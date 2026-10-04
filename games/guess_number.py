@@ -11,10 +11,11 @@ WIN_BASE_REWARDS = {1: 25, 2: 50, 3: 75}
 
 
 class GuessNumberGame(AbstractGame):
-    def __init__(self):
+    def __init__(self, player: Player):
         self._level_choose: int = 0
         self._to_range: int = 0
         self._guess_number: int = 0
+        super().__init__(player)
 
     def _choose_level(self) -> int:
         while True:

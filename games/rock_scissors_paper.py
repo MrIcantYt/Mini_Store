@@ -34,14 +34,15 @@ class RockScissorsPaperGame(AbstractGame):
                 or (user_choice == 'ножницы' and bot_choice == 'бумага')
                 or (user_choice == 'бумага' and bot_choice == 'камень')
             ):
+                # TODO: check 64-87 lines in guess_the_number.py. There is a similar reward calculation logic
                 luck = random.randint(1, 100)
                 chance = 35 if player.potion_luck else 15
 
                 base_reward = 50 if luck <= chance else 25
-                reward_xp = 40 if player.xp_x2 else 20
+                reward_xp = 20 * player.xp_multiplier
 
                 level_multiplier = 1.0 + (player.lvl - 1) * 0.1
-                reward_coins = int(base_reward * level_multiplier * (2 if player.balance_x2 else 1))
+                reward_coins = int(base_reward * level_multiplier * player.balance_multiplier)
 
                 if luck <= chance:
                     reward_xp *= 2
@@ -64,8 +65,8 @@ class RockScissorsPaperGame(AbstractGame):
             else:
                 life -= 1
 
-                if lucky_ticket:
-                    lucky_ticket = False
+                if player.lucky_ticket:
+                    player.lucky_ticket = False
                     life += 1
 
                     print(

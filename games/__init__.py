@@ -3,7 +3,7 @@ __all__ = (
     'GuessNumberGame',
     'RockScissorsPaperGame',
     'SlotsGame',
-)  # TODO: Sort by alpahet
+)
 
 from .abstract import AbstractGame
 from .guess_number import GuessNumberGame

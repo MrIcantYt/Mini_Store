@@ -666,13 +666,15 @@ def main():
 
                 match user_number_game:
                     case 1:
-                        game = GuessNumberGame()
+                        game = GuessNumberGame(player)
                     case 2:
-                        game = RockScissorsPaper()
+                        game = RockScissorsPaperGame(player)
                     case 3:
-                        game = SlotMachine()
+                        game = SlotsGame(player)
                     case 4:
-                        game = Blackjack()
+                        # TODO
+                        # game = Blackjack()
+                        pass
                     case _:
                         print(f'\n{Colors.red}Такой игры нет.{Colors.reset}\n')
                         continue
@@ -698,7 +700,7 @@ def main():
             print(
                 f'Бонус уровня: {Colors.yellow}+{level_bonus_percent}%{Colors.reset} к доходу ({Colors.yellow}{level_multiplier:.1f}x{Colors.reset})'
             )
-            print(f'Баланс: {Colors.yellow}{fmt(balance)}{Colors.reset} монет 💰')
+            print(f'Баланс: {Colors.yellow}{fmt(player.balance)}{Colors.reset} монет 💰')
 
             print('\nКупленные предметы:')
             has_items = False
