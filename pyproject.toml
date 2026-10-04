@@ -1,0 +1,14 @@
+[project]
+name = "mini-store"
+version = "0.5.0"
+description = "Terminal game"
+readme = "README.md"
+authors = [
+    { name = "Lynx20wz", email = "maks20wz@gmail.com" },
+    { name = "MrIcantYt", email = "icant@example.com" }
+]
+requires-python = ">=3.14"
+dependencies = []
+
+[project.scripts]
+mini-store = "mini_store:main"
