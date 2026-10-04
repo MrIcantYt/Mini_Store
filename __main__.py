@@ -705,23 +705,20 @@ def main():
             print('\nКупленные предметы:')
             has_items = False
 
-            if balance_x2:
-                print(f' - Множитель монет x2 {Colors.green}[Активен]{Colors.reset}')
-                has_items = True
+            print(
+                f' - Множитель монет {player.balance_multiplier} {Colors.green}[Активен]{Colors.reset}'
+                f' - Множитель опыта {player.xp_multiplier} {Colors.green}[Активен]{Colors.reset}'
+            )
 
-            if xp_x2:
-                print(f' - Множитель опыта x2 {Colors.green}[Активен]{Colors.reset}')
-                has_items = True
-
-            if lucky_amulet:
+            if player.lucky_amulet:
                 print(f' - Счастливый Амулет {Colors.green}[+1 жизнь]{Colors.reset}')
                 has_items = True
 
-            if potion_luck:
+            if player.potion_luck:
                 print(f' - Зелье Удачи {Colors.green}[Шанс в казино повышен]{Colors.reset}')
                 has_items = True
 
-            if lucky_ticket:
+            if player.lucky_ticket:
                 print(f' - Счастливый Тикет {Colors.green}[Защита от 1 проигрыша]{Colors.reset}')
                 has_items = True
 
@@ -734,7 +731,7 @@ def main():
                 )
                 has_items = True
 
-            if business:
+            if player.business:
                 print(f' - Пассивный бизнес {Colors.green}[+25 монет за ход]{Colors.reset}')
                 has_items = True
 
@@ -745,9 +742,9 @@ def main():
 
         # Промокод
         elif user_digit == 4:
-            Colors.reset_num = 0
+            player.reset_num = 0
 
-            if not promo_used:
+            if not player.promo_used:
                 user_promo = input('\nВведите промокод: ').strip()
 
                 if user_promo == PROMO:
@@ -755,12 +752,12 @@ def main():
                     base_xp = 30
                     level_multiplier = 1.0 + (player.lvl - 1) * 0.1
 
-                    coins_given = int(base_coins * level_multiplier * (2 if balance_x2 else 1))
-                    xp_given = int(base_xp * level_multiplier * (2 if xp_x2 else 1))
+                    coins_given = int(base_coins * level_multiplier * player.balance_multiplier)
+                    xp_given = int(base_xp * level_multiplier * player.xp_multiplier)
 
-                    balance += coins_given
-                    xp += xp_given
-                    promo_used = True
+                    player.balance += coins_given
+                    player.xp += xp_given
+                    player.promo_used = True
 
                     print(f'\n🎉 {Colors.green}Успешно, промокод был активирован!{Colors.reset} ')
                     print(
@@ -782,7 +779,7 @@ def main():
 
         # Майнинг-ферма
         elif user_digit == 5:
-            Colors.reset_num = 0
+            player.reset_num = 0
 
             import msvcrt
 
@@ -792,10 +789,10 @@ def main():
                 )
 
                 while True:
-                    balance += 5 * mining_lvl
+                    player.balance += 5 * mining_lvl
 
-                    if balance > 999999999:
-                        balance = 999999999
+                    if player.balance > 999999999:
+                        player.balance = 999999999
 
                     print(
                         f'Добыча... Ваш баланс: {Colors.yellow}{fmt(balance)}{Colors.reset} монет 💰',
@@ -830,16 +827,16 @@ def main():
 
         # Удаления БД
         elif user_digit == 7:
-            if Colors.reset_num == 0:
+            if player.reset_num == 0:
                 print(
                     f'\nНезнакомец: {Colors.blue_dark}Вы уверенны, что хотите сбросить весь свой прогресс? (Нажмите 7 ещё раз для подтверждения){Colors.reset}\n'
                 )
 
-                Colors.reset_num = 1
+                player.reset_num = 1
 
                 time.sleep(2)
 
-            elif Colors.reset_num == 1:
+            elif player.reset_num == 1:
                 print(
                     f'\nНезнакомец: {Colors.blue_dark}Хорошо! Ваше решение принято.{Colors.reset}\n'
                 )
@@ -861,18 +858,18 @@ def main():
                             f'{Colors.red}Ошибка! Не удалось удалить базу данных. Закройте сторонние программы/клиенты БД и попробуйте снова.{Colors.reset}\n'
                         )
 
-                        Colors.reset_num = 0
+                        player.reset_num = 0
 
                 else:
                     print(
                         f'{Colors.red}Ошибка! Файл базы данных game.db не найден.{Colors.reset}\n'
                     )
 
-                    Colors.reset_num = 0
+                    player.reset_num = 0
 
         # Неизвестный пункт
         else:
-            Colors.reset_num = 0
+            player.reset_num = 0
 
             print(f'\n{Colors.red}Неизвестный пункт меню: {user_digit}{Colors.reset} \n')
 

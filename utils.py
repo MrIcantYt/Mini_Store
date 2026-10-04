@@ -1,2 +1,2 @@
 def fmt(value: int) -> str:
-    return f"{value:,}".replace(",", ".")
+    return f'{value:,}'.replace(',', '.')
