@@ -14,7 +14,7 @@ class Player:
         self.balance_x2: bool = False
         self._xp: int = 0
         self.xp_x2: bool = False
-        self.level: int = 1
+        self.lvl: int = 1
         self.promo_used: bool = False
         self.lucky_amulet: bool = False
         self.secret_used: bool = False
@@ -39,24 +39,24 @@ class Player:
 
     @property
     def _xp_needed(self) -> int:
-        return self.level * XP_PER_LEVEL_MULTIPLIER
+        return self.lvl * XP_PER_LEVEL_MULTIPLIER
 
     def check_level_up(self):
         """Проверяет и обрабатывает повышение уровня."""
 
-        if self.level >= MAX_LEVEL:
+        if self.lvl >= MAX_LEVEL:
             self._convert_xp_to_gold()
 
         while self._xp >= self._xp_needed:
             self._xp -= self._xp_needed
-            self.level += 1
+            self.lvl += 1
 
             print(
-                f"{Colors.green}🎉 ПОЗДРАВЛЯЕМ! Вы достигли {self.level} уровня! 🎉 {Colors.reset}\n"
+                f"{Colors.green}🎉 ПОЗДРАВЛЯЕМ! Вы достигли {self.lvl} уровня! 🎉 {Colors.reset}\n"
             )
             sleep(0.5)
 
-            if self.level >= MAX_LEVEL:
+            if self.lvl >= MAX_LEVEL:
                 print(
                     f"{Colors.yellow}⭐ Вы достигли МАКСИМАЛЬНОГО {MAX_LEVEL} уровня! "
                     f"Теперь опыт превращается в монеты!{Colors.reset}\n"

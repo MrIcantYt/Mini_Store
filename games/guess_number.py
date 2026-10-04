@@ -65,7 +65,7 @@ class GuessNumber(AbstractGame):
 
                 if user_number == self._guess_number:
                     # Calculate multipliers
-                    level_multiplier = 1.0 + (player.level - 1) * 0.1
+                    level_multiplier = 1.0 + (player.lvl - 1) * 0.1
                     xp_multiplier = 2 if player.xp_x2 else 1
 
                     # Will be surcharged

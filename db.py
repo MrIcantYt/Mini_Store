@@ -65,7 +65,7 @@ class DataBase:
                     int(player.balance_x2),
                     int(player.promo_used),
                     player._xp,
-                    player.level,
+                    player.lvl,
                     int(player.xp_x2),
                     int(player.lucky_amulet),
                     int(player.secret_used),
