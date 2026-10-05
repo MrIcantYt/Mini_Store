@@ -57,7 +57,7 @@ class SlotsGame(AbstractGame):
         self._variants: list[Slot] = self._setup_variants()
         self._slots = random.choices(self._variants, k=3)
         self._is_vip = False
-        super().__init__(player)
+        super().__init__(self._player)
 
     def _setup_variants(self) -> list[Slot]:
         variants = [
@@ -77,18 +77,20 @@ class SlotsGame(AbstractGame):
         set_ = set(self._slots)
         return next(iter(set_)) if len(set_) == 1 else None
 
-    def play(self, player: Player) -> Any:
+    def play(self) -> Any:
         print(f'\n {Colors.yellow}== Игра: Игровой Автомат =={Colors.reset}\n')
 
         user_bet = (
-            input(f"Введите вашу ставку или 'all'/'все' (Ваш баланс: {fmt(player.balance)}): ")
+            input(
+                f"Введите вашу ставку или 'all'/'все' (Ваш баланс: {fmt(self._player.balance)}): "
+            )
             .strip()
             .lower()
         )
 
         try:
             if user_bet in ['all', 'все']:
-                money_player = player.balance
+                money_player = self._player.balance
             else:
                 money_player = int(user_bet)
 
@@ -100,19 +102,19 @@ class SlotsGame(AbstractGame):
 
         if money_player <= 0:
             print(
-                f'\n{Colors.red}Ошибка! Ставка {fmt(player.balance)} монет невозможна! Нельзя играть на 0 или меньше.{Colors.reset}\n'
+                f'\n{Colors.red}Ошибка! Ставка {fmt(self._player.balance)} монет невозможна! Нельзя играть на 0 или меньше.{Colors.reset}\n'
             )
             return
 
-        elif money_player > player.balance:
+        elif money_player > self._player.balance:
             print(
                 f'\n{Colors.red}Ошибка! Нельзя вводить ставку больше своего баланса! {Colors.reset}\n'
             )
             return
 
-        player.balance -= money_player
+        self._player.balance -= money_player
 
-        if money_player == 777 and player.balance >= 777:
+        if money_player == 777 and self._player.balance >= 777:
             self._is_vip = True
             print(
                 f'\n{Colors.yellow}⚡ ВНИМАНИЕ! Активирован VIP-режим ХАЙРОЛЛЕРА «777»!⚡{Colors.reset}\n'
@@ -131,8 +133,8 @@ class SlotsGame(AbstractGame):
         sleep(0.4)
 
         if slot := self._all_slots_is():
-            win_coins = int(slot.win_reward * money_player * player.balance_multiplier)
-            win_xp = int(slot.xp_reward * player.xp_multiplier)
+            win_coins = int(slot.win_reward * money_player * self._player.balance_multiplier)
+            win_xp = int(slot.xp_reward * self._player.xp_multiplier)
             msg = slot.msg
 
             if self._is_vip:
@@ -145,8 +147,8 @@ class SlotsGame(AbstractGame):
                 f'💰 Вы выиграли {Colors.yellow}{fmt(win_coins)}{Colors.reset} монет и получили {Colors.yellow}{fmt(win_xp)}{Colors.reset} XP!\n',
             )
 
-            player.balance += win_coins
-            player.xp += win_xp
+            self._player.balance += win_coins
+            self._player.xp += win_xp
 
             return
 
@@ -155,7 +157,7 @@ class SlotsGame(AbstractGame):
                 print(
                     f'{Colors.red}💥 КРАХ ХАЙРОЛЛЕРА! Слот заблокирован. С вашего баланса списан ДВОЙНОЙ штраф за риск!{Colors.reset}\n'
                 )
-                player.balance -= money_player
+                self._player.balance -= money_player
 
             else:
                 print('🔴 Увы, комбинация пустая. Вы потеряли свою ставку. Попробуйте еще раз!\n')

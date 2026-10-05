@@ -15,7 +15,7 @@ class GuessNumberGame(AbstractGame):
         self._level_choose: int = 0
         self._to_range: int = 0
         self._guess_number: int = 0
-        super().__init__(player)
+        super().__init__(self._player)
 
     def _choose_level(self) -> int:
         while True:
@@ -34,14 +34,14 @@ class GuessNumberGame(AbstractGame):
                 continue
             return level_choose
 
-    def play(self, player: Player):
+    def play(self):
         print(f'\n {Colors.yellow}== Игра: Угадай число == {Colors.reset}\n')
 
         try:
             self._level_choose = self._choose_level()
             self._to_range = TO_RANGE[self._level_choose]
             self._guess_number = random.randint(1, self._to_range)
-            life = 4 if player.lucky_amulet else 3
+            life = 4 if self._player.lucky_amulet else 3
 
             while life > 0:
                 user_number = int(input(f'Введите число (От 1 до {self._to_range}): '))
@@ -52,8 +52,8 @@ class GuessNumberGame(AbstractGame):
                     )
                     continue
 
-                if player.lucky_ticket:
-                    player.lucky_ticket = False
+                if self._player.lucky_ticket:
+                    self._player.lucky_ticket = False
                     print(
                         f'\n🎫 {Colors.yellow}Счастливый тикет сработал и спас вашу жизнь!{Colors.reset}'
                     )
@@ -62,23 +62,23 @@ class GuessNumberGame(AbstractGame):
 
                 if user_number == self._guess_number:
                     # Calculate multipliers
-                    level_multiplier = 1.0 + (player.lvl - 1) * 0.1
+                    level_multiplier = 1.0 + (self._player.lvl - 1) * 0.1
 
                     # Will be surcharged
                     luck = random.randint(1, 100)
-                    win_chance = 35 if player.potion_luck else 15
+                    win_chance = 35 if self._player.potion_luck else 15
                     is_surcharged = luck <= win_chance
                     surcharge_factor = 2 if is_surcharged else 1
 
                     # Calculate rewards
                     base = WIN_BASE_REWARDS[self._level_choose]
                     reward_base = base * surcharge_factor
-                    reward_xp = reward_base * player.xp_multiplier
+                    reward_xp = reward_base * self._player.xp_multiplier
                     reward_coins = int(
                         reward_base
                         * level_multiplier
                         * surcharge_factor
-                        * player.balance_multiplier
+                        * self._player.balance_multiplier
                     )
 
                     if is_surcharged:

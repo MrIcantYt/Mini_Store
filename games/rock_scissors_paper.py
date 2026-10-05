@@ -2,19 +2,18 @@ import random
 from typing import Any
 
 from colors import Colors
-from player import Player
 from utils import fmt
 
 from .abstract import AbstractGame
 
 
 class RockScissorsPaperGame(AbstractGame):
-    def play(self, player: Player) -> Any:
+    def play(self) -> Any:
         print(f'\n {Colors.yellow}== Игра: Камень, ножницы, бумага == {Colors.reset}\n')
 
         variants = ['камень', 'ножницы', 'бумага']
 
-        life = 4 if player.lucky_amulet else 3
+        life = 4 if self._player.lucky_amulet else 3
 
         while life > 0:
             user_choice = input('Выберите (Камень, Ножницы, Бумага): ').lower().strip()
@@ -36,13 +35,13 @@ class RockScissorsPaperGame(AbstractGame):
             ):
                 # TODO: check 64-87 lines in guess_the_number.py. There is a similar reward calculation logic
                 luck = random.randint(1, 100)
-                chance = 35 if player.potion_luck else 15
+                chance = 35 if self._player.potion_luck else 15
 
                 base_reward = 50 if luck <= chance else 25
-                reward_xp = 20 * player.xp_multiplier
+                reward_xp = 20 * self._player.xp_multiplier
 
-                level_multiplier = 1.0 + (player.lvl - 1) * 0.1
-                reward_coins = int(base_reward * level_multiplier * player.balance_multiplier)
+                level_multiplier = 1.0 + (self._player.lvl - 1) * 0.1
+                reward_coins = int(base_reward * level_multiplier * self._player.balance_multiplier)
 
                 if luck <= chance:
                     reward_xp *= 2
@@ -65,8 +64,8 @@ class RockScissorsPaperGame(AbstractGame):
             else:
                 life -= 1
 
-                if player.lucky_ticket:
-                    player.lucky_ticket = False
+                if self._player.lucky_ticket:
+                    self._player.lucky_ticket = False
                     life += 1
 
                     print(
