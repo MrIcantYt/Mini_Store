@@ -9,13 +9,26 @@ from utils import fmt
 
 from .abstract import AbstractGame
 
-
 class Slot(Enum):
+    SEVEN_SEVEN_SEVEN = (
+        '7️⃣',
+        30,
+        240,
+        f'{Colors.green}7️⃣ ТРИ СЕМЁРКИ В РЯД! У вас выпали три СЕМЁРКИ В РЯД! 7️⃣{Colors.reset}',
+        f'{Colors.green}7️⃣ ЛЕГЕНДАРНЫЕ ТРИ СЕМЁРКИ В РЯД! 60x МНОЖИТЕЛЬ СРАБОТАЛ! 7️⃣{Colors.reset}',
+    )
+    SACK_MONEY = (
+        '💰',
+        15,
+        120,
+        f'{Colors.green}💰 ЧТО В МЕШОЧКЕ? У вас выпали три МЕШКА С ДЕНЬГАМИ! 💰{Colors.reset}',
+        f'{Colors.green}💰 ЛЕГЕНДАРНЫЕ ТРИ МЕШКА! 30x МНОЖИТЕЛЬ СРАБОТАЛ! 💰{Colors.reset}',
+    )
     CROWN = (
         '👑',
         7,
         60,
-        f'{Colors.green}🔥 ДЖЕКПОТ! У вас выпали три КОРОНЫ! 🔥 {Colors.reset}',
+        f'{Colors.green}🔥 ДЖЕКПОТ! У вас выпали три КОРОНЫ! 🔥{Colors.reset}',
         f'{Colors.green}🔥 ЛЕГЕНДАРНЫЙ VIP-ДЖЕКПОТ! 14x МНОЖИТЕЛЬ СРАБОТАЛ! 🔥{Colors.reset}',
     )
     DIAMOND = (
@@ -34,14 +47,14 @@ class Slot(Enum):
     )
 
     symbol: str
-    win_reward: int
+    coins_reward: int
     xp_reward: int
     msg: str
     vip_msg: str
 
     def __init__(self, symbol: str, win_reward: int, xp_reward: int, msg: str, vip_msg: str):
         self.symbol = symbol
-        self.win_reward = win_reward
+        self.coins_reward = win_reward
         self.xp_reward = xp_reward
         self.msg = msg
         self.vip_msg = vip_msg
@@ -49,7 +62,6 @@ class Slot(Enum):
     @classmethod
     def from_symbol(cls, symbol: str) -> Slot | None:
         return next((s for s in cls if s.symbol == symbol), None)
-
 
 class SlotsGame(AbstractGame):
     def __init__(self, player: Player) -> None:
@@ -65,12 +77,13 @@ class SlotsGame(AbstractGame):
             Slot.CHERRY,
             Slot.CHERRY,
             Slot.CHERRY,
+            Slot.CHERRY,
             Slot.DIAMOND,
             Slot.DIAMOND,
             Slot.CROWN,
         ]
         if self._player.potion_luck:
-            variants.extend([Slot.DIAMOND, Slot.CROWN])
+            variants.extend([Slot.DIAMOND, Slot.CROWN, Slot.SACK_MONEY, Slot.SEVEN_SEVEN_SEVEN])
         return variants
 
     def _all_slots_is(self) -> Slot | None:
@@ -80,36 +93,25 @@ class SlotsGame(AbstractGame):
     def play(self) -> Any:
         print(f'\n {Colors.yellow}== Игра: Игровой Автомат =={Colors.reset}\n')
 
-        user_bet = (
-            input(
-                f"Введите вашу ставку или 'all'/'все' (Ваш баланс: {fmt(self._player.balance)}): "
-            )
-            .strip()
-            .lower()
-        )
+        user_bet = input(f"Введите вашу ставку или 'all'/'все' (Ваш баланс: {fmt(self._player.balance)}): ").strip().lower()
 
         try:
             if user_bet in ['all', 'все']:
                 money_player = self._player.balance
+
             else:
                 money_player = int(user_bet)
 
         except ValueError:
-            print(
-                f"\n{Colors.red}Ошибка! Введите корректное число или слово 'all'/'все'.{Colors.reset}\n"
-            )
+            print(f"\n{Colors.red}Ошибка! Введите корректное число или слово 'all'/'все'.{Colors.reset}\n")
             return
 
         if money_player <= 0:
-            print(
-                f'\n{Colors.red}Ошибка! Ставка {fmt(self._player.balance)} монет невозможна! Нельзя играть на 0 или меньше.{Colors.reset}\n'
-            )
+            print(f'\n{Colors.red}Ошибка! Ставка {fmt(self._player.balance)} монет невозможна! Нельзя играть на 0 или меньше.{Colors.reset}\n')
             return
 
         elif money_player > self._player.balance:
-            print(
-                f'\n{Colors.red}Ошибка! Нельзя вводить ставку больше своего баланса! {Colors.reset}\n'
-            )
+            print(f'\n{Colors.red}Ошибка! Нельзя вводить ставку больше своего баланса! {Colors.reset}\n')
             return
 
         self._player.balance -= money_player
@@ -133,7 +135,7 @@ class SlotsGame(AbstractGame):
         sleep(0.4)
 
         if slot := self._all_slots_is():
-            win_coins = int(slot.win_reward * money_player * self._player.balance_multiplier)
+            win_coins = int(slot.coins_reward * money_player * self._player.balance_multiplier)
             win_xp = int(slot.xp_reward * self._player.xp_multiplier)
             msg = slot.msg
 
@@ -142,10 +144,7 @@ class SlotsGame(AbstractGame):
                 win_xp *= 2
                 msg = slot.vip_msg
 
-            print(
-                msg,
-                f'💰 Вы выиграли {Colors.yellow}{fmt(win_coins)}{Colors.reset} монет и получили {Colors.yellow}{fmt(win_xp)}{Colors.reset} XP!\n',
-            )
+            print(msg, f'💰 Вы выиграли {Colors.yellow}{fmt(win_coins)}{Colors.reset} монет и получили {Colors.yellow}{fmt(win_xp)}{Colors.reset} XP!\n')
 
             self._player.balance += win_coins
             self._player.xp += win_xp
@@ -154,9 +153,8 @@ class SlotsGame(AbstractGame):
 
         else:
             if self._is_vip:
-                print(
-                    f'{Colors.red}💥 КРАХ ХАЙРОЛЛЕРА! Слот заблокирован. С вашего баланса списан ДВОЙНОЙ штраф за риск!{Colors.reset}\n'
-                )
+                print(f'{Colors.red}💥 КРАХ ХАЙРОЛЛЕРА! Слот заблокирован. С вашего баланса списан ДВОЙНОЙ штраф за риск!{Colors.reset}\n')
+
                 self._player.balance -= money_player
 
             else:
