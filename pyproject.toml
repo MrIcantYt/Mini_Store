@@ -27,3 +27,8 @@ ignore = ['EXE002']
 [tool.ruff.format]
 indent-style = "space"
 quote-style = "single"
+
+[dependency-groups]
+dev = [
+    "ruff>=0.16.10",
+]
