@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from typing import Any
 
 from player import Player
 
@@ -9,5 +8,5 @@ class AbstractGame(ABC):
         self._player = player
 
     @abstractmethod
-    def play(self, player: Player) -> Any:
+    def play(self) -> None:
         pass
