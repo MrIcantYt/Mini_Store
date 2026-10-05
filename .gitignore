@@ -1,3 +1,6 @@
 **/__pycache__
-game.db
 .venv
+game.db
+game.json
+.ruff_cache
+.zed
