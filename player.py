@@ -93,11 +93,11 @@ class Player:
 
     def add_coins(self, amount: int) -> str:
         self.balance += int(amount * self.balance_multiplier * self.level_multiplier)
-        return f'💰 Вы получили {Colors.yellow}{fmt(amount)}x{self.balance_multiplier:.1f}x{self.level_multiplier:.1f}{Colors.reset} монет ({Colors.yellow}{fmt(self.balance)}{Colors.reset} монет на счету)'
+        return f'💰 Вы получили {Colors.yellow}{fmt(amount)}x{self.balance_multiplier * self.level_multiplier:.1f}{Colors.reset} монет ({Colors.yellow}{fmt(self.balance)}{Colors.reset} монет на счету)'
 
     def add_xp(self, amount: int) -> str:
         self.xp += int(amount * self.xp_multiplier * self.level_multiplier)
-        return f'📈 Вам начислено {Colors.yellow}{fmt(amount)}x{self.xp_multiplier:.1f}x{self.level_multiplier:.1f}{Colors.reset} XP ({Colors.yellow}{fmt(self._xp)}{Colors.reset} XP на счету)'
+        return f'📈 Вам начислено {Colors.yellow}{fmt(amount)}x{self.xp_multiplier * self.level_multiplier:.1f}{Colors.reset} XP ({Colors.yellow}{fmt(self._xp)}{Colors.reset} XP на счету)'
 
     def add_coins_and_xp(self, *, coins: int, xp: int) -> str:
         return self.add_coins(coins) + '\n' + self.add_xp(xp)
