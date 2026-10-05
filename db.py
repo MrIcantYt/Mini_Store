@@ -47,6 +47,7 @@ class SqliteDataBase(AbstractDataBase):
                     buy_num_boost       INTEGER NOT NULL DEFAULT 0,
                     business            BOOLEAN NOT NULL DEFAULT 0,
                     reset_num           INTEGER NOT NULL DEFAULT 0,
+                    secret_case         INTEGER NOT NULL DEFAULT 0,
                     rebirths            INTEGER NOT NULL DEFAULT 0
                 );
             """)

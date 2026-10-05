@@ -109,7 +109,7 @@ class GuessNumberGame(AbstractGame):
 
             return
 
-        except ValueError, TypeError:
+        except (ValueError, TypeError):
             print(f'\n{Colors.red}Ошибка! Введите корректное число. {Colors.reset}\n')
 
             return

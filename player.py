@@ -39,6 +39,7 @@ class Player:
     buy_num_boost: int = 0
     business: bool = False
     reset_num: int = 0
+    secret_case: int = 0
     rebirths: int = 0
 
     def to_row(self) -> dict[str, object]:
@@ -48,7 +49,7 @@ class Player:
         return data
 
     @classmethod
-    def from_row(cls, row) -> Player:
+    def from_row(cls, row) -> "Player":
         data = {f.name: row[f.name] for f in fields(cls)}
         for name in BOOL_FIELDS:
             data[name] = bool(data[name])

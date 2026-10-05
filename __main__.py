@@ -327,7 +327,7 @@ def main():
 
                                     else:
                                         print(
-                                            f'\n{Colors.red}Недостаточно монет! Нужно 1.200, а у вас {fmt(balance)}.{Colors.reset}\n'
+                                            f'\n{Colors.red}Недостаточно монет! Нужно 1.200, а у вас {fmt(player.balance)}.{Colors.reset}\n'
                                         )
 
                                 case _:
