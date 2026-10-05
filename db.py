@@ -1,11 +1,14 @@
 import sqlite3
 from abc import ABC, abstractmethod
+from os import path
+from warnings import deprecated
 
 from player import Player
+from sign import SignedJson
 
 
 class AbstractDataBase(ABC):
-    db_path: str
+    path: str
 
     @abstractmethod
     def init_db(self) -> None:
@@ -16,16 +19,25 @@ class AbstractDataBase(ABC):
         pass
 
     @abstractmethod
+    def reset_player(self, player_id: int) -> None:
+        pass
+
+    @abstractmethod
     def get_player_by_id(self, player_id: int) -> Player | None:
         pass
 
+    @abstractmethod
+    def get_all_players(self) -> list[Player]:
+        pass
 
+
+@deprecated('SqliteDataBase is deprecated. Use JsonDataBase instead.')
 class SqliteDataBase(AbstractDataBase):
     def __init__(self, db_path: str = 'game.db'):
-        self.db_path = db_path
+        self.path = db_path
 
     def init_db(self):
-        with sqlite3.connect(self.db_path) as conn:
+        with sqlite3.connect(self.path) as conn:
             cursor = conn.cursor()
 
             cursor.execute("""
@@ -54,33 +66,69 @@ class SqliteDataBase(AbstractDataBase):
 
             conn.commit()
 
-    def get_player_by_id(self, player_id: int) -> Player | None:
-        with sqlite3.connect(self.db_path) as conn:
-            conn.row_factory = sqlite3.Row
-            row = conn.execute('SELECT * FROM players WHERE id = ?', (player_id,)).fetchone()
-
-        return Player.from_row(row) if row else None
-
     def save_player(self, player: Player) -> None:
         data = player.to_row()
         columns = ', '.join(f'{col} = ?' for col in data)
 
-        with sqlite3.connect(self.db_path) as conn:
+        with sqlite3.connect(self.path) as conn:
             conn.execute(
                 f'UPDATE players SET {columns} WHERE id = ?',
                 (*data.values(), player.id),
             )
 
+    def get_player_by_id(self, player_id: int) -> Player | None:
+        with sqlite3.connect(self.path) as conn:
+            conn.row_factory = sqlite3.Row
+            row = conn.execute('SELECT * FROM players WHERE id = ?', (player_id,)).fetchone()
+
+        return Player.from_row(row) if row else None
+
+    def get_all_players(self) -> list[Player]:
+        with sqlite3.connect(self.path) as conn:
+            conn.row_factory = sqlite3.Row
+            rows = conn.execute('SELECT * FROM players').fetchall()
+
+        return [Player.from_row(row) for row in rows]
+
 
 class JsonDataBase(AbstractDataBase):
     def __init__(self, db_path: str = 'game.json') -> None:
-        self.db_path = db_path
+        self.path = db_path
+        self.json = SignedJson(db_path)
 
     def init_db(self) -> None:
-        pass
+        if not path.exists(self.path):
+            self.json.dump({'players': []})
 
     def save_player(self, player: Player) -> None:
-        pass
+        data = self.json.load()
+        players = data['players']
+        record = player.to_dict()
+
+        for i, p in enumerate(players):
+            if p['id'] == player.id:
+                players[i] = record
+                break
+        else:
+            players.append(record)
+
+        self.json.dump(data)
+
+    def reset_player(self, player_id: int) -> None:
+        data = self.json.load(False)
+        players = data['players']
+        for i, p in enumerate(players):
+            if p['id'] == player_id:
+                players[i] = Player(id=player_id)
+                break
 
     def get_player_by_id(self, player_id: int) -> Player | None:
-        pass
+        data = self.json.load()
+        for p in data['players']:
+            if p['id'] == player_id:
+                return Player.from_dict(p)
+        return None
+
+    def get_all_players(self) -> list[Player]:
+        data = self.json.load()
+        return [Player.from_dict(p) for p in data['players']]

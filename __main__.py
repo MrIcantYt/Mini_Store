@@ -6,7 +6,8 @@ import time
 from colorama import init as colorama_init
 
 from colors import Colors
-from db import SqliteDataBase
+from db import JsonDataBase
+from exceptions import SignCheckError
 from games import *
 from player import Player
 from utils import fmt
@@ -26,13 +27,18 @@ SHOP_CONTENT = (
 )
 
 
-def load_game(player_id):
-    player = Player(player_id)
-    db = SqliteDataBase()
+def init_game(player_id: int) -> tuple[JsonDataBase, Player]:
+    db = JsonDataBase()
     db.init_db()
 
-    db_player = db.get_player_by_id(player_id)
-    if db_player is None:
+    try:
+        player = db.get_player_by_id(player_id)
+    except SignCheckError as e:
+        print(f'\n{Colors.red}{e.message}. Ваш прогресс сброшен!{Colors.reset}')
+        player = None
+
+    if player is None:
+        player = Player(id=player_id)
         db.save_player(player)
 
     return db, player
@@ -40,7 +46,8 @@ def load_game(player_id):
 
 def main():
     player_id = 1
-    db, player = load_game(player_id)
+    db, player = init_game(player_id)
+
     if player is None:
         print(f'\n{Colors.red}Ошибка! Игрок с ID {player_id} не найден.{Colors.reset}\n')
         return
