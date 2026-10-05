@@ -16,9 +16,11 @@ dependencies = [
 mini-store = "mini_store:main"
 
 [tool.ruff]
-ignore = ['EXE002']
-line-length = 100
 indent-width = 4
+line-length = 100
+
+[tool.ruff.lint]
+ignore = ['EXE002']
 
 [tool.ruff.format]
 indent-style = "space"

@@ -230,10 +230,8 @@ def main():
             db.save_player(player)
 
         # Максимальный баланс
-        if player.balance > 999999999:
-            player.balance = 999999999
-
-            db.save_player(player)
+        player.balance = min(player.balance, 999999999)
+        db.save_player(player)
 
         # Магазин
         if user_digit == 1:
@@ -258,8 +256,8 @@ def main():
                                             f'\n{Colors.yellow}Вы уже купили этот товар!{Colors.reset}\n'
                                         )
 
-                                    elif balance >= 100:
-                                        balance -= 100
+                                    elif player.balance >= 100:
+                                        player.balance -= 100
                                         balance_x2 = True
 
                                         db.save_player(player)
@@ -270,7 +268,7 @@ def main():
 
                                     else:
                                         print(
-                                            f'\n{Colors.red}Недостаточно монет! Нужно 100, а у вас {balance}.{Colors.reset}\n'
+                                            f'\n{Colors.red}Недостаточно монет! Нужно 100, а у вас {player.balance}.{Colors.reset}\n'
                                         )
 
                                 case 2:
@@ -295,19 +293,19 @@ def main():
                                                 'Незнакомец: Всё, хорошо, держите 100 монет. Если ещё раз тыкнете, то с вас спишется 100 монет!\n'
                                             )
 
-                                            balance += 100
+                                            player.balance += 100
 
                                             db.save_player(player)
 
                                         elif bought == 6:
                                             print('Незнакомец: Я вас предупреждал!\n')
 
-                                            balance -= 100
+                                            player.balance -= 100
 
                                             db.save_player(player)
 
-                                    elif balance >= 200:
-                                        balance -= 200
+                                    elif player.balance >= 200:
+                                        player.balance -= 200
                                         xp_x2 = True
 
                                         db.save_player(player)
@@ -318,18 +316,18 @@ def main():
 
                                     else:
                                         print(
-                                            f'\n{Colors.red}Недостаточно монет! Нужно 200, а у вас {balance}.{Colors.reset}\n'
+                                            f'\n{Colors.red}Недостаточно монет! Нужно 200, а у вас {player.balance}.{Colors.reset}\n'
                                         )
 
                                 case 3:
-                                    if lucky_amulet:
+                                    if player.lucky_amulet:
                                         print(
                                             f'\n{Colors.yellow}Вы уже купили этот товар!{Colors.reset}\n'
                                         )
 
-                                    elif balance >= 300:
-                                        balance -= 300
-                                        lucky_amulet = True
+                                    elif player.balance >= 300:
+                                        player.balance -= 300
+                                        player.lucky_amulet = True
 
                                         db.save_player(player)
 
@@ -339,7 +337,7 @@ def main():
 
                                     else:
                                         print(
-                                            f'\n{Colors.red}Недостаточно монет! Нужно 300, а у вас {balance}.{Colors.reset}\n'
+                                            f'\n{Colors.red}Недостаточно монет! Нужно 300, а у вас {player.balance}.{Colors.reset}\n'
                                         )
 
                                 case 4:
@@ -353,8 +351,8 @@ def main():
                                             300 * (mining_lvl + 1) if mining_lvl != 0 else 300
                                         )
 
-                                        if balance >= result_mining_lvl_mon:
-                                            balance -= result_mining_lvl_mon
+                                        if player.balance >= result_mining_lvl_mon:
+                                            player.balance -= result_mining_lvl_mon
                                             mining_lvl += 1
 
                                             db.save_player(player)
@@ -366,22 +364,22 @@ def main():
                                                 f'Следующая прокачка будет стоить: {f"{fmt(300 * (mining_lvl + 1))} монет." if mining_lvl != 10 else "MAX прокачка."}'
                                             )
                                             print(
-                                                f'\nУ вас на балансе: {fmt(balance)} монет.{Colors.reset}\n'
+                                                f'\nУ вас на балансе: {fmt(player.balance)} монет.{Colors.reset}\n'
                                             )
 
                                         else:
                                             print(
-                                                f'\n{Colors.red}Недостаточно монет! Нужно {fmt(result_mining_lvl_mon)}, а у вас {fmt(balance)}.{Colors.reset}\n'
+                                                f'\n{Colors.red}Недостаточно монет! Нужно {fmt(result_mining_lvl_mon)}, а у вас {fmt(player.balance)}.{Colors.reset}\n'
                                             )
 
                                 case 5:
-                                    if potion_luck:
+                                    if player.potion_luck:
                                         print(
                                             f'\n{Colors.yellow}Вы уже купили этот товар!{Colors.reset}\n'
                                         )
 
-                                    elif balance >= 500:
-                                        balance -= 500
+                                    elif player.balance >= 500:
+                                        player.balance -= 500
                                         potion_luck = True
 
                                         db.save_player(player)
@@ -392,17 +390,17 @@ def main():
 
                                     else:
                                         print(
-                                            f'\n{Colors.red}Недостаточно монет! Нужно 500, а у вас {balance}.{Colors.reset}\n'
+                                            f'\n{Colors.red}Недостаточно монет! Нужно 500, а у вас {player.balance}.{Colors.reset}\n'
                                         )
 
                                 case 6:
-                                    if lucky_ticket:
+                                    if player.lucky_ticket:
                                         print(
                                             f'\n{Colors.yellow}Вы уже купили этот товар!{Colors.reset}\n'
                                         )
 
-                                    elif balance >= 400:
-                                        balance -= 400
+                                    elif player.balance >= 400:
+                                        player.balance -= 400
                                         lucky_ticket = True
 
                                         db.save_player(player)
@@ -413,7 +411,7 @@ def main():
 
                                     else:
                                         print(
-                                            f'\n{Colors.red}Недостаточно монет! Нужно 400, а у вас {balance}.{Colors.reset}\n'
+                                            f'\n{Colors.red}Недостаточно монет! Нужно 400, а у вас {player.balance}.{Colors.reset}\n'
                                         )
 
                                 case 7:
@@ -422,7 +420,7 @@ def main():
                                             f'\n{Colors.yellow}Вы уже купили этот товар!{Colors.reset}\n'
                                         )
 
-                                    elif balance >= 700:
+                                    elif player.balance >= 700:
                                         if buy_num_boost == 0:
                                             print(
                                                 f'\nНезнакомец: {Colors.blue_dark}Хм... Кофе? Ты уверен? Это не обычный напиток. Его аромат способен разогнать до предела любую электронику... Точно берешь?{Colors.reset}\n'
@@ -437,7 +435,7 @@ def main():
                                             print(
                                                 f'\nНезнакомец: {Colors.blue_dark}Отличный выбор. Твоя Майнинг-ферма скажет тебе спасибо. Работа пойдет в два раза быстрее!{Colors.reset}\n'
                                             )
-                                            balance -= 700
+                                            player.balance -= 700
                                             mining_boost = True
 
                                             db.save_player(player)
@@ -450,7 +448,7 @@ def main():
 
                                     else:
                                         print(
-                                            f'\n{Colors.red}Недостаточно монет! Нужно 700, а у вас {balance}.{Colors.reset}\n'
+                                            f'\n{Colors.red}Недостаточно монет! Нужно 700, а у вас {player.balance}.{Colors.reset}\n'
                                         )
 
                                 case 8:
@@ -459,8 +457,8 @@ def main():
                                             f'\n{Colors.yellow}Вы уже купили этот товар!{Colors.reset}\n'
                                         )
 
-                                    elif balance >= 1200:
-                                        balance -= 1200
+                                    elif player.balance >= 1200:
+                                        player.balance -= 1200
                                         business = True
 
                                         db.save_player(player)
@@ -496,7 +494,7 @@ def main():
                                     )
 
                                     balance_x2 = False
-                                    balance += 50
+                                    player.balance += 50
 
                                     db.save_player(player)
 
@@ -512,7 +510,7 @@ def main():
                                     )
 
                                     xp_x2 = False
-                                    balance += 100
+                                    player.balance += 100
 
                                     db.save_player(player)
 
@@ -522,13 +520,13 @@ def main():
                                     )
 
                             case 3:
-                                if lucky_amulet:
+                                if player.lucky_amulet:
                                     print(
                                         f'\n{Colors.green}Успешно! Вы вернули "Счастливый Амулет"! К вашему балансу было прибавлено 150 монет!{Colors.reset}\n'
                                     )
 
-                                    lucky_amulet = False
-                                    balance += 150
+                                    player.lucky_amulet = False
+                                    player.balance += 150
 
                                     db.save_player(player)
 
@@ -538,12 +536,12 @@ def main():
                                     )
 
                             case 4:
-                                if mining_lvl == 10 and balance >= 5000:
+                                if mining_lvl == 10 and player.balance >= 5000:
                                     print(
                                         f'\nНезнакомец: {Colors.blue_dark}Ферма 10 лвл демонтирована. За электричество и простой снято {Colors.red}5.000 монет{Colors.blue_dark}.{Colors.reset}\n'
                                     )
 
-                                    balance -= 5000
+                                    player.balance -= 5000
                                     mining_lvl = 0
                                     mining_boost = False
                                     buy_num_boost = 0
@@ -573,7 +571,7 @@ def main():
                                     )
 
                                     potion_luck = False
-                                    balance += 250
+                                    player.balance += 250
 
                                     db.save_player(player)
 
@@ -589,7 +587,7 @@ def main():
                                     )
 
                                     lucky_ticket = False
-                                    balance += 200
+                                    player.balance += 200
 
                                     db.save_player(player)
 
@@ -605,7 +603,7 @@ def main():
                                     )
 
                                     mining_boost = False
-                                    balance += 350
+                                    player.balance += 350
 
                                     db.save_player(player)
 
@@ -618,7 +616,7 @@ def main():
                                         f'\nНезнакомец: {Colors.blue_dark}Пассивный бизнес продан за полцены. Вам возвращено {Colors.yellow}600 монет{Colors.blue_dark}.{Colors.reset}\n'
                                     )
 
-                                    balance += 600
+                                    player.balance += 600
                                     business = False
 
                                     db.save_player(player)
@@ -790,12 +788,10 @@ def main():
 
                 while True:
                     player.balance += 5 * mining_lvl
-
-                    if player.balance > 999999999:
-                        player.balance = 999999999
+                    player.balance = min(player.balance, 999999999)
 
                     print(
-                        f'Добыча... Ваш баланс: {Colors.yellow}{fmt(balance)}{Colors.reset} монет 💰',
+                        f'Добыча... Ваш баланс: {Colors.yellow}{fmt(player.balance)}{Colors.reset} монет 💰',
                         end='\r',
                     )
 
