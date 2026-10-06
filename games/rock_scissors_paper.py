@@ -2,7 +2,6 @@ import random
 from typing import Any
 
 from colors import Colors
-from utils import fmt
 
 from .abstract import AbstractGame
 
@@ -33,17 +32,14 @@ class RockScissorsPaperGame(AbstractGame):
                 or (user_choice == 'ножницы' and bot_choice == 'бумага')
                 or (user_choice == 'бумага' and bot_choice == 'камень')
             ):
-                # TODO: check 64-87 lines in guess_the_number.py. There is a similar reward calculation logic
                 luck = random.randint(1, 100)
                 chance = 35 if self._player.potion_luck else 15
+                is_win = luck <= chance
 
-                base_reward = 50 if luck <= chance else 25
+                reward_coins = 50 if is_win else 25
                 reward_xp = 20 * self._player.xp_multiplier
 
-                level_multiplier = 1.0 + (self._player.lvl - 1) * 0.1
-                reward_coins = int(base_reward * level_multiplier * self._player.balance_multiplier)
-
-                if luck <= chance:
+                if is_win:
                     reward_xp *= 2
 
                     print(
@@ -52,8 +48,7 @@ class RockScissorsPaperGame(AbstractGame):
 
                 print(
                     f'🎉 {Colors.green}Поздравляю! Вы победили! {Colors.reset}'
-                    f'💰 Вы получили {Colors.yellow}{fmt(reward_coins)}{Colors.reset} монет (Множитель уровня: {Colors.yellow}{level_multiplier:.1f}x{Colors.reset})!'
-                    f'📈 Вам начислено {Colors.yellow}{fmt(reward_xp)}{Colors.reset} XP!\n'
+                    f'{self._player.add_coins_and_xp(coins=reward_coins, xp=reward_xp)}\n'
                 )
 
                 return

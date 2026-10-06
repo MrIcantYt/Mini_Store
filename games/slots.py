@@ -9,8 +9,9 @@ from utils import fmt
 
 from .abstract import AbstractGame
 
+
 class Slot(Enum):
-    SEVEN_SEVEN_SEVEN = (
+    SEVEN = (
         '7️⃣',
         30,
         240,
@@ -63,6 +64,7 @@ class Slot(Enum):
     def from_symbol(cls, symbol: str) -> Slot | None:
         return next((s for s in cls if s.symbol == symbol), None)
 
+
 class SlotsGame(AbstractGame):
     def __init__(self, player: Player) -> None:
         self._slots = []
@@ -83,7 +85,7 @@ class SlotsGame(AbstractGame):
             Slot.CROWN,
         ]
         if self._player.potion_luck:
-            variants.extend([Slot.DIAMOND, Slot.CROWN, Slot.SACK_MONEY, Slot.SEVEN_SEVEN_SEVEN])
+            variants.extend([Slot.DIAMOND, Slot.CROWN, Slot.SACK_MONEY, Slot.SEVEN])
         return variants
 
     def _all_slots_is(self) -> Slot | None:
@@ -93,7 +95,13 @@ class SlotsGame(AbstractGame):
     def play(self) -> Any:
         print(f'\n {Colors.yellow}== Игра: Игровой Автомат =={Colors.reset}\n')
 
-        user_bet = input(f"Введите вашу ставку или 'all'/'все' (Ваш баланс: {fmt(self._player.balance)}): ").strip().lower()
+        user_bet = (
+            input(
+                f"Введите вашу ставку или 'all'/'все' (Ваш баланс: {fmt(self._player.balance)}): "
+            )
+            .strip()
+            .lower()
+        )
 
         try:
             if user_bet in ['all', 'все']:
@@ -103,15 +111,21 @@ class SlotsGame(AbstractGame):
                 money_player = int(user_bet)
 
         except ValueError:
-            print(f"\n{Colors.red}Ошибка! Введите корректное число или слово 'all'/'все'.{Colors.reset}\n")
+            print(
+                f"\n{Colors.red}Ошибка! Введите корректное число или слово 'all'/'все'.{Colors.reset}\n"
+            )
             return
 
         if money_player <= 0:
-            print(f'\n{Colors.red}Ошибка! Ставка {fmt(self._player.balance)} монет невозможна! Нельзя играть на 0 или меньше.{Colors.reset}\n')
+            print(
+                f'\n{Colors.red}Ошибка! Ставка {fmt(self._player.balance)} монет невозможна! Нельзя играть на 0 или меньше.{Colors.reset}\n'
+            )
             return
 
         elif money_player > self._player.balance:
-            print(f'\n{Colors.red}Ошибка! Нельзя вводить ставку больше своего баланса! {Colors.reset}\n')
+            print(
+                f'\n{Colors.red}Ошибка! Нельзя вводить ставку больше своего баланса! {Colors.reset}\n'
+            )
             return
 
         self._player.balance -= money_player
@@ -144,7 +158,10 @@ class SlotsGame(AbstractGame):
                 win_xp *= 2
                 msg = slot.vip_msg
 
-            print(msg, f'💰 Вы выиграли {Colors.yellow}{fmt(win_coins)}{Colors.reset} монет и получили {Colors.yellow}{fmt(win_xp)}{Colors.reset} XP!\n')
+            print(
+                msg,
+                f'💰 Вы выиграли {Colors.yellow}{fmt(win_coins)}{Colors.reset} монет и получили {Colors.yellow}{fmt(win_xp)}{Colors.reset} XP!\n',
+            )
 
             self._player.balance += win_coins
             self._player.xp += win_xp
@@ -153,7 +170,9 @@ class SlotsGame(AbstractGame):
 
         else:
             if self._is_vip:
-                print(f'{Colors.red}💥 КРАХ ХАЙРОЛЛЕРА! Слот заблокирован. С вашего баланса списан ДВОЙНОЙ штраф за риск!{Colors.reset}\n')
+                print(
+                    f'{Colors.red}💥 КРАХ ХАЙРОЛЛЕРА! Слот заблокирован. С вашего баланса списан ДВОЙНОЙ штраф за риск!{Colors.reset}\n'
+                )
 
                 self._player.balance -= money_player
 
