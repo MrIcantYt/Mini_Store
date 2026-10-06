@@ -60,6 +60,8 @@ class SqliteDataBase(AbstractDataBase):
                     business            BOOLEAN NOT NULL DEFAULT 0,
                     reset_num           INTEGER NOT NULL DEFAULT 0,
                     secret_case         INTEGER NOT NULL DEFAULT 0,
+                    quest_id            INTEGER NOT NULL DEFAULT 1,
+                    quest_progress      INTEGER NOT NULL DEFAULT 0,
                     rebirths            INTEGER NOT NULL DEFAULT 0
                 );
             """)
