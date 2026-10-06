@@ -51,14 +51,14 @@ def main():
             '4. Майнинг ферма',
             '5. Задания незнакомца',
             '6. Выход',
-            f'\n{Colors.red}7. Сброс игры{Colors.reset}',
+            f'\n{Colors.red}7. Сброс игры{Colors.reset}\n',
             sep='\n',
         )
 
         max_value = 7
         if not player.promo_used:
             max_value = 8
-            print(f'\n{Colors.yellow}8. Промокод{Colors.reset}')
+            print(f'{Colors.yellow}8. Промокод{Colors.reset}')
 
         section_choose = ask_number('Выберите пункт меню: ', max=max_value)
         if not section_choose:
