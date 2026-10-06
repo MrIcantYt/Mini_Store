@@ -16,10 +16,8 @@ def clear_console() -> None:
     else:
         subprocess.run('clear', check=False)
 
-
 def confirm(prompt: str) -> bool:
-    return 'д' in input(prompt + ' [да/нет]')
-
+    return 'д' in input(prompt + ' [Да/Нет]. ')
 
 def ask_number(
     prompt: str,
@@ -42,7 +40,7 @@ def ask_number(
         try:
             value = int(raw)
         except ValueError:
-            print(f'{Colors.red}Не число: {raw!r}{Colors.reset}')
+            print(f'\n{Colors.red}Ошибка! Введите корректное число, а не: {raw!r}.{Colors.reset}\n')
             continue
 
         if min is not None and value < min:
