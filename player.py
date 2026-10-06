@@ -49,7 +49,7 @@ class Player:
         return data
 
     @classmethod
-    def from_row(cls, row) -> Player:
+    def from_row(cls, row) -> "Player":
         data = {f.name: row[f.name] for f in fields(cls)}
         data['_xp'] = data.pop('xp')
         for name in BOOL_FIELDS:
@@ -63,7 +63,7 @@ class Player:
         return data
 
     @classmethod
-    def from_dict(cls, data: dict[str, object]) -> Player:
+    def from_dict(cls, data: dict[str, object]) -> "Player":
         data['_xp'] = data.pop('xp')
         data['_balance'] = data.pop('balance')
         return cls(**data)  # pyright: ignore[reportArgumentType]
