@@ -1,4 +1,5 @@
 import time
+import random
 from typing import Final
 
 from keyboard import is_pressed, wait
@@ -17,7 +18,8 @@ SHOP_CONTENT: Final[str] = (
     '5. Зелье удачи — Цена: 500 монет\n'
     '6. Cчастливый тикет — Цена: 400 монет\n'
     '7. Кофе — Цена: 700 монет\n'
-    '8. Пассивный бизнес — Цена: 1200 монет'
+    '8. Пассивный бизнес — Цена: 1200 монет\n'
+    '9. Секретный кейс — Цена: 2500 монет'
 )
 
 
@@ -57,16 +59,17 @@ def game(player: Player) -> None:
 
 def shop(player: Player) -> None:
     clear_console()
+
     print(
-        f'Ваш баланс: {Colors.yellow}{fmt(player.balance)}{Colors.reset}',
-        '===============',
+        f'\nВаш баланс: {Colors.yellow}{fmt(player.balance)} монет{Colors.reset}.',
+        '\n==============================\n',
         f'{SHOP_CONTENT}',
-        '===============',
+        '\n==============================\n',
         sep='\n',
     )
 
     user_action = ask_number(
-        'Купить или вернуть? (1 или 2, 3 для выхода): ',
+        'Купить или вернуть? (1 или 2. 3 Для выхода): ',
         max=2,
         allow_cancel=True,
         cancel_on='3',
@@ -88,16 +91,12 @@ def shop(player: Player) -> None:
                     print('Вы уже имеете максимальный уровень прокачки этого улучшения!')
                     return
 
-                upgrade_cost = 100 * 2**player.balance_multiplier
+                upgrade_cost = 100 * 2 ** player.balance_multiplier
 
                 if player.balance > upgrade_cost:
-                    print(
-                        f'\n{Colors.red}Недостаточно монет! Нужно {upgrade_cost}, а у вас {player.balance}.{Colors.reset}\n'
-                    )
+                    print(f'\n{Colors.red}Недостаточно монет! Нужно {upgrade_cost}, а у вас {player.balance}.{Colors.reset}\n')
 
-                if not confirm(
-                    f'Улучшение множителя монет обойдётся вам в {upgrade_cost}. Купить?'
-                ):
+                if not confirm(f'\nУлучшение множителя монет обойдётся вам в {Colors.yellow}{upgrade_cost} монет{Colors.reset}. Купить?'):
                     return
 
                 player.balance -= upgrade_cost
@@ -107,30 +106,32 @@ def shop(player: Player) -> None:
                     f'\nСписано {upgrade_cost} монет. Ваш множитель монет {Colors.yellow}{player.balance_multiplier}x{Colors.reset}\n'
                 )
 
+                time.sleep(5)
+            
             case 2:
-                if xp_x2:
+                if player.xp_x2:
                     print(f'\n{Colors.yellow}Вы уже купили этот товар!{Colors.reset}\n')
 
-                    bought += 1
+                    player.bought += 1
 
-                    if bought == 3:
+                    if player.bought == 3:
                         print('Незнакомец: Вам не надоело тыкать на купленный товар?\n')
 
-                    elif bought == 5:
+                    elif player.bought == 5:
                         print(
                             'Незнакомец: Всё, хорошо, держите 100 монет. Если ещё раз тыкнете, то с вас спишется 100 монет!\n'
                         )
 
                         player.balance += 100
 
-                    elif bought == 6:
+                    elif player.bought == 6:
                         print('Незнакомец: Я вас предупреждал!\n')
 
                         player.balance -= 100
 
                 elif player.balance >= 200:
                     player.balance -= 200
-                    xp_x2 = True
+                    player.xp_x2 = True
 
                     print(
                         f'\n{Colors.green}Успешно! Списано 200 монет, теперь у вас x2 бонус к опыту!{Colors.reset}\n'
@@ -192,7 +193,7 @@ def shop(player: Player) -> None:
 
                 elif player.balance >= 500:
                     player.balance -= 500
-                    potion_luck = True
+                    player.potion_luck = True
 
                     print(
                         f'\n{Colors.green}Успешно! Списано 500 монет, теперь у вас есть Счастливое Зелье (Больше шансов в Казино)!{Colors.reset}\n'
@@ -209,7 +210,7 @@ def shop(player: Player) -> None:
 
                 elif player.balance >= 400:
                     player.balance -= 400
-                    lucky_ticket = True
+                    player.lucky_ticket = True
 
                     print(
                         f'\n{Colors.green}Успешно! Списано 400 монет, теперь у вас есть Счастливый Тикет (Не вычитается жизнь при первой попыткой)!{Colors.reset}\n'
@@ -221,24 +222,24 @@ def shop(player: Player) -> None:
                     )
 
             case 7:
-                if mining_boost:
+                if player.mining_boost:
                     print(f'\n{Colors.yellow}Вы уже купили этот товар!{Colors.reset}\n')
 
                 elif player.balance >= 700:
-                    if buy_num_boost == 0:
+                    if player.buy_num_boost == 0:
                         print(
                             f'\nНезнакомец: {Colors.blue_dark}Хм... Кофе? Ты уверен? Это не обычный напиток. Его аромат способен разогнать до предела любую электронику... Точно берешь?{Colors.reset}\n'
                         )
                         time.sleep(5)
 
-                        buy_num_boost = 1
+                        player.buy_num_boost = 1
 
-                    elif buy_num_boost == 1:
+                    elif player.buy_num_boost == 1:
                         print(
                             f'\nНезнакомец: {Colors.blue_dark}Отличный выбор. Твоя Майнинг-ферма скажет тебе спасибо. Работа пойдет в два раза быстрее!{Colors.reset}\n'
                         )
                         player.balance -= 700
-                        mining_boost = True
+                        player.mining_boost = True
 
                         time.sleep(5)
 
@@ -252,12 +253,12 @@ def shop(player: Player) -> None:
                     )
 
             case 8:
-                if business:
+                if player.business:
                     print(f'\n{Colors.yellow}Вы уже купили этот товар!{Colors.reset}\n')
 
                 elif player.balance >= 1200:
                     player.balance -= 1200
-                    business = True
+                    player.business = True
 
                     print(
                         f'\n{Colors.green}Успешно! Списано 1.200 монет, теперь у вас есть Пассивный бизнес (За каждый ход в меню +25 монет на баланс)!{Colors.reset}\n'
@@ -268,14 +269,41 @@ def shop(player: Player) -> None:
                         f'\n{Colors.red}Недостаточно монет! Нужно 1.200, а у вас {fmt(player.balance)}.{Colors.reset}\n'
                     )
 
+            case 9:
+                if player.balance >= 2500:
+                    player.balance -= 2500
+                    player.secret_case += 1
+
+                    case_list = [1250, 2500, 5000]
+                    win_money = random.choice(case_list)
+
+                    player.balance += win_money
+
+                    print(f"\n{Colors.green}Успешно! Куплен Секретный кейс за 2.500 монет.{Colors.reset}")
+
+                    time.sleep(1)
+
+                    print(f"Вы открываете кейс... и внутри оказывается: {Colors.yellow}{fmt(win_money)} монет{Colors.reset}! 🔓")
+
+                    if win_money == 5000:
+                        print(f"{Colors.green}🔥 ЛУЧШИЙ ДРОП! Вы сорвали куш кейса!{Colors.reset}\n")
+                    elif win_money == 1250:
+                        print(f"{Colors.red}Эх, Незнакомец подсунул дешёвку. Повезёт в следующий раз!{Colors.reset}\n")
+                    else:
+                        print(f"{Colors.yellow}Нормально, вернули своё!{Colors.reset}\n")   
+                         
+                else:
+                    print(f'\n{Colors.red}Недостаточно монет! Нужно 2.500, а у вас {fmt(player.balance)}.{Colors.reset}\n')
+
             case _:
                 print(f'\n{Colors.red}Товара с таким ID не существует!{Colors.reset}\n')
 
     elif user_action == 2:
         user_id_return = int(input('\nВыберите ID продукта для возращение товара: '))
+
         match user_id_return:
             case 1:
-                if balance_x2:
+                if player.balance_x2:
                     print(
                         f'\n{Colors.green}Успешно! Вы вернули "x2 бонус к монетам"! К вашему балансу было прибавлено 50 монет!{Colors.reset}\n'
                     )
@@ -286,12 +314,12 @@ def shop(player: Player) -> None:
                     print(f'\n{Colors.red}У вас не куплено "x2 бонус к монетам"!{Colors.reset}\n')
 
             case 2:
-                if xp_x2:
+                if player.xp_x2:
                     print(
                         f'\n{Colors.green}Успешно! Вы вернули "x2 бонус к опыту"! К вашему балансу было прибавлено 100 монет!{Colors.reset}\n'
                     )
 
-                    xp_x2 = False
+                    player.xp_x2 = False
                     player.balance += 100
 
                 else:
@@ -317,8 +345,8 @@ def shop(player: Player) -> None:
 
                     player.balance -= 5000
                     player.mining_lvl = 0
-                    mining_boost = False
-                    buy_num_boost = 0
+                    player.mining_boost = False
+                    player.buy_num_boost = 0
 
                     time.sleep(3)
 
@@ -335,49 +363,49 @@ def shop(player: Player) -> None:
                     print(f'\n{Colors.red}У вас не куплена "Майнинг-ферма"!{Colors.reset}\n')
 
             case 5:
-                if potion_luck:
+                if player.potion_luck:
                     print(
                         f'\n{Colors.green}Успешно! Вы вернули "Зелье Удачи"! К вашему балансу было прибавлено 250 монет!{Colors.reset}\n'
                     )
 
-                    potion_luck = False
+                    player.potion_luck = False
                     player.balance += 250
 
                 else:
                     print(f'\n{Colors.red}У вас не куплено "Зелье Удачи"!{Colors.reset}\n')
 
             case 6:
-                if lucky_ticket:
+                if player.lucky_ticket:
                     print(
                         f'\n{Colors.green}Успешно! Вы вернули "Cчастливый Тикет"! К вашему балансу было прибавлено 200 монет!{Colors.reset}\n'
                     )
 
-                    lucky_ticket = False
+                    player.lucky_ticket = False
                     player.balance += 200
 
                 else:
                     print(f'\n{Colors.red}У вас не куплено "Счастливый Тикет"!{Colors.reset}\n')
 
             case 7:
-                if mining_boost:
+                if player.mining_boost:
                     print(
                         f'\n{Colors.green}Успешно! Вы вернули "Кофе"! К вашему балансу было прибавлено 350 монет!{Colors.reset}\n'
                     )
 
-                    mining_boost = False
+                    player.mining_boost = False
                     player.balance += 350
 
                 else:
                     print(f'\n{Colors.red}У вас не куплено "Кофе"!{Colors.reset}\n')
 
             case 8:
-                if business:
+                if player.business:
                     print(
                         f'\nНезнакомец: {Colors.blue_dark}Пассивный бизнес продан за полцены. Вам возвращено {Colors.yellow}600 монет{Colors.blue_dark}.{Colors.reset}\n'
                     )
 
                     player.balance += 600
-                    business = False
+                    player.business = False
 
                     time.sleep(3)
 
@@ -387,6 +415,9 @@ def shop(player: Player) -> None:
 
                 else:
                     print(f'\n{Colors.red}У вас не куплен "Пассивный Бизнес"!{Colors.reset}\n')
+
+            case 9:
+                print(f"{Colors.red}Ошибка! Секретный кейс нельзя вернуть!{Colors.reset}")
 
             case _:
                 print(
@@ -447,6 +478,8 @@ def profile(player: Player) -> None:
 
 
 def mining(player: Player) -> None:
+    clear_console()
+
     if player.mining_lvl > 0:
         print(f'\n⛏️ {Colors.green}Майнинг-ферма запущена! [Нажмите Q для выхода]{Colors.reset}\n')
 
@@ -467,16 +500,20 @@ def mining(player: Player) -> None:
 
     else:
         print(f'\n{Colors.red}Сначала купите ферму в каталоге!{Colors.reset}\n')
+        
+        time.sleep(3)
 
 
 def stranger(player: Player) -> None:
-    print('\n--- ЗАДАНИЯ НЕЗНАКОМЦА ---')
+    clear_console()
+
+    print('\n--- ЗАДАНИЯ НЕЗНАКОМЦА ---\n')
 
     # === КВЕСТ 1 ===
     if player.quest_id == 1:
         print(
             f'Текущее задание: {Colors.blue_dark}«Первый капитал»{Colors.reset}',
-            f'Цель: Накопить 500 монет. (У вас сейчас: {fmt(player.balance)})',
+            f'Цель: Накопить {Colors.yellow}500 монет{Colors.reset}. (У вас сейчас: {Colors.yellow}{fmt(player.balance)} монет{Colors.reset}).',
             sep='\n',
         )
 
@@ -491,7 +528,7 @@ def stranger(player: Player) -> None:
 
         else:
             print(
-                f'{Colors.red}Задание ещё не выполнено. Возвращайтесь, когда наберёте сумму.{Colors.reset}\n'
+                f'\n{Colors.red}Задание ещё не выполнено. Возвращайтесь, когда наберёте сумму.{Colors.reset}\n'
             )
 
     # === КВЕСТ 2 ===
@@ -540,7 +577,7 @@ def stranger(player: Player) -> None:
         print(
             f'{Colors.yellow}Незнакомец: Больше заданий для тебя нет, ты выполнил всё, что нужно.{Colors.reset}\n'
         )
-
+    time.sleep(5)
 
 def promocode(player: Player) -> None:
     if not player.promo_used:
