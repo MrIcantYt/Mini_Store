@@ -61,7 +61,7 @@ class Slot(Enum):
         self.vip_msg = vip_msg
 
     @classmethod
-    def from_symbol(cls, symbol: str) -> Slot | None:
+    def from_symbol(cls, symbol: str) -> "Slot | None":
         return next((s for s in cls if s.symbol == symbol), None)
 
 
@@ -94,7 +94,10 @@ class SlotsGame(AbstractGame):
 
     def play(self) -> Any:
         print(f'\n {Colors.yellow}== Игра: Игровой Автомат =={Colors.reset}\n')
-
+        
+        if Player.quest_id == 3:
+            Player.quest_progress += 1
+        
         user_bet = (
             input(
                 f"Введите вашу ставку или 'all'/'все' (Ваш баланс: {fmt(self._player.balance)}): "
