@@ -25,6 +25,8 @@ SHOP_CONTENT: Final[str] = (
     '8. Пассивный бизнес — Цена: 1200 монет'
 )
 
+NAME_BD = 'game.json'
+
 
 def init_game(player_id: int) -> tuple[JsonDataBase, Player]:
     db = JsonDataBase()
@@ -59,12 +61,13 @@ def main():
             '2. Игры',
             '3. Профиль',
             '4. Майнинг ферма',
-            '5. Выход',
-            f'\n{Colors.red}6. Сброс игры{Colors.reset}',
+            '5. Задания незнакомца',
+            '6. Выход',
+            f'\n{Colors.red}7. Сброс игры{Colors.reset}',
             sep='\n',
         )
         if not player.promo_used:
-            print(f'\n{Colors.yellow}7. Промокод{Colors.reset}')
+            print(f'\n{Colors.yellow}8. Промокод{Colors.reset}')
 
         try:
             user_digit = int(input('\nВведите цифру: '))
@@ -561,18 +564,96 @@ def main():
             else:
                 print(f'\n{Colors.red}Сначала купите ферму в каталоге!{Colors.reset}\n')
 
-        # Выход
         elif user_digit == 5:
-            print('\nПрогресс сохранен! Прощайте, удачи вам!\n')
+            print('\n--- ЗАДАНИЯ НЕЗНАКОМЦА ---')
+
+            # === КВЕСТ 1 ===
+            if player.quest_id == 1:
+                print(f'Текущее задание: {Colors.blue_dark}«Первый капитал»{Colors.reset}')
+                print(f'Цель: Накопить 500 монет. (У вас сейчас: {fmt(player.balance)})')
+
+                if player.balance >= 500:
+                    player.xp += 150
+                    player.quest_id = 2
+
+                    db.save_player(player)
+
+                    print(
+                        f'\n{Colors.green}Квест выполнен! Награда: +150 XP. Открыто новое задание!{Colors.reset}\n'
+                    )
+
+                else:
+                    print(
+                        f'{Colors.red}Задание ещё не выполнено. Возвращайтесь, когда наберёте сумму.{Colors.reset}\n'
+                    )
+
+            # === КВЕСТ 2 ===
+            elif player.quest_id == 2:
+                print(f'Текущее задание: {Colors.blue_dark}«Разгон железа»{Colors.reset}')
+                print(
+                    f'Цель: Прокачать Майнинг-ферму до 3 уровня или выше. (Ваш уровень: {player.mining_lvl})'
+                )
+
+                if player.mining_lvl >= 3:
+                    player.balance += 1000
+                    player.quest_id = 3
+
+                    db.save_player(player)
+
+                    print(
+                        f'\n{Colors.green}Квест выполнен! Награда: +1.000 монет. Открыто новое задание!{Colors.reset}\n'
+                    )
+
+                else:
+                    print(
+                        f'{Colors.red}Требуется 3 уровень фермы. Купите апгрейды в каталоге.{Colors.reset}\n'
+                    )
+
+            # === КВЕСТ 3 ===
+            elif player.quest_id == 3:
+                print(f'Текущее задание: {Colors.blue_dark}«Азартный игрок»{Colors.reset}')
+                print(
+                    f'Цель: Сыграть в Игровой автомат 5 раз. (Прогресс: {player.quest_progress} / 5)'
+                )
+
+                if player.quest_progress >= 5:
+                    player.balance += 500
+                    player.xp += 300
+                    player.quest_id = 4
+                    player.quest_progress = 0
+
+                    db.save_player(player)
+
+                    print(
+                        f'\n{Colors.green}Квест выполнен! Награда: +500 монет и +300 XP!{Colors.reset}\n'
+                    )
+
+                else:
+                    print(
+                        f'{Colors.red}Задание выполняется в меню Казино (Игровой автомат).{Colors.reset}\n'
+                    )
+
+            # === СЮЖЕТ СЛЕДУЮЩИХ ПАТЧЕЙ ===
+            else:
+                print(
+                    f'{Colors.yellow}Незнакомец: Больше заданий для тебя нет, ты выполнил всё, что нужно. Жди версию BETA-0.7!{Colors.reset}\n'
+                )
+
+        # Выход
+        elif user_digit == 6:
+            db.save_player(player)
+
+            print('\nПрогресс сохранен! Прощайте, удачи вам! \n')
+
             break
 
         # Удаления БД
-        elif user_digit == 6:
+        elif user_digit == 7:
             confirm = input(
-                f'\nНезнакомец: {Colors.blue_dark}Вы уверенны, что хотите сбросить весь свой прогресс? (Нажмите 6 ещё раз для подтверждения){Colors.reset}\n'
+                f'\nНезнакомец: {Colors.blue_dark}Вы уверенны, что хотите сбросить весь свой прогресс? (Нажмите 7 ещё раз для подтверждения){Colors.reset}\n'
             )
 
-            if confirm.lower() != '6':
+            if confirm.lower() != '7':
                 continue
 
             print(f'\nНезнакомец: {Colors.blue_dark}Хорошо! Ваше решение принято.{Colors.reset}\n')
@@ -580,7 +661,7 @@ def main():
             db.reset_player(player_id)
 
         # Промокод
-        elif user_digit == 7:
+        elif user_digit == 8:
             if not player.promo_used:
                 user_promo = input('\nВведите промокод: ').strip()
 

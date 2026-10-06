@@ -7,7 +7,7 @@ from utils import fmt
 MAX_LEVEL = 100
 MAX_BALANCE = 1_000_000
 XP_PER_LEVEL_MULTIPLIER = 100
-GOLD_PERxp = 2
+GOLD_PER_XP = 2
 BOOL_FIELDS = frozenset(
     {
         'promo_used',
@@ -131,7 +131,7 @@ class Player:
         if self.xp <= 0:
             return
 
-        gold_bonus = self.xp * GOLD_PERxp
+        gold_bonus = self.xp * GOLD_PER_XP
         self.balance += gold_bonus
 
         print(
