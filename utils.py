@@ -11,7 +11,10 @@ def fmt(value: int) -> str:
 
 
 def clear_console() -> None:
-    subprocess.run('cls' if os.name == 'nt' else 'clear', check=False)
+    if os.name == 'nt':
+        subprocess.run('cls', shell=True, check=False)
+    else:
+        subprocess.run('clear', check=False)
 
 
 def confirm(prompt: str) -> bool:
