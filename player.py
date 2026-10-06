@@ -74,7 +74,7 @@ class Player:
 
     @xp.setter
     def xp(self, value):
-        self.xp = value
+        self._xp = value
         self.check_level_up()
 
     @property
