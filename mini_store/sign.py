@@ -4,7 +4,7 @@ from json import dumps, loads
 from os import path
 from typing import Final
 
-from exceptions import SignCheckError
+from mini_store.exceptions import SignCheckError
 
 SECRET: Final[bytes] = ('o@k!' + '9dNz' + 'H#SC' + 'vb4d' + '!3y*').encode()
 

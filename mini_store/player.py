@@ -1,8 +1,8 @@
 from dataclasses import asdict, dataclass, fields
 from time import sleep
 
-from colors import Colors
-from utils import fmt
+from mini_store.colors import Colors
+from mini_store.utils import fmt
 
 MAX_LEVEL = 100
 MAX_BALANCE = 1_000_000
@@ -49,7 +49,7 @@ class Player:
         return data
 
     @classmethod
-    def from_row(cls, row) -> "Player":
+    def from_row(cls, row) -> Player:
         data = {f.name: row[f.name] for f in fields(cls)}
         data['_xp'] = data.pop('xp')
         for name in BOOL_FIELDS:
@@ -63,7 +63,7 @@ class Player:
         return data
 
     @classmethod
-    def from_dict(cls, data: dict[str, object]) -> "Player":
+    def from_dict(cls, data: dict[str, object]) -> Player:
         data['_xp'] = data.pop('xp')
         data['_balance'] = data.pop('balance')
         return cls(**data)  # pyright: ignore[reportArgumentType]
@@ -94,12 +94,14 @@ class Player:
         return 1.0 + (self.lvl - 1) * 0.1
 
     def add_coins(self, amount: int) -> str:
-        self.balance += int(amount * self.balance_multiplier * self.level_multiplier)
-        return f'💰 Вы получили {Colors.yellow}{fmt(amount)}x{self.balance_multiplier * self.level_multiplier:.1f}{Colors.reset} монет ({Colors.yellow}{fmt(self.balance)}{Colors.reset} монет на счету)'
+        final_amount = int(amount * self.balance_multiplier * self.level_multiplier)
+        self.balance += final_amount
+        return f'💰 Вы получили {Colors.yellow}{fmt(final_amount)}{Colors.reset} монет ({Colors.yellow}{fmt(self.balance)}{Colors.reset} монет на счету)'
 
     def add_xp(self, amount: int) -> str:
-        self.xp += int(amount * self.xp_multiplier * self.level_multiplier)
-        return f'📈 Вам начислено {Colors.yellow}{fmt(amount)}x{self.xp_multiplier * self.level_multiplier:.1f}{Colors.reset} XP ({Colors.yellow}{fmt(self._xp)}{Colors.reset} XP на счету)'
+        final_amount = int(amount * self.xp_multiplier * self.level_multiplier)
+        self.xp += final_amount
+        return f'📈 Вам начислено {Colors.yellow}{fmt(final_amount)}{Colors.reset} XP ({Colors.yellow}{fmt(self._xp)}{Colors.reset} XP на счету)'
 
     def add_coins_and_xp(self, *, coins: int, xp: int) -> str:
         return self.add_coins(coins) + '\n' + self.add_xp(xp)

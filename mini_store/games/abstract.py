@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from player import Player
+from mini_store.player import Player
 
 
 class AbstractGame(ABC):

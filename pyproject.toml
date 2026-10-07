@@ -11,11 +11,8 @@ requires-python = ">=3.14"
 dependencies = [
     "colorama>=0.4.6",
     "cryptography>=50.0.2",
-    "keyboard>=0.13.5",
 ]
 
-[project.scripts]
-mini-store = "mini_store:main"
 
 [tool.ruff]
 indent-width = 4

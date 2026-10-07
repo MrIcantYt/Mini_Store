@@ -3,8 +3,8 @@ from abc import ABC, abstractmethod
 from os import path
 from warnings import deprecated
 
-from player import Player
-from sign import SignedJson
+from mini_store.player import Player
+from mini_store.sign import SignedJson
 
 
 class AbstractDataBase(ABC):
@@ -19,8 +19,8 @@ class AbstractDataBase(ABC):
         pass
 
     @abstractmethod
-    def reset_player(self, player_id: int) -> None:
-        pass
+    def reset_player(self, player: Player) -> Player:
+        """Reset player to default state and return the resetted player object."""
 
     @abstractmethod
     def get_player_by_id(self, player_id: int) -> Player | None:
@@ -116,13 +116,8 @@ class JsonDataBase(AbstractDataBase):
 
         self.json.dump(data)
 
-    def reset_player(self, player_id: int) -> None:
-        data = self.json.load(False)
-        players = data['players']
-        for i, p in enumerate(players):
-            if p['id'] == player_id:
-                players[i] = Player(id=player_id)
-                break
+    def reset_player(self, player: Player) -> Player:
+        return Player(id=player.id)
 
     def get_player_by_id(self, player_id: int) -> Player | None:
         data = self.json.load()

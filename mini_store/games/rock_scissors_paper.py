@@ -1,7 +1,7 @@
 import random
 from typing import Any
 
-from colors import Colors
+from mini_store.colors import Colors
 
 from .abstract import AbstractGame
 

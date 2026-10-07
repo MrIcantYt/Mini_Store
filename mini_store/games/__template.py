@@ -1,6 +1,4 @@
-from player import Player
-
-from .abstract import AbstractGame
+from .abstract import AbstractGame, Player
 
 
 # Use it's a template for creating new games:

@@ -2,11 +2,10 @@ import random
 from time import sleep
 from typing import Any
 
-from colors import Colors
-from player import Player
-from utils import fmt
+from mini_store.colors import Colors
+from mini_store.utils import fmt
 
-from .abstract import AbstractGame
+from .abstract import AbstractGame, Player
 
 
 class Blackjack(AbstractGame):
