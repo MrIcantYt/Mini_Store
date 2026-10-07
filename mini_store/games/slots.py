@@ -91,9 +91,7 @@ class SlotsGame(AbstractGame):
             Slot.CROWN,
         ]
         if self._player.potion_luck:
-            variants.extend(
-                [Slot.DIAMOND, Slot.CROWN, Slot.SACK_MONEY, Slot.SEVEN]
-            )
+            variants.extend([Slot.DIAMOND, Slot.CROWN, Slot.SACK_MONEY, Slot.SEVEN])
         return variants
 
     def _all_slots_is(self) -> Slot | None:
@@ -161,9 +159,7 @@ class SlotsGame(AbstractGame):
 
         if slot := self._all_slots_is():
             win_coins = int(
-                slot.coins_reward
-                * money_player
-                * self._player.balance_multiplier
+                slot.coins_reward * money_player * self._player.balance_multiplier
             )
             win_xp = int(slot.xp_reward * self._player.xp_multiplier)
             msg = slot.msg

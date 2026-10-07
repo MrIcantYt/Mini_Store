@@ -13,9 +13,7 @@ class Blackjack(AbstractGame):
         self._player = player
 
     def play(self) -> Any:
-        print(
-            f'\n {Colors.yellow}== Игра: Блекджек (21 очко) =={Colors.reset}\n'
-        )
+        print(f'\n {Colors.yellow}== Игра: Блекджек (21 очко) =={Colors.reset}\n')
 
         cards: tuple[int, ...] = (2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11)
         player_score = 0
@@ -61,14 +59,10 @@ class Blackjack(AbstractGame):
         player_overflow = False
 
         while player_score < 21:
-            print(
-                f'\nУ вас на руках: {Colors.yellow}{player_score}{Colors.reset} очков'
-            )
+            print(f'\nУ вас на руках: {Colors.yellow}{player_score}{Colors.reset} очков')
 
             try:
-                user_choice = int(
-                    input('1. Взять ещё карту | 2. Остановиться: ')
-                )
+                user_choice = int(input('1. Взять ещё карту | 2. Остановиться: '))
 
             except ValueError:
                 print(f'\n{Colors.red}Ошибка! Введите 1 или 2.{Colors.reset}')
@@ -78,9 +72,7 @@ class Blackjack(AbstractGame):
                 random_cart = random.choice(cards)
                 player_score += random_cart
 
-                print(
-                    f'Вы вытянули карту: {Colors.yellow}{random_cart}{Colors.reset}'
-                )
+                print(f'Вы вытянули карту: {Colors.yellow}{random_cart}{Colors.reset}')
 
                 if player_score > 21:
                     print(
@@ -97,9 +89,7 @@ class Blackjack(AbstractGame):
                 break
 
             else:
-                print(
-                    f'\n{Colors.red}Неверный пункт! Выберите 1 или 2.{Colors.reset}\n'
-                )
+                print(f'\n{Colors.red}Неверный пункт! Выберите 1 или 2.{Colors.reset}\n')
 
         if player_overflow:
             return
@@ -126,9 +116,7 @@ class Blackjack(AbstractGame):
 
             sleep(0.6)
 
-        print(
-            f'\nФинальный счёт дилера: {Colors.blue}{bot_score}{Colors.reset} очков'
-        )
+        print(f'\nФинальный счёт дилера: {Colors.blue}{bot_score}{Colors.reset} очков')
 
         sleep(0.4)
 
@@ -136,9 +124,7 @@ class Blackjack(AbstractGame):
 
         if bot_score > 21 or player_score > bot_score:
             reward_coins = int(
-                money_player
-                * level_multiplier
-                * self._player.balance_multiplier
+                money_player * level_multiplier * self._player.balance_multiplier
             )
             reward_xp = 30 * self._player.xp_multiplier
 
@@ -158,9 +144,7 @@ class Blackjack(AbstractGame):
             print(
                 f'💰 Вы получили {Colors.yellow}{fmt(reward_coins)}{Colors.reset} монет (Множитель уровня: {Colors.yellow}{level_multiplier:.1f}x{Colors.reset})!'
             )
-            print(
-                f'📈 Вам начислено {Colors.yellow}{fmt(reward_xp)}{Colors.reset} XP!\n'
-            )
+            print(f'📈 Вам начислено {Colors.yellow}{fmt(reward_xp)}{Colors.reset} XP!\n')
 
         elif player_score == bot_score:
             self._player.balance += money_player

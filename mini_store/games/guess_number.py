@@ -41,9 +41,7 @@ class GuessNumberGame(AbstractGame):
             life = 4 if self._player.lucky_amulet else 3
 
             while life > 0:
-                user_number = int(
-                    input(f'Введите число (От 1 до {to_range}): ')
-                )
+                user_number = int(input(f'Введите число (От 1 до {to_range}): '))
 
                 if user_number < 1 or user_number > to_range:
                     print(
@@ -87,20 +85,14 @@ class GuessNumberGame(AbstractGame):
                     return
 
                 elif user_number > guess_number:
-                    print(
-                        f'\nЗагаданное число меньше! Осталось жизней: {life}\n'
-                    )
+                    print(f'\nЗагаданное число меньше! Осталось жизней: {life}\n')
 
                 elif user_number < guess_number:
-                    print(
-                        f'\nЗагаданное число больше! Осталось жизней: {life}\n'
-                    )
+                    print(f'\nЗагаданное число больше! Осталось жизней: {life}\n')
 
             return
 
         except (ValueError, TypeError):
-            print(
-                f'\n{Colors.red}Ошибка! Введите корректное число. {Colors.reset}\n'
-            )
+            print(f'\n{Colors.red}Ошибка! Введите корректное число. {Colors.reset}\n')
 
             return

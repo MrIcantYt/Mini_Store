@@ -94,9 +94,7 @@ class Player:
         return 1.0 + (self.lvl - 1) * 0.1
 
     def add_coins(self, amount: int) -> str:
-        final_amount = int(
-            amount * self.balance_multiplier * self.level_multiplier
-        )
+        final_amount = int(amount * self.balance_multiplier * self.level_multiplier)
         self.balance += final_amount
         return f'💰 Вы получили {Colors.yellow}{fmt(final_amount)}{Colors.reset} монет ({Colors.yellow}{fmt(self.balance)}{Colors.reset} монет на счету)'
 

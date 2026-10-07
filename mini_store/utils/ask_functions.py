@@ -153,9 +153,7 @@ def ask_option[T](
     next_auto = 1
 
     reserved: set[int] = {
-        opt.pos
-        for opt in options
-        if isinstance(opt, Option) and opt.pos is not None
+        opt.pos for opt in options if isinstance(opt, Option) and opt.pos is not None
     }
 
     for opt in options:

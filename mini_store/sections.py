@@ -37,9 +37,7 @@ def game(ctx: GameContext) -> None:
         sep='\n',
     )
 
-    user_number_game = ask_number(
-        'Введите номер игры: ', max=4, allow_cancel=True
-    )
+    user_number_game = ask_number('Введите номер игры: ', max=4, allow_cancel=True)
 
     if not user_number_game:
         return
@@ -88,25 +86,23 @@ def shop(ctx: GameContext) -> None:
         try:
             user_id_buy = int(input('\nВыберите номер продукта для покупки: '))
         except ValueError:
-            print(
-                f'\n{Colors.red}Ошибка! Введите корректный ID числом!\n{Colors.reset}'
-            )
+            print(f'\n{Colors.red}Ошибка! Введите корректный ID числом!\n{Colors.reset}')
             return
 
         match user_id_buy:
             case 1:
                 if ctx.player.balance_multiplier == 5:
-                    print(
-                        'Вы уже имеете максимальный уровень прокачки этого улучшения!'
-                    )
+                    print('Вы уже имеете максимальный уровень прокачки этого улучшения!')
                     return
 
                 upgrade_cost = 100 * 2**ctx.player.balance_multiplier
 
-                if ctx.player.balance > upgrade_cost:
+                if ctx.player.balance < upgrade_cost:
+                    cls()
                     print(
                         f'\n{Colors.red}Недостаточно монет! Нужно {upgrade_cost}, а у вас {ctx.player.balance}.{Colors.reset}\n'
                     )
+                    return
 
                 if not confirm(
                     f'\nУлучшение множителя монет обойдётся вам в {Colors.yellow}{upgrade_cost} монет{Colors.reset}. Купить?'
@@ -124,17 +120,17 @@ def shop(ctx: GameContext) -> None:
 
             case 2:
                 if ctx.player.xp_multiplier == 5:
-                    print(
-                        'Вы уже имеете максимальный уровень прокачки этого улучшения!'
-                    )
+                    print('Вы уже имеете максимальный уровень прокачки этого улучшения!')
                     return
 
                 upgrade_cost = 100 * 2**ctx.player.xp_multiplier
 
-                if ctx.player.balance > upgrade_cost:
+                if ctx.player.balance < upgrade_cost:
+                    cls()
                     print(
                         f'\n{Colors.red}Недостаточно монет! Нужно {upgrade_cost}, а у вас {ctx.player.balance}.{Colors.reset}\n'
                     )
+                    return
 
                 if not confirm(
                     f'\nУлучшение множителя монет обойдётся вам в {Colors.yellow}{upgrade_cost} монет{Colors.reset}. Купить?'
@@ -145,16 +141,14 @@ def shop(ctx: GameContext) -> None:
                 ctx.player.xp += 1
 
                 print(
-                    f'\nСписано {upgrade_cost} монет. Ваш множитель монет {Colors.yellow}{ctx.player.xp_multiplier}x{Colors.reset}\n'
+                    f'\nСписано {upgrade_cost} монет. Ваш множитель опыта {Colors.yellow}{ctx.player.xp_multiplier}x{Colors.reset}\n'
                 )
 
                 time.sleep(5)
 
             case 3:
                 if ctx.player.lucky_amulet:
-                    print(
-                        f'\n{Colors.yellow}Вы уже купили этот товар!{Colors.reset}\n'
-                    )
+                    print(f'\n{Colors.yellow}Вы уже купили этот товар!{Colors.reset}\n')
 
                 elif ctx.player.balance >= 300:
                     ctx.player.balance -= 300
@@ -203,9 +197,7 @@ def shop(ctx: GameContext) -> None:
 
             case 5:
                 if ctx.player.potion_luck:
-                    print(
-                        f'\n{Colors.yellow}Вы уже купили этот товар!{Colors.reset}\n'
-                    )
+                    print(f'\n{Colors.yellow}Вы уже купили этот товар!{Colors.reset}\n')
 
                 elif ctx.player.balance >= 500:
                     ctx.player.balance -= 500
@@ -222,9 +214,7 @@ def shop(ctx: GameContext) -> None:
 
             case 6:
                 if ctx.player.lucky_ticket:
-                    print(
-                        f'\n{Colors.yellow}Вы уже купили этот товар!{Colors.reset}\n'
-                    )
+                    print(f'\n{Colors.yellow}Вы уже купили этот товар!{Colors.reset}\n')
 
                 elif ctx.player.balance >= 400:
                     ctx.player.balance -= 400
@@ -241,9 +231,7 @@ def shop(ctx: GameContext) -> None:
 
             case 7:
                 if ctx.player.mining_multiplier == 2:
-                    print(
-                        f'\n{Colors.yellow}Вы уже купили этот товар!{Colors.reset}\n'
-                    )
+                    print(f'\n{Colors.yellow}Вы уже купили этот товар!{Colors.reset}\n')
 
                 if ctx.player.balance < 700:
                     print(
@@ -270,9 +258,7 @@ def shop(ctx: GameContext) -> None:
 
             case 8:
                 if ctx.player.business:
-                    print(
-                        f'\n{Colors.yellow}Вы уже купили этот товар!{Colors.reset}\n'
-                    )
+                    print(f'\n{Colors.yellow}Вы уже купили этот товар!{Colors.reset}\n')
 
                 elif ctx.player.balance >= 1200:
                     ctx.player.balance -= 1200
@@ -316,9 +302,7 @@ def shop(ctx: GameContext) -> None:
                             f'{Colors.red}Эх, Незнакомец подсунул дешёвку. Повезёт в следующий раз!{Colors.reset}\n'
                         )
                     else:
-                        print(
-                            f'{Colors.yellow}Нормально, вернули своё!{Colors.reset}\n'
-                        )
+                        print(f'{Colors.yellow}Нормально, вернули своё!{Colors.reset}\n')
 
                 else:
                     print(
@@ -326,14 +310,10 @@ def shop(ctx: GameContext) -> None:
                     )
 
             case _:
-                print(
-                    f'\n{Colors.red}Товара с таким ID не существует!{Colors.reset}\n'
-                )
+                print(f'\n{Colors.red}Товара с таким ID не существует!{Colors.reset}\n')
 
     elif user_action == 2:
-        user_id_return = int(
-            input('\nВыберите ID продукта для возращение товара: ')
-        )
+        user_id_return = int(input('\nВыберите ID продукта для возращение товара: '))
 
         match user_id_return:
             case 1:
@@ -442,9 +422,7 @@ def shop(ctx: GameContext) -> None:
                     ctx.player.balance += 350
 
                 else:
-                    print(
-                        f'\n{Colors.red}У вас не куплено "Кофе"!{Colors.reset}\n'
-                    )
+                    print(f'\n{Colors.red}У вас не куплено "Кофе"!{Colors.reset}\n')
 
             case 8:
                 if ctx.player.business:
@@ -467,9 +445,7 @@ def shop(ctx: GameContext) -> None:
                     )
 
             case 9:
-                print(
-                    f'{Colors.red}Ошибка! Секретный кейс нельзя вернуть!{Colors.reset}'
-                )
+                print(f'{Colors.red}Ошибка! Секретный кейс нельзя вернуть!{Colors.reset}')
 
             case _:
                 print(
@@ -503,9 +479,7 @@ def profile(ctx: GameContext) -> None:
     items = []
 
     if ctx.player.lucky_amulet:
-        items.append(
-            f' - Счастливый Амулет {Colors.green}[+1 жизнь]{Colors.reset}'
-        )
+        items.append(f' - Счастливый Амулет {Colors.green}[+1 жизнь]{Colors.reset}')
     if ctx.player.potion_luck:
         items.append(
             f' - Зелье Удачи {Colors.green}[Шанс в казино повышен]{Colors.reset}'
@@ -516,7 +490,9 @@ def profile(ctx: GameContext) -> None:
         )
 
     if ctx.player.mining_lvl > 0:
-        msg = f' - Майнинг-ферма: {Colors.yellow}{ctx.player.mining_lvl} лвл{Colors.reset}.'
+        msg = (
+            f' - Майнинг-ферма: {Colors.yellow}{ctx.player.mining_lvl} лвл{Colors.reset}.'
+        )
 
         if ctx.player.mining_multiplier != 1.0:
             msg += f' {Colors.blue}[Кофе ускорил вас в {ctx.player.mining_multiplier:.1f} раза]{Colors.reset}'
@@ -529,9 +505,7 @@ def profile(ctx: GameContext) -> None:
         )
 
     if not items:
-        print(
-            f'{Colors.red}Рюкзак пуст. Купите что-нибудь в магазине.{Colors.reset}'
-        )
+        print(f'{Colors.red}Рюкзак пуст. Купите что-нибудь в магазине.{Colors.reset}')
     else:
         print('\n\t'.join(items))
     print('-' * 20, '\n\nНажмите "q" для выхода в меню')
@@ -560,9 +534,7 @@ def mining(ctx: GameContext) -> None:
             time.sleep(sleep_time)
 
             if is_pressed('q'):
-                print(
-                    f'\n{Colors.green}Майнинг приостановлен...{Colors.reset}\n'
-                )
+                print(f'\n{Colors.green}Майнинг приостановлен...{Colors.reset}\n')
                 break
 
     else:
@@ -622,9 +594,7 @@ def stranger(ctx: GameContext) -> None:
 
     # === КВЕСТ 3 ===
     elif ctx.player.quest_id == 3:
-        print(
-            f'Текущее задание: {Colors.blue_dark}«Азартный игрок»{Colors.reset}'
-        )
+        print(f'Текущее задание: {Colors.blue_dark}«Азартный игрок»{Colors.reset}')
         print(
             f'Цель: Сыграть в Игровой автомат 5 раз. (Прогресс: {ctx.player.quest_progress} / 5)'
         )
@@ -683,9 +653,7 @@ def reset(ctx: GameContext) -> None:
         return
 
     cls()
-    print(
-        f'\nНезнакомец: {Colors.blue_dark}Хорошо! Ваше решение принято.{Colors.reset}'
-    )
+    print(f'\nНезнакомец: {Colors.blue_dark}Хорошо! Ваше решение принято.{Colors.reset}')
 
     ctx.player = ctx.db.reset_player(ctx.player)
 
