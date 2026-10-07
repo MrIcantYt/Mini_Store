@@ -49,7 +49,7 @@ class Player:
         return data
 
     @classmethod
-    def from_row(cls, row) -> Player:
+    def from_row(cls, row) -> 'Player':
         data = {f.name: row[f.name] for f in fields(cls)}
         data['_xp'] = data.pop('xp')
         for name in BOOL_FIELDS:
@@ -63,7 +63,7 @@ class Player:
         return data
 
     @classmethod
-    def from_dict(cls, data: dict[str, object]) -> Player:
+    def from_dict(cls, data: dict[str, object]) -> 'Player':
         data['_xp'] = data.pop('xp')
         data['_balance'] = data.pop('balance')
         return cls(**data)  # pyright: ignore[reportArgumentType]
@@ -94,7 +94,9 @@ class Player:
         return 1.0 + (self.lvl - 1) * 0.1
 
     def add_coins(self, amount: int) -> str:
-        final_amount = int(amount * self.balance_multiplier * self.level_multiplier)
+        final_amount = int(
+            amount * self.balance_multiplier * self.level_multiplier
+        )
         self.balance += final_amount
         return f'💰 Вы получили {Colors.yellow}{fmt(final_amount)}{Colors.reset} монет ({Colors.yellow}{fmt(self.balance)}{Colors.reset} монет на счету)'
 

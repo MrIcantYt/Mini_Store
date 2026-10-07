@@ -52,7 +52,14 @@ class Slot(Enum):
     msg: str
     vip_msg: str
 
-    def __init__(self, symbol: str, win_reward: int, xp_reward: int, msg: str, vip_msg: str):
+    def __init__(
+        self,
+        symbol: str,
+        win_reward: int,
+        xp_reward: int,
+        msg: str,
+        vip_msg: str,
+    ):
         self.symbol = symbol
         self.coins_reward = win_reward
         self.xp_reward = xp_reward
@@ -60,7 +67,7 @@ class Slot(Enum):
         self.vip_msg = vip_msg
 
     @classmethod
-    def from_symbol(cls, symbol: str) -> Slot | None:
+    def from_symbol(cls, symbol: str) -> 'Slot | None':
         return next((s for s in cls if s.symbol == symbol), None)
 
 
@@ -84,7 +91,9 @@ class SlotsGame(AbstractGame):
             Slot.CROWN,
         ]
         if self._player.potion_luck:
-            variants.extend([Slot.DIAMOND, Slot.CROWN, Slot.SACK_MONEY, Slot.SEVEN])
+            variants.extend(
+                [Slot.DIAMOND, Slot.CROWN, Slot.SACK_MONEY, Slot.SEVEN]
+            )
         return variants
 
     def _all_slots_is(self) -> Slot | None:
@@ -151,7 +160,11 @@ class SlotsGame(AbstractGame):
         sleep(0.4)
 
         if slot := self._all_slots_is():
-            win_coins = int(slot.coins_reward * money_player * self._player.balance_multiplier)
+            win_coins = int(
+                slot.coins_reward
+                * money_player
+                * self._player.balance_multiplier
+            )
             win_xp = int(slot.xp_reward * self._player.xp_multiplier)
             msg = slot.msg
 
@@ -179,4 +192,6 @@ class SlotsGame(AbstractGame):
                 self._player.balance -= money_player
 
             else:
-                print('🔴 Увы, комбинация пустая. Вы потеряли свою ставку. Попробуйте еще раз!\n')
+                print(
+                    '🔴 Увы, комбинация пустая. Вы потеряли свою ставку. Попробуйте еще раз!\n'
+                )

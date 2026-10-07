@@ -34,7 +34,9 @@ def main():
     ctx = init_game(player_id)
 
     if ctx.player is None:
-        print(f'\n{Colors.red}Ошибка! Игрок с ID {player_id} не найден.{Colors.reset}\n')
+        print(
+            f'\n{Colors.red}Ошибка! Игрок с ID {player_id} не найден.{Colors.reset}\n'
+        )
         return
 
     cls()
@@ -61,7 +63,9 @@ def main():
                 ]
             )
 
-        section: SectionFunc | None = ask_option('Выберите пункт меню: ', options)
+        section: SectionFunc | None = ask_option(
+            'Выберите пункт меню: ', options
+        )
         if not section:
             continue
 

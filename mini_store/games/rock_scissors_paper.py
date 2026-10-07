@@ -8,14 +8,18 @@ from .abstract import AbstractGame
 
 class RockScissorsPaperGame(AbstractGame):
     def play(self) -> Any:
-        print(f'\n {Colors.yellow}== Игра: Камень, ножницы, бумага == {Colors.reset}\n')
+        print(
+            f'\n {Colors.yellow}== Игра: Камень, ножницы, бумага == {Colors.reset}\n'
+        )
 
         variants = ['камень', 'ножницы', 'бумага']
 
         life = 4 if self._player.lucky_amulet else 3
 
         while life > 0:
-            user_choice = input('Выберите (Камень, Ножницы, Бумага): ').lower().strip()
+            user_choice = (
+                input('Выберите (Камень, Ножницы, Бумага): ').lower().strip()
+            )
 
             if user_choice not in variants:
                 print(
@@ -70,6 +74,8 @@ class RockScissorsPaperGame(AbstractGame):
                 print(f'Вы не угадали! У вас осталось {life} жизни!\n')
 
                 if life == 0:
-                    print(f'{Colors.red}Вы полностью проиграли в этой игре! {Colors.reset}\n')
+                    print(
+                        f'{Colors.red}Вы полностью проиграли в этой игре! {Colors.reset}\n'
+                    )
 
         return

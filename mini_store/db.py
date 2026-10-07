@@ -81,7 +81,9 @@ class SqliteDataBase(AbstractDataBase):
     def get_player_by_id(self, player_id: int) -> Player | None:
         with sqlite3.connect(self.path) as conn:
             conn.row_factory = sqlite3.Row
-            row = conn.execute('SELECT * FROM players WHERE id = ?', (player_id,)).fetchone()
+            row = conn.execute(
+                'SELECT * FROM players WHERE id = ?', (player_id,)
+            ).fetchone()
 
         return Player.from_row(row) if row else None
 
