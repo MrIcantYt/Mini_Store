@@ -29,33 +29,13 @@ type SectionFunc = Callable[[GameContext], None]
 
 def game(ctx: GameContext) -> None:
     cls()
-    print(
-        '1. Угадать число',
-        '2. Камень, ножницы, бумага',
-        '3. Игровой автомат (Слоты) 🎰',
-        '4. Блекджек (21 очко)',
-        sep='\n',
-    )
-
-    user_number_game = ask_number('Введите номер игры: ', max=4, allow_cancel=True)
-
-    if not user_number_game:
-        return
-
-    game_type: type[AbstractGame]
-
-    match user_number_game:
-        case 1:
-            game_type = GuessNumberGame
-        case 2:
-            game_type = RockScissorsPaperGame
-        case 3:
-            game_type = SlotsGame
-        case 4:
-            game_type = Blackjack
-        case _:
-            print(f'\n{Colors.red}Такой игры нет.{Colors.reset}\n')
-            return
+    game_type = ask_option('Выберите игру: ', [
+        Option('Угадать число', GuessNumberGame),
+        Option('Камень, ножницы, бумага', RockScissorsPaperGame),
+        Option('Игровой автомат (Слоты)', SlotsGame),
+        Option('Блекдежек (21 очко)', BlackjackGame),
+        Option('Колесо Рулетки', RouttleGame)
+    ])
 
     game: AbstractGame = game_type(ctx.player)
     game.play()
