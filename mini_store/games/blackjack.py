@@ -8,7 +8,7 @@ from mini_store.utils import fmt
 from .abstract import AbstractGame, Player
 
 
-class Blackjack(AbstractGame):
+class BlackjackGame(AbstractGame):
     def __init__(self, player: Player):
         self._player = player
 
