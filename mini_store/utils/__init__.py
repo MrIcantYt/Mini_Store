@@ -16,4 +16,4 @@ def cls() -> None:
 
 
 def confirm(prompt: str) -> bool:
-    return 'д' in input(prompt + '\n[Да/Нет]: ')
+    return 'д' in input(prompt + '\n[Да/Нет]: ').lower()
