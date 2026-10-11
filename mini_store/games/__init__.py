@@ -3,13 +3,13 @@ __all__ = (
     'BlackjackGame',
     'GuessNumberGame',
     'RockScissorsPaperGame',
+    'RouttleGame',
     'SlotsGame',
-    'RouttleGame'
 )
 
 from .abstract import AbstractGame
 from .blackjack import BlackjackGame
 from .guess_number import GuessNumberGame
 from .rock_scissors_paper import RockScissorsPaperGame
-from .slots import SlotsGame
 from .routtle import RouttleGame
+from .slots import SlotsGame

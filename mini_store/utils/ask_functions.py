@@ -71,12 +71,13 @@ def ask_number(
         int | None: The parsed integer, or None if the user cancelled.
 
     Example:
-        >>> n = ask_number("How many? ", min=1, max=10)
+        >>> n = ask_number('How many? ', min=1, max=10)
         >>> if n is None:
-        ...     print("Cancelled")
+        ...     print('Cancelled')
     """
     while True:
-        raw = input(prompt).strip().lower()
+        cancel_msg = f' ({cancel_on} для отмены): ' if allow_cancel else ': '
+        raw = input(prompt + cancel_msg).strip().lower()
 
         if allow_cancel and raw == cancel_on:
             return None
@@ -137,12 +138,12 @@ def ask_option[T](
 
     Example:
         >>> options = [
-        ...     Option("Shop", open_shop),
+        ...     Option('Shop', open_shop),
         ...     Spacer(),
-        ...     Option("Games", open_games, position=5),
+        ...     Option('Games', open_games, position=5),
         ...     HiddenOption(666, easter_egg),
         ... ]
-        >>> choice = ask_option("Choose a menu item: ", options)
+        >>> choice = ask_option('Choose a menu item: ', options)
         >>> if choice is not None:
         ...     choice()
     """

@@ -21,6 +21,8 @@ line-length = 90
 ignore = ['EXE002']
 
 [tool.ruff.format]
+docstring-code-format = true
+docstring-code-line-length = 60
 indent-style = "space"
 quote-style = "single"
 

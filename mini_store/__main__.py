@@ -33,15 +33,11 @@ def main():
     player_id = 1
     ctx = init_game(player_id)
 
-    if ctx.player is None:
-        print(f'\n{Colors.red}Ошибка! Игрок с ID {player_id} не найден.{Colors.reset}\n')
-        return
-
     cls()
     while True:
         print(' === Добро пожаловать в "Мини Магазин" === \n')
 
-        options = [
+        options: list = [
             Option('Магазин', shop),
             Option('Игры', game),
             Option('Профиль', profile),
@@ -61,7 +57,7 @@ def main():
                 ]
             )
 
-        section: SectionFunc | None = ask_option('Выберите пункт меню: ', options)
+        section: SectionFunc | None = ask_option('Выберите пункт меню', options)
         if not section:
             continue
 

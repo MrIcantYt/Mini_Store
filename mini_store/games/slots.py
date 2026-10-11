@@ -161,6 +161,7 @@ class SlotsGame(AbstractGame):
         sleep(0.4)
 
         if slot := self._all_slots_is():
+            # TODO: rewrite it in a new way
             win_coins = int(
                 slot.coins_reward * money_player * self._player.balance_multiplier
             )
