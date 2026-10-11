@@ -29,7 +29,7 @@ type SectionFunc = Callable[[GameContext], None]
 def game(ctx: GameContext) -> None:
     cls()
     game_type: type[AbstractGame] | None = ask_option(
-        'Выберите игру',
+        'Выберите игру: ',
         [
             Option('Угадать число', GuessNumberGame),
             Option('Камень, ножницы, бумага', RockScissorsPaperGame),
@@ -78,7 +78,7 @@ def shop(ctx: GameContext) -> None:
         match user_id_buy:
             case 1:
                 if ctx.player.balance_multiplier == 5:
-                    print('Вы уже имеете максимальный уровень прокачки этого улучшения!')
+                    print(f'\n{Colors.yellow}Вы уже имеете максимальный уровень прокачки этого улучшения!{Colors.reset}\n')
                     return
 
                 upgrade_cost = 100 * 2**ctx.player.balance_multiplier
@@ -90,9 +90,7 @@ def shop(ctx: GameContext) -> None:
                     )
                     return
 
-                if not confirm(
-                    f'\nУлучшение множителя монет обойдётся вам в {Colors.yellow}{upgrade_cost} монет{Colors.reset}. Купить?'
-                ):
+                if not confirm(f'\nУлучшение множителя монет обойдётся вам в {Colors.yellow}{upgrade_cost} монет{Colors.reset}. Купить?'):
                     return
 
                 ctx.player.balance -= upgrade_cost
@@ -634,20 +632,22 @@ def game_exit(ctx: GameContext) -> None:
 
 
 def reset(ctx: GameContext) -> None:
-    if not confirm(
-        f'\nНезнакомец: {Colors.blue_dark}Вы уверенны, что хотите сбросить весь свой прогресс?{Colors.reset}\n'
-    ):
+    if not confirm(f'\nНезнакомец: {Colors.blue_dark}Вы уверенны, что хотите сбросить весь свой прогресс?{Colors.reset}\n'):
         return
 
-    cls()
-    print(f'\nНезнакомец: {Colors.blue_dark}Хорошо! Ваше решение принято.{Colors.reset}')
+    print(f'\nНезнакомец: {Colors.blue_dark}Хорошо! Ваше решение принято.{Colors.reset}\n')
 
     ctx.player = ctx.db.reset_player(ctx.player)
 
+    time.sleep(3)
+    
+    cls()
 
 def easter_egg(ctx: GameContext) -> None:
     if not ctx.player.secret_used:
         print(f'Вы нашли пасхалку!\n{ctx.player.add_coins(100000000)}\n')
+
         ctx.player.secret_used = True
+
     else:
         print(f'{Colors.red}Ошибка 666! Вы уже нашли пасхалку!{Colors.reset}\n')
