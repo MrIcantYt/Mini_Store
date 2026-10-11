@@ -66,6 +66,9 @@ class Slot(Enum):
         self.msg = msg
         self.vip_msg = vip_msg
 
+    def __str__(self):
+        return self.symbol
+
     @classmethod
     def from_symbol(cls, symbol: str) -> 'Slot | None':
         return next((s for s in cls if s.symbol == symbol), None)
@@ -73,11 +76,11 @@ class Slot(Enum):
 
 class SlotsGame(AbstractGame):
     def __init__(self, player: Player) -> None:
+        super().__init__(player)
         self._slots = []
         self._variants: list[Slot] = self._setup_variants()
         self._slots = random.choices(self._variants, k=3)
         self._is_vip = False
-        super().__init__(self._player)
 
     def _setup_variants(self) -> list[Slot]:
         variants = [
@@ -101,8 +104,8 @@ class SlotsGame(AbstractGame):
     def play(self) -> Any:
         print(f'\n {Colors.yellow}== Игра: Игровой Автомат =={Colors.reset}\n')
 
-        if Player.quest_id == 3:
-            Player.quest_progress += 1
+        if self._player.quest_id == 3:
+            self._player.quest_progress += 1
 
         user_bet = (
             input(
