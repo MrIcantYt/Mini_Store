@@ -23,19 +23,25 @@ SHOP_CONTENT: Final[str] = (
     '9. Секретный кейс — Цена: 2500 монет'
 )
 
-# Bool whenever needs to clear the console after the section is done
 type SectionFunc = Callable[[GameContext], None]
 
 
 def game(ctx: GameContext) -> None:
     cls()
-    game_type = ask_option('Выберите игру: ', [
-        Option('Угадать число', GuessNumberGame),
-        Option('Камень, ножницы, бумага', RockScissorsPaperGame),
-        Option('Игровой автомат (Слоты)', SlotsGame),
-        Option('Блекдежек (21 очко)', BlackjackGame),
-        Option('Колесо Рулетки', RouttleGame)
-    ])
+    game_type: type[AbstractGame] | None = ask_option(
+        'Выберите игру',
+        [
+            Option('Угадать число', GuessNumberGame),
+            Option('Камень, ножницы, бумага', RockScissorsPaperGame),
+            Option('Игровой автомат (Слоты)', SlotsGame),
+            Option('Блекдежек (21 очко)', BlackjackGame),
+            Option('Колесо Рулетки', RouttleGame),
+        ],
+        allow_cancel=True,
+    )
+
+    if game_type is None:
+        return
 
     game: AbstractGame = game_type(ctx.player)
     game.play()
@@ -524,62 +530,80 @@ def mining(ctx: GameContext) -> None:
 def stranger(ctx: GameContext) -> None:
     cls()
 
-    print("\n--- 📜 ЗАДАНИЯ НЕЗНАКОМЦА ---\n")
+    print('\n--- 📜 ЗАДАНИЯ НЕЗНАКОМЦА ---\n')
 
     # Квест 1: Стартовый капитал
     if ctx.player.quest_id == 1:
-        print(f"Задание 1: {Colors.blue}«Первые шаги»{Colors.reset}")
-        print(f"Цель: Накопить {Colors.yellow}500 монет{Colors.reset}. (У вас сейчас: {Colors.yellow}{fmt(ctx.player.balance)} монет{Colors.reset})")
-                
+        print(f'Задание 1: {Colors.blue}«Первые шаги»{Colors.reset}')
+        print(
+            f'Цель: Накопить {Colors.yellow}500 монет{Colors.reset}. (У вас сейчас: {Colors.yellow}{fmt(ctx.player.balance)} монет{Colors.reset})'
+        )
+
         if ctx.player.balance >= 500:
             ctx.player.quest_id = 2
-                    
-            print(f"\n{Colors.green}🎉 Квест выполнен! Награда: +150 XP. Открыто новое задание!{Colors.reset}\n")
+
+            print(
+                f'\n{Colors.green}🎉 Квест выполнен! Награда: +150 XP. Открыто новое задание!{Colors.reset}\n'
+            )
 
             ctx.player.add_xp(150)
-                
+
         else:
-            print(f"\n{Colors.red}Задание не выполнено. Копи монеты.{Colors.reset}\n")
-            
+            print(f'\n{Colors.red}Задание не выполнено. Копи монеты.{Colors.reset}\n')
+
         time.sleep(3)
 
     # Квест 2: Прокачка железа
     elif ctx.player.quest_id == 2:
-        print(f"Задание 2: {Colors.blue}«Разгон фермы»{Colors.reset}")
-        print(f"Цель: Прокачать Майнинг-ферму до {Colors.yellow}3 уровня{Colors.reset} или выше. (Ваш уровень: {Colors.yellow}{ctx.player.mining_lvl} лвл{Colors.reset})")
-                
+        print(f'Задание 2: {Colors.blue}«Разгон фермы»{Colors.reset}')
+        print(
+            f'Цель: Прокачать Майнинг-ферму до {Colors.yellow}3 уровня{Colors.reset} или выше. (Ваш уровень: {Colors.yellow}{ctx.player.mining_lvl} лвл{Colors.reset})'
+        )
+
         if ctx.player.mining_lvl >= 3:
             ctx.player.quest_id = 3
-     
-            print(f"\n{Colors.green}🎉 Квест выполнен! Награда: +1.000 монет. Открыто новое задание!{Colors.reset}\n")
+
+            print(
+                f'\n{Colors.green}🎉 Квест выполнен! Награда: +1.000 монет. Открыто новое задание!{Colors.reset}\n'
+            )
 
             ctx.player.add_coins(1000)
-                
+
         else:
-            print(f"\n{Colors.red}Задание не выполнено. Улучши ферму в Каталоге до 3 лвл.{Colors.reset}\n")
-                
+            print(
+                f'\n{Colors.red}Задание не выполнено. Улучши ферму в Каталоге до 3 лвл.{Colors.reset}\n'
+            )
+
         time.sleep(3)
-                
+
     # Квест 3: Испытать удачу в Слотах
     elif ctx.player.quest_id == 3:
-        print(f"Задание 3: {Colors.blue}«Азартный тиктокер»{Colors.reset}")
-        print(f"Цель: Сыграть в Игровой Автомат (Слоты) {Colors.yellow}5 раз{Colors.reset}. (Прогресс: {Colors.yellow}{ctx.player.quest_progress} / 5{Colors.reset})")
-                
+        print(f'Задание 3: {Colors.blue}«Азартный тиктокер»{Colors.reset}')
+        print(
+            f'Цель: Сыграть в Игровой Автомат (Слоты) {Colors.yellow}5 раз{Colors.reset}. (Прогресс: {Colors.yellow}{ctx.player.quest_progress} / 5{Colors.reset})'
+        )
+
         if ctx.player.quest_progress >= 5:
             ctx.player.quest_id = 4
             ctx.player.quest_progress = 0
 
-            print(f"\n{Colors.green}🎉 Все задания Незнакомца выполнены! Награда: +500 монет и +300 XP!{Colors.reset}\n")
+            print(
+                f'\n{Colors.green}🎉 Все задания Незнакомца выполнены! Награда: +500 монет и +300 XP!{Colors.reset}\n'
+            )
 
             ctx.player.add_coins_and_xp(coins=500, xp=300)
-                
+
         else:
-            print(f"\n{Colors.red}Задание выполняется в казино (Пункт 2 -> Игра 3).{Colors.reset}\n")
+            print(
+                f'\n{Colors.red}Задание выполняется в казино (Пункт 2 -> Игра 3).{Colors.reset}\n'
+            )
 
         time.sleep(3)
 
     else:
-        print(f"{Colors.yellow}Незнакомец: Контракты закончились. Ты выполнил всё, что я просил. Жди обновлений!{Colors.reset}\n")
+        print(
+            f'{Colors.yellow}Незнакомец: Контракты закончились. Ты выполнил всё, что я просил. Жди обновлений!{Colors.reset}\n'
+        )
 
         time.sleep(3)
 
