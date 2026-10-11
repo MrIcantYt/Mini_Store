@@ -76,8 +76,7 @@ def ask_number(
         ...     print('Cancelled')
     """
     while True:
-        cancel_msg = f' ({cancel_on} для отмены): ' if allow_cancel else ': '
-        raw = input(prompt + cancel_msg).strip().lower()
+        raw = input(prompt).strip().lower()
 
         if allow_cancel and raw == cancel_on:
             return None
