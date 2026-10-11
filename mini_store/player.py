@@ -1,5 +1,6 @@
 from dataclasses import asdict, dataclass, fields
-from time import sleep
+from random import randint
+from typing import NamedTuple
 
 from mini_store.colors import Colors
 from mini_store.utils import fmt
@@ -20,12 +21,17 @@ BOOL_FIELDS = frozenset(
 )
 
 
+class Converted(NamedTuple):
+    xp_converted: int
+    gold: int
+
+
 @dataclass(slots=True)
 class Player:
     id: int
     _balance: int = 0
     balance_multiplier: int = 1
-    _xp: int = 0
+    xp: int = 0
     xp_multiplier: int = 1
     lvl: int = 1
     promo_used: bool = False
@@ -51,38 +57,26 @@ class Player:
     @classmethod
     def from_row(cls, row) -> 'Player':
         data = {f.name: row[f.name] for f in fields(cls)}
-        data['_xp'] = data.pop('xp')
         for name in BOOL_FIELDS:
             data[name] = bool(data[name])
         return cls(**data)
 
     def to_dict(self) -> dict[str, object]:
         data = asdict(self)
-        data['xp'] = data.pop('_xp')
         data['balance'] = data.pop('_balance')
         return data
 
     @classmethod
     def from_dict(cls, data: dict[str, object]) -> 'Player':
-        data['_xp'] = data.pop('xp')
         data['_balance'] = data.pop('balance')
-        return cls(**data)  # pyright: ignore[reportArgumentType]
-
-    @property
-    def xp(self) -> int:
-        return self._xp
-
-    @xp.setter
-    def xp(self, value):
-        self._xp = value
-        self.check_level_up()
+        return cls(**data)  # pyright: ignore[reportArgumentType]  # ty: ignore[invalid-argument-type]
 
     @property
     def balance(self) -> int:
         return self._balance
 
     @balance.setter
-    def balance(self, value):
+    def balance(self, value: int):
         self._balance = min(value, MAX_BALANCE)
 
     @property
@@ -101,44 +95,59 @@ class Player:
     def add_xp(self, amount: int) -> str:
         final_amount = int(amount * self.xp_multiplier * self.level_multiplier)
         self.xp += final_amount
-        return f'📈 Вам начислено {Colors.yellow}{fmt(final_amount)}{Colors.reset} XP ({Colors.yellow}{fmt(self._xp)}{Colors.reset} XP на счету)'
+        return f'📈 Вам начислено {Colors.yellow}{fmt(final_amount)}{Colors.reset} XP ({Colors.yellow}{fmt(self.xp)}{Colors.reset} XP на счету)\n{self.check_level_up()}'
 
     def add_coins_and_xp(self, *, coins: int, xp: int) -> str:
         return self.add_coins(coins) + '\n' + self.add_xp(xp)
 
-    def check_level_up(self):
-        """Проверяет и обрабатывает повышение уровня."""
+    def check_level_up(self) -> str | None:
+        """Checks for and applies any pending level-ups.
 
+        Consumes XP from the player until the level-up threshold is no
+        longer met or the maximum level is reached. If the maximum level
+        is reached, remaining XP is converted to gold via `_convert_xp_to_gold`.
+
+        Returns:
+            str | None: A message describing the level-up, or None if the level did not change.
+        """
         if self.lvl >= MAX_LEVEL:
-            self._convert_xp_to_gold()
+            return None
 
-        while self._xp >= self.next_lvl_xp_needed:
-            self._xp -= self.next_lvl_xp_needed
+        start_level = self.lvl
+
+        while self.xp >= self.next_lvl_xp_needed and self.lvl < MAX_LEVEL:
+            self.xp -= self.next_lvl_xp_needed
             self.lvl += 1
 
-            print(
-                f'{Colors.green}🎉 ПОЗДРАВЛЯЕМ! Вы достигли {self.lvl} уровня! 🎉 {Colors.reset}\n'
+        if self.lvl == start_level:
+            return None
+
+        if self.lvl >= MAX_LEVEL:
+            xp_converted, gold = self._convert_xp_to_gold()
+            return (
+                f'{Colors.yellow}⭐ Вы достигли МАКСИМАЛЬНОГО {MAX_LEVEL} уровня!\n'
+                f'{fmt(xp_converted)} XP были конвертированы в '
+                f'+{fmt(gold)} монет!{Colors.reset}\n'
             )
-            sleep(0.5)
 
-            if self.lvl >= MAX_LEVEL:
-                print(
-                    f'{Colors.yellow}⭐ Вы достигли МАКСИМАЛЬНОГО {MAX_LEVEL} уровня! '
-                    f'Теперь опыт превращается в монеты!{Colors.reset}\n'
-                )
-                self._convert_xp_to_gold()
+        return f'{Colors.green}🎉 ПОЗДРАВЛЯЕМ! Вы достигли {self.lvl} уровня! 🎉{Colors.reset}\n'
 
-    def _convert_xp_to_gold(self) -> None:
-        """Конвертирует накопленный XP в золото на максимальном уровне."""
+    def _convert_xp_to_gold(self) -> Converted:
+        """Converts accumulated XP into gold at the maximum level.
+
+        Resets `self.xp` to 0 and adds the converted amount to `self.balance`.
+
+        Returns:
+            Converted: A pair (xp_converted, gold). Both are 0 if there was no XP to convert.
+        """
         if self.xp <= 0:
-            return
+            return Converted(0, 0)
 
-        gold_bonus = self.xp * GOLD_PER_XP
-        self.balance += gold_bonus
-
-        print(
-            f'{Colors.yellow}⭐ МАКСИМАЛЬНЫЙ УРОВЕНЬ! '
-            f'{fmt(self.xp)} XP были конвертированы в '
-            f'+{fmt(gold_bonus)} монет!{Colors.reset}\n'
-        )
+        xp_converted = self.xp
+        gold = xp_converted * GOLD_PER_XP
+        self.balance += gold
         self.xp = 0
+        return Converted(xp_converted, gold)
+
+    def check_luck(self) -> bool:
+        return randint(1, 100) <= (35 if self.potion_luck else 15)
