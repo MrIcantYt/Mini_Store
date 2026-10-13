@@ -84,9 +84,8 @@ def shop(ctx: GameContext) -> None:
                 upgrade_cost = 100 * 2**ctx.player.balance_multiplier
 
                 if ctx.player.balance < upgrade_cost:
-                    cls()
                     print(
-                        f'\n{Colors.red}Недостаточно монет! Нужно {upgrade_cost}, а у вас {ctx.player.balance}.{Colors.reset}\n'
+                        f'\n{Colors.red}Недостаточно монет! Нужно {fmt(upgrade_cost)} монет, а у вас {ctx.player.balance} монет.{Colors.reset}\n'
                     )
                     return
 
@@ -646,9 +645,9 @@ def reset(ctx: GameContext) -> None:
 def easter_egg(ctx: GameContext) -> None:
     if not ctx.player.secret_used:
         print(f'\n{Colors.green}Успешно! Вы нашли пасхалку!{Colors.reset}\n'
-              f'\n{ctx.player.add_coins(100000000)}\n')
+              f'\n{ctx.player.add_coins(1000)}\n')
 
         ctx.player.secret_used = True
 
     else:
-        print(f'{Colors.red}Ошибка 666! Вы уже нашли пасхалку!{Colors.reset}\n')
+        print(f'\n{Colors.red}Ошибка 666! Вы уже нашли пасхалку!{Colors.reset}\n')
