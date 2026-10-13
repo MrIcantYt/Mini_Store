@@ -95,7 +95,11 @@ class Player:
     def add_xp(self, amount: int) -> str:
         final_amount = int(amount * self.xp_multiplier * self.level_multiplier)
         self.xp += final_amount
-        return f'📈 Вам начислено {Colors.yellow}{fmt(final_amount)}{Colors.reset} XP (У вас {Colors.yellow}{fmt(self.xp)}{Colors.reset} XP на счету)\n{self.check_level_up()}'
+
+        level_msg = self.check_level_up()
+        suffix = f'\n{level_msg}' if level_msg else ''
+
+        return f'📈 Вам начислено {Colors.yellow}{fmt(final_amount)}{Colors.reset} XP (У вас {Colors.yellow}{fmt(self.xp)}{Colors.reset} XP на счету){suffix}'
 
     def add_coins_and_xp(self, *, coins: int, xp: int) -> str:
         return self.add_coins(coins) + '\n' + self.add_xp(xp)
