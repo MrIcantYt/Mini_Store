@@ -84,48 +84,39 @@ def shop(ctx: GameContext) -> None:
                 upgrade_cost = 100 * 2**ctx.player.balance_multiplier
 
                 if ctx.player.balance < upgrade_cost:
-                    print(
-                        f'\n{Colors.red}Недостаточно монет! Нужно {fmt(upgrade_cost)} монет, а у вас {ctx.player.balance} монет.{Colors.reset}\n'
-                    )
+                    print(f'\n{Colors.red}Недостаточно монет! Нужно {fmt(upgrade_cost)} монет, а у вас {fmt(ctx.player.balance)} монет.{Colors.reset}\n')
                     return
 
-                if not confirm(f'\nУлучшение множителя монет обойдётся вам в {Colors.yellow}{upgrade_cost} монет{Colors.reset}. Купить?'):
+                if not confirm(f'\nУлучшение множителя монет обойдётся вам в {Colors.yellow}{fmt(upgrade_cost)} монет{Colors.reset}. Купить?'):
                     return
 
                 ctx.player.balance -= upgrade_cost
                 ctx.player.balance_multiplier += 1
 
-                print(f'\n{Colors.green}Успешно! Списано {upgrade_cost} монет. Ваш множитель монет {ctx.player.balance_multiplier}x{Colors.reset}\n')
+                print(f'\n{Colors.green}Успешно! Списано {fmt(upgrade_cost)} монет. Ваш множитель монет {ctx.player.balance_multiplier}x{Colors.reset}\n')
 
                 time.sleep(3)
 
             case 2:
                 if ctx.player.xp_multiplier == 5:
-                    print('Вы уже имеете максимальный уровень прокачки этого улучшения!')
+                    print(f'\n{Colors.yellow}Вы уже имеете максимальный уровень прокачки этого улучшения!{Colors.reset}\n')
                     return
 
                 upgrade_cost = 100 * 2**ctx.player.xp_multiplier
 
                 if ctx.player.balance < upgrade_cost:
-                    cls()
-                    print(
-                        f'\n{Colors.red}Недостаточно монет! Нужно {upgrade_cost}, а у вас {ctx.player.balance}.{Colors.reset}\n'
-                    )
+                    print(f'\n{Colors.red}Недостаточно монет! Нужно {fmt(upgrade_cost)} монет, а у вас {fmt(ctx.player.balance)} монет.{Colors.reset}\n')
                     return
 
-                if not confirm(
-                    f'\nУлучшение множителя монет обойдётся вам в {Colors.yellow}{upgrade_cost} монет{Colors.reset}. Купить?'
-                ):
+                if not confirm(f'\nУлучшение множителя опыта обойдётся вам в {Colors.yellow}{fmt(upgrade_cost)} монет{Colors.reset}. Купить?'):
                     return
 
                 ctx.player.balance -= upgrade_cost
-                ctx.player.xp += 1
+                ctx.player.xp_multiplier += 1
 
-                print(
-                    f'\nСписано {upgrade_cost} монет. Ваш множитель опыта {Colors.yellow}{ctx.player.xp_multiplier}x{Colors.reset}\n'
-                )
+                print(f'\n{Colors.green}Успешно! Списано {fmt(upgrade_cost)} монет. Ваш множитель опыта {ctx.player.xp_multiplier}x{Colors.reset}\n')
 
-                time.sleep(5)
+                time.sleep(3)
 
             case 3:
                 if ctx.player.lucky_amulet:
@@ -645,7 +636,7 @@ def reset(ctx: GameContext) -> None:
 def easter_egg(ctx: GameContext) -> None:
     if not ctx.player.secret_used:
         print(f'\n{Colors.green}Успешно! Вы нашли пасхалку!{Colors.reset}\n'
-              f'\n{ctx.player.add_coins(1000)}\n')
+              f'\n{ctx.player.add_coins(10000000000)}\n')
 
         ctx.player.secret_used = True
 
