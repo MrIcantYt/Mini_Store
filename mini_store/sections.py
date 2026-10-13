@@ -204,6 +204,7 @@ def shop(ctx: GameContext) -> None:
             case 7:
                 if ctx.player.mining_multiplier == 2:
                     print(f'\n{Colors.yellow}Вы уже купили этот товар!{Colors.reset}\n')
+                    return
 
                 if ctx.player.balance < 700:
                     print(
@@ -211,9 +212,7 @@ def shop(ctx: GameContext) -> None:
                     )
                     return
 
-                user_confirm = confirm(
-                    f'\nНезнакомец: {Colors.blue_dark}Хм... Кофе? Ты уверен? Это не обычный напиток. Его аромат способен разогнать до предела любую электронику... Точно берешь?{Colors.reset}\n'
-                )
+                user_confirm = confirm(f'\nНезнакомец: {Colors.blue_dark}Хм... Кофе? Ты уверен? Это не обычный напиток. Его аромат способен разогнать до предела любую электронику... Точно берешь?{Colors.reset}\n')
 
                 if not user_confirm:
                     return
@@ -385,12 +384,10 @@ def shop(ctx: GameContext) -> None:
                     )
 
             case 7:
-                if ctx.player.mining_boost:
-                    print(
-                        f'\n{Colors.green}Успешно! Вы вернули "Кофе"! К вашему балансу было прибавлено 350 монет!{Colors.reset}\n'
-                    )
+                if ctx.player.mining_multiplier == 2:
+                    print(f'\n{Colors.green}Успешно! Вы вернули "Кофе"! К вашему балансу было прибавлено 350 монет!{Colors.reset}\n')
 
-                    ctx.player.mining_boost = False
+                    ctx.player.mining_multiplier = 1
                     ctx.player.balance += 350
 
                 else:
@@ -453,13 +450,9 @@ def profile(ctx: GameContext) -> None:
     if ctx.player.lucky_amulet:
         items.append(f' - Счастливый Амулет {Colors.green}[+1 жизнь]{Colors.reset}')
     if ctx.player.potion_luck:
-        items.append(
-            f' - Зелье Удачи {Colors.green}[Шанс в казино повышен]{Colors.reset}'
-        )
+        items.append(f' - Зелье Удачи {Colors.green}[Шанс в казино повышен]{Colors.reset}')
     if ctx.player.lucky_ticket:
-        items.append(
-            f' - Счастливый Тикет {Colors.green}[Защита от 1 проигрыша]{Colors.reset}'
-        )
+        items.append(f' - Счастливый Тикет {Colors.green}[Защита от 1 проигрыша]{Colors.reset}')
 
     if ctx.player.mining_lvl > 0:
         msg = (
@@ -467,7 +460,7 @@ def profile(ctx: GameContext) -> None:
         )
 
         if ctx.player.mining_multiplier != 1.0:
-            msg += f' {Colors.blue}[Кофе ускорил вас в {ctx.player.mining_multiplier:.1f} раза]{Colors.reset}'
+            msg += f' {Colors.blue}[Кофе ускорил в {ctx.player.mining_multiplier:.0f} раза]{Colors.reset}'
 
         items.append(msg)
 
