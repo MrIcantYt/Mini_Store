@@ -90,12 +90,12 @@ class Player:
     def add_coins(self, amount: int) -> str:
         final_amount = int(amount * self.balance_multiplier * self.level_multiplier)
         self.balance += final_amount
-        return f'💰 Вы получили {Colors.yellow}{fmt(final_amount)}{Colors.reset} монет ({Colors.yellow}{fmt(self.balance)}{Colors.reset} монет на счету)'
+        return f'💰 Вы получили {Colors.yellow}{fmt(final_amount)}{Colors.reset} монет (У вас {Colors.yellow}{fmt(self.balance)}{Colors.reset} монет на счету)'
 
     def add_xp(self, amount: int) -> str:
         final_amount = int(amount * self.xp_multiplier * self.level_multiplier)
         self.xp += final_amount
-        return f'📈 Вам начислено {Colors.yellow}{fmt(final_amount)}{Colors.reset} XP ({Colors.yellow}{fmt(self.xp)}{Colors.reset} XP на счету)\n{self.check_level_up()}'
+        return f'📈 Вам начислено {Colors.yellow}{fmt(final_amount)}{Colors.reset} XP (У вас {Colors.yellow}{fmt(self.xp)}{Colors.reset} XP на счету)\n{self.check_level_up()}'
 
     def add_coins_and_xp(self, *, coins: int, xp: int) -> str:
         return self.add_coins(coins) + '\n' + self.add_xp(xp)
