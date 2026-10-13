@@ -645,7 +645,8 @@ def reset(ctx: GameContext) -> None:
 
 def easter_egg(ctx: GameContext) -> None:
     if not ctx.player.secret_used:
-        print(f'Вы нашли пасхалку!\n{ctx.player.add_coins(100000000)}\n')
+        print(f'\n{Colors.green}Успешно! Вы нашли пасхалку!{Colors.reset}\n'
+              f'\n{ctx.player.add_coins(100000000)}\n')
 
         ctx.player.secret_used = True
 
