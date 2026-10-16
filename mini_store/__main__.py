@@ -35,7 +35,7 @@ def main():
 
     cls()
     while True:
-        print(' === Добро пожаловать в "Мини Магазин" === \n')
+        print('\n === Добро пожаловать в "Мини Магазин" === \n')
 
         options: list = [
             Option('Магазин', shop),
@@ -61,6 +61,8 @@ def main():
         if not section:
             continue
 
+        section(ctx)
+
         # Passive business
         if ctx.player.business:
             print(
@@ -68,8 +70,6 @@ def main():
             )
 
             ctx.player.balance += 25
-
-        section(ctx)
 
         ctx.db.save_player(ctx.player)
 
