@@ -1,6 +1,7 @@
 from colorama import init as colorama_init
 
 from mini_store.colors import Colors
+from mini_store.config import is_debug
 from mini_store.db import JsonDataBase
 from mini_store.exceptions import SignCheckError
 from mini_store.games import *
@@ -12,6 +13,7 @@ colorama_init()
 
 
 def init_game(player_id: int) -> GameContext:
+    cls()
     db = JsonDataBase()
     db.init_db()
 
@@ -33,9 +35,12 @@ def main():
     player_id = 1
     ctx = init_game(player_id)
 
-    cls()
+    if is_debug:
+        print(
+            f"{Colors.green}You're in debug mode. The save's sign check is disabled.{Colors.reset}\n"
+        )
     while True:
-        print('\n === Добро пожаловать в "Мини Магазин" === \n')
+        print('=== Добро пожаловать в "Мини Магазин" ===\n')
 
         options: list = [
             Option('Магазин', shop),
@@ -56,6 +61,10 @@ def main():
                     Option('Промокод', promocode, color=Colors.yellow),
                 ]
             )
+        if is_debug:
+            options.extend(
+                [Spacer(), Option('Debug menu', debug_menu, color=Colors.green)]
+            )
 
         section: SectionFunc | None = ask_option('Выберите пункт меню: ', options)
         if section is None:
@@ -66,7 +75,7 @@ def main():
         # Passive business
         if ctx.player.business:
             print(
-                f'\nНезнакомец: {Colors.blue_dark}Стартап принёс доход: {Colors.yellow}+25 монет{Colors.blue_dark}.{Colors.reset}'
+                f'\nНезнакомец: {Colors.blue_dark}Ваш стартап принёс доход {Colors.yellow}+25 монет{Colors.blue_dark}.{Colors.reset}'
             )
 
             ctx.player.balance += 25

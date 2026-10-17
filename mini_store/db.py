@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from os import path
 from warnings import deprecated
 
+from mini_store.config import is_debug
 from mini_store.player import Player
 from mini_store.sign import SignedJson
 
@@ -98,7 +99,7 @@ class SqliteDataBase(AbstractDataBase):
 class JsonDataBase(AbstractDataBase):
     def __init__(self, db_path: str = 'game.json') -> None:
         self.path = db_path
-        self.json = SignedJson(db_path)
+        self.json = SignedJson(db_path, check_sign=not is_debug)
 
     def init_db(self) -> None:
         if not path.exists(self.path):
@@ -106,7 +107,10 @@ class JsonDataBase(AbstractDataBase):
 
     def save_player(self, player: Player) -> None:
         data = self.json.load(False)
-        players = data['players']
+
+        if not (players := data.get('players')):
+            return
+
         record = player.to_dict()
 
         for i, p in enumerate(players):
@@ -123,11 +127,19 @@ class JsonDataBase(AbstractDataBase):
 
     def get_player_by_id(self, player_id: int) -> Player | None:
         data = self.json.load()
-        for p in data['players']:
+
+        if (players := data.get('players')) is None:
+            return
+
+        for p in players:
             if p['id'] == player_id:
                 return Player.from_dict(p)
-        return None
+        return
 
     def get_all_players(self) -> list[Player]:
         data = self.json.load()
-        return [Player.from_dict(p) for p in data['players']]
+        
+        if (players := data.get('players')) is None:
+            return []
+            
+        return [Player.from_dict(p) for p in players]

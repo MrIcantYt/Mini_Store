@@ -651,3 +651,40 @@ def easter_egg(ctx: GameContext) -> None:
 
     else:
         print(f'\n{Colors.red}Ошибка 666! Вы уже нашли пасхалку!{Colors.reset}\n')
+
+
+def debug_menu(ctx: GameContext) -> None:
+    cls()
+    print('=== Debug menu ===\n')
+    action_choose = ask_option(
+        'Выберите действие: ',
+        [
+            Option('Добавить монет', 1),
+            Option('Добавить опыта', 2),
+            Option('Установить уровень', 3),
+        ],
+        allow_cancel=True,
+    )
+
+    if action_choose is None:
+        cls()
+        return
+
+    cls()
+    match action_choose:
+        case 1:
+            amount = ask_number('Сколько монет добавить: ')
+            if amount is None:
+                return
+            print(ctx.player.add_coins(amount, False))
+        case 2:
+            amount = ask_number('Сколько опыта добавить: ')
+            if amount is None:
+                return
+            print(ctx.player.add_xp(amount, False))
+        case 3:
+            level: int | None = ask_number('Какой уровень установить: ')
+            if level is None:
+                return
+            ctx.player.lvl = level
+            print(f'Был установлен {level} уровень.')

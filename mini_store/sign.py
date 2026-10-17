@@ -10,25 +10,29 @@ SECRET: Final[bytes] = ('o@k!' + '9dNz' + 'H#SC' + 'vb4d' + '!3y*').encode()
 
 
 class SignedJson:
-    def __init__(self, file_path: str, secret: bytes = SECRET) -> None:
+    def __init__(
+        self, file_path: str, *, secret: bytes = SECRET, check_sign: bool = True
+    ) -> None:
         self.file_path = file_path
         self.secret = secret
+        self._need_check_sign = check_sign
 
-    def _sign(self, json_str: str) -> str:
+    def _get_save_sign(self, json_str: str) -> str:
+        """Return sha256 with salt sign for save."""
         return new(self.secret, json_str.encode('utf-8'), sha256).hexdigest()
 
-    def _sign_check_and_get_save(self, signed_save: str) -> str:
+    def _sign_check(self, sign: str, save: str) -> bool:
+        expected_sign = self._get_save_sign(save)
+        return compare_digest(sign, expected_sign)
+
+    def _split_sign_and_save(self, signed_save: str) -> list[str]:
         if '\n' not in signed_save:
             raise ValueError('Файл повреждён')
-        sign, save = signed_save.split('\n', 1)
-        expected_sign = self._sign(save)
-        if not compare_digest(sign, expected_sign):
-            raise SignCheckError()
-        return save
+        return signed_save.split('\n', 1)
 
     def dump(self, save: dict) -> None:
         json_save = dumps(save, separators=(',', ':'), ensure_ascii=False)
-        signed_save = self._sign(json_save) + '\n' + json_save
+        signed_save = self._get_save_sign(json_save) + '\n' + json_save
         with open(self.file_path, 'w', encoding='utf-8') as f:
             f.write(signed_save)
 
@@ -38,14 +42,14 @@ class SignedJson:
             return {}
 
         with open(self.file_path, 'r', encoding='utf-8') as f:
-            signed_save = f.read()
+            signed_save = f.read().strip()
 
-        if not signed_save.strip():
+        if not signed_save:
             return {}
 
-        if check_sign:
-            save = self._sign_check_and_get_save(signed_save)
-        else:
-            _, save = signed_save.split('\n', 1)
+        sign, save = self._split_sign_and_save(signed_save)
 
+        need_check = self._need_check_sign and force_check
+        if need_check and not self._sign_check(sign, save):
+            return {}
         return loads(save)
