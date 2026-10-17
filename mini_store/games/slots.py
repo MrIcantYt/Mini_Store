@@ -11,11 +11,11 @@ from .abstract import AbstractGame, Player
 
 class Slot(Enum):
     SEVEN = (
-        '7️⃣',
+        '7',
         30,
         240,
-        f'{Colors.green}7️⃣ ТРИ СЕМЁРКИ В РЯД! У вас выпали три СЕМЁРКИ В РЯД! 7️⃣{Colors.reset}',
-        f'{Colors.green}7️⃣ ЛЕГЕНДАРНЫЕ ТРИ СЕМЁРКИ В РЯД! 60x МНОЖИТЕЛЬ СРАБОТАЛ! 7️⃣{Colors.reset}',
+        f'{Colors.green}7 ТРИ СЕМЁРКИ В РЯД! У вас выпали три СЕМЁРКИ В РЯД! 7{Colors.reset}',
+        f'{Colors.green}7 ЛЕГЕНДАРНЫЕ ТРИ СЕМЁРКИ В РЯД! 60x МНОЖИТЕЛЬ СРАБОТАЛ! 7{Colors.reset}',
     )
     SACK_MONEY = (
         '💰',
@@ -124,19 +124,19 @@ class SlotsGame(AbstractGame):
 
         except ValueError:
             print(
-                f"\n{Colors.red}Ошибка! Введите корректное число или слово 'all'/'все'.{Colors.reset}\n"
+                f"\n{Colors.red}Ошибка! Введите корректное число или слово 'all'/'все'.{Colors.reset}"
             )
             return
 
         if money_player <= 0:
             print(
-                f'\n{Colors.red}Ошибка! Ставка {fmt(self._player.balance)} монет невозможна! Нельзя играть на 0 или меньше.{Colors.reset}\n'
+                f'\n{Colors.red}Ошибка! Ставка {fmt(self._player.balance)} монет невозможна! Нельзя играть на 0 или меньше.{Colors.reset}'
             )
             return
 
         elif money_player > self._player.balance:
             print(
-                f'\n{Colors.red}Ошибка! Нельзя вводить ставку больше своего баланса! {Colors.reset}\n'
+                f'\n{Colors.red}Ошибка! Нельзя вводить ставку больше своего баланса! {Colors.reset}'
             )
             return
 
@@ -175,7 +175,7 @@ class SlotsGame(AbstractGame):
 
             print(
                 msg,
-                f'💰 Вы выиграли {Colors.yellow}{fmt(win_coins)}{Colors.reset} монет и получили {Colors.yellow}{fmt(win_xp)}{Colors.reset} XP!\n',
+                f'\n💰 Вы выиграли {Colors.yellow}{fmt(win_coins)}{Colors.reset} монет и получили {Colors.yellow}{fmt(win_xp)}{Colors.reset} XP!',
             )
 
             self._player.balance += win_coins
@@ -186,12 +186,12 @@ class SlotsGame(AbstractGame):
         else:
             if self._is_vip:
                 print(
-                    f'{Colors.red}💥 КРАХ ХАЙРОЛЛЕРА! Слот заблокирован. С вашего баланса списан ДВОЙНОЙ штраф за риск!{Colors.reset}\n'
+                    f'{Colors.red}💥 КРАХ ХАЙРОЛЛЕРА! Слот заблокирован. С вашего баланса списан ДВОЙНОЙ штраф за риск!{Colors.reset}'
                 )
 
                 self._player.balance -= money_player
 
             else:
                 print(
-                    '🔴 Увы, комбинация пустая. Вы потеряли свою ставку. Попробуйте еще раз!\n'
+                    '🔴 Увы, комбинация пустая. Вы потеряли свою ставку. Попробуйте еще раз!'
                 )

@@ -6,28 +6,31 @@ from mini_store.utils import *
 
 from .abstract import AbstractGame
 
+
 class RouttleGame(AbstractGame):
     def play(self) -> None:
         print(f"\n {Colors.yellow}== Игра: Рулетка Казино =={Colors.reset}\n")
 
         user_input = input(f"Введите вашу ставку или 'all'/'все' (Ваш баланс: {fmt(self._player.balance)}): ").strip().lower()
 
+        print()
+
         if user_input == "all" or user_input == "все":
             bet = self._player.balance
         
         else:
             if not user_input.isdigit():
-                print(f"\n{Colors.red}Ошибка! Введите корректное число или слово 'all'/'все'.{Colors.reset}\n")
+                print(f"\n{Colors.red}Ошибка! Введите корректное число или слово 'all'/'все'.{Colors.reset}")
                 return
         
             bet = int(user_input)
 
         if bet <= 0:
-            print(f"\n{Colors.red}Ошибка! Ставка {fmt(bet)} монет невозможна! Нельзя играть на 0 или меньше.{Colors.reset}\n")
+            print(f"\n{Colors.red}Ошибка! Ставка {fmt(bet)} монет невозможна! Нельзя играть на 0 или меньше.{Colors.reset}")
             return
         
         elif bet > self._player.balance:
-            print(f"\n{Colors.red}Ошибка! Нельзя вводить ставку больше своего баланса!{Colors.reset}\n")
+            print(f"\n{Colors.red}Ошибка! Нельзя вводить ставку больше своего баланса!{Colors.reset}")
             return
 
         bet_option = ask_option('Выберите тип ставки: ', [
@@ -38,7 +41,7 @@ class RouttleGame(AbstractGame):
 
         self._player.balance -= bet
 
-        print(f"\n| 🎰 СТАВКА ПРИНЯТА. КОЛЕСО РУЛЕТКИ ЗАПУЩЕНО... |")
+        print("\n| 🎰 СТАВКА ПРИНЯТА. КОЛЕСО РУЛЕТКИ ЗАПУЩЕНО... |")
         time.sleep(0.5)
         print(" [ . ]", end="", flush=True)
         time.sleep(0.5)
@@ -60,11 +63,11 @@ class RouttleGame(AbstractGame):
                 
                 else: 
                     winning_color = "красное" if wheel_result % 2 == 0 else "черное"
-        
+
         else:
             if wheel_result == 0:
                 winning_color = "зеро"
-        
+            
             else:
                 winning_color = "красное" if wheel_result % 2 == 0 else "черное"
 
@@ -95,6 +98,6 @@ class RouttleGame(AbstractGame):
             print(self._player.add_coins_and_xp(coins=reward_coins, xp=reward_xp))
 
         else:
-            print(f"\n{Colors.red}🔴 Увы, ставка не сыграла. Незнакомец забирает монеты!{Colors.reset}\n")
+            print(f"\n{Colors.red}🔴 Увы, ставка не сыграла. Незнакомец забирает монеты!{Colors.reset}")
 
         return
