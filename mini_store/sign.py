@@ -39,7 +39,7 @@ class SignedJson:
     def load(self, force_check: bool = True) -> dict[str, Any]:
         """Load save from file with checking sign if `self._check_sign` and `force_check`"""
         if not path.exists(self.file_path):
-            return {}
+            raise FileNotFoundError()
 
         with open(self.file_path, 'r', encoding='utf-8') as f:
             signed_save = f.read().strip()
@@ -51,5 +51,5 @@ class SignedJson:
 
         need_check = self._need_check_sign and force_check
         if need_check and not self._sign_check(sign, save):
-            return {}
+            raise SignCheckError()
         return loads(save)

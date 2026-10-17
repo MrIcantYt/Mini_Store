@@ -19,6 +19,11 @@ def init_game(player_id: int) -> GameContext:
 
     try:
         player = db.get_player_by_id(player_id)
+    except FileNotFoundError:
+        print(
+            f'\n{Colors.red}Файл сохранения не был найден. Ваш прогресс сброшен!{Colors.reset}'
+        )
+        player = None
     except SignCheckError as e:
         print(f'\n{Colors.red}{e.message}. Ваш прогресс сброшен!{Colors.reset}')
         player = None
