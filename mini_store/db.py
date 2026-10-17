@@ -138,8 +138,8 @@ class JsonDataBase(AbstractDataBase):
 
     def get_all_players(self) -> list[Player]:
         data = self.json.load()
-        
+
         if (players := data.get('players')) is None:
             return []
-            
+
         return [Player.from_dict(p) for p in players]

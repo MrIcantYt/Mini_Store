@@ -87,22 +87,25 @@ class Player:
     def level_multiplier(self) -> float:
         return 1.0 + (self.lvl - 1) * 0.1
 
-    def add_coins(self, amount: int) -> str:
-        final_amount = int(amount * self.balance_multiplier * self.level_multiplier)
+    def add_coins(self, amount: int, apply_multipliers: bool = True) -> str:
+        multiplier = self.balance_multiplier * self.level_multiplier
+        final_amount = int(amount * multiplier) if apply_multipliers else amount
         self.balance += final_amount
+
         return f'💰 Вы получили {Colors.yellow}{fmt(final_amount)}{Colors.reset} монет (У вас {Colors.yellow}{fmt(self.balance)}{Colors.reset} монет на счету)'
 
-    def add_xp(self, amount: int) -> str:
-        final_amount = int(amount * self.xp_multiplier * self.level_multiplier)
+    def add_xp(self, amount: int, apply_multipliers: bool = True) -> str:
+        multiplier = self.xp_multiplier * self.level_multiplier
+        final_amount = int(amount * multiplier) if apply_multipliers else amount
         self.xp += final_amount
 
         level_msg = self.check_level_up()
         suffix = f'\n{level_msg}' if level_msg else ''
 
-        return f'📈 Вам начислено {Colors.yellow}{fmt(final_amount)}{Colors.reset} XP (У вас {Colors.yellow}{fmt(self.xp)}{Colors.reset} XP на счету){suffix}'
+        return f'{suffix}\n📈 Вам начислено {Colors.yellow}{fmt(final_amount)}{Colors.reset} XP (У вас {Colors.yellow}{fmt(self.xp)}{Colors.reset} XP на счету)'
 
     def add_coins_and_xp(self, *, coins: int, xp: int) -> str:
-        return self.add_coins(coins) + '\n' + self.add_xp(xp)
+        return self.add_xp(xp) + '\n' + self.add_coins(coins)
 
     def check_level_up(self) -> str | None:
         """Checks for and applies any pending level-ups.
@@ -131,10 +134,10 @@ class Player:
             return (
                 f'{Colors.yellow}⭐ Вы достигли МАКСИМАЛЬНОГО {MAX_LEVEL} уровня!\n'
                 f'{fmt(xp_converted)} XP были конвертированы в '
-                f'+{fmt(gold)} монет!{Colors.reset}\n'
+                f'+{fmt(gold)} монет!{Colors.reset}'
             )
 
-        return f'{Colors.green}🎉 ПОЗДРАВЛЯЕМ! Вы достигли {self.lvl} уровня! 🎉{Colors.reset}\n'
+        return f'{Colors.green}🎉 ПОЗДРАВЛЯЕМ! Вы достигли {self.lvl} уровня! 🎉{Colors.reset}'
 
     def _convert_xp_to_gold(self) -> Converted:
         """Converts accumulated XP into gold at the maximum level.
