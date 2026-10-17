@@ -72,15 +72,14 @@ class GuessNumberGame(AbstractGame):
                     print(
                         f'\n🎉 {Colors.green}Поздравляю! Вы победили! {Colors.reset}',
                         self._player.add_coins_and_xp(coins=reward, xp=reward),
-                        '',
-                        sep='\n',
+                        sep='\n'
                     )
 
                     return
 
                 elif life == 0:
                     print(
-                        f'\n{Colors.red}Вы програли! Загаданное число было: {guess_number}. {Colors.reset}\n'
+                        f'\n{Colors.red}Вы програли! Загаданное число было: {guess_number}. {Colors.reset}'
                     )
                     return
 
@@ -93,6 +92,6 @@ class GuessNumberGame(AbstractGame):
             return
 
         except (ValueError, TypeError):
-            print(f'\n{Colors.red}Ошибка! Введите корректное число. {Colors.reset}\n')
+            print(f'\n{Colors.red}Ошибка! Введите корректное число. {Colors.reset}')
 
             return
