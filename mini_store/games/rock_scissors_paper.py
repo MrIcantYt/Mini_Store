@@ -10,6 +10,8 @@ class RockScissorsPaperGame(AbstractGame):
     def play(self) -> Any:
         print(f'\n {Colors.yellow}== Игра: Камень, ножницы, бумага == {Colors.reset}\n')
 
+        ticket = self._player.lucky_ticket
+
         variants = ['камень', 'ножницы', 'бумага']
 
         life = 4 if self._player.lucky_amulet else 3
@@ -37,7 +39,7 @@ class RockScissorsPaperGame(AbstractGame):
                 is_win = luck <= chance
 
                 reward_coins = 50 if is_win else 25
-                reward_xp = 20 * self._player.xp_multiplier
+                reward_xp = self._player.xp_multiplier
 
                 if is_win:
                     reward_xp *= 2
@@ -59,8 +61,8 @@ class RockScissorsPaperGame(AbstractGame):
             else:
                 life -= 1
 
-                if self._player.lucky_ticket:
-                    self._player.lucky_ticket = False
+                if ticket:
+                    ticket = False
                     life += 1
 
                     print(
