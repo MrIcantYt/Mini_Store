@@ -36,19 +36,19 @@ class BlackjackGame(AbstractGame):
 
         except ValueError:
             print(
-                f"\n{Colors.red}Ошибка! Введите корректное число или слово 'all'/'все'.{Colors.reset}\n"
+                f"\n{Colors.red}Ошибка! Введите корректное число или слово 'all'/'все'.{Colors.reset}"
             )
             return
 
         if money_player <= 0:
             print(
-                f'\n{Colors.red}Ошибка! Ставка {fmt(self._player.balance)} монет невозможна! Нельзя играть на 0 или меньше.{Colors.reset}\n'
+                f'\n{Colors.red}Ошибка! Ставка {fmt(self._player.balance)} монет невозможна! Нельзя играть на 0 или меньше.{Colors.reset}'
             )
             return
 
         elif money_player > self._player.balance:
             print(
-                f'\n{Colors.red}Ошибка! Нельзя вводить ставку больше своего баланса!{Colors.reset}\n'
+                f'\n{Colors.red}Ошибка! Нельзя вводить ставку больше своего баланса!{Colors.reset}'
             )
             return
 
@@ -72,15 +72,11 @@ class BlackjackGame(AbstractGame):
                 random_cart = random.choice(cards)
                 player_score += random_cart
 
-                print(f'Вы вытянули карту: {Colors.yellow}{random_cart}{Colors.reset}')
+                print(f'\nВы вытянули карту: {Colors.yellow}{random_cart}{Colors.reset}')
 
                 if player_score > 21:
-                    print(
-                        f'\nУ вас на руках: {Colors.red}{player_score}{Colors.reset} очков'
-                    )
-                    print(
-                        f'\n{Colors.red}💥 Перебор! Вы проиграли свою ставку!{Colors.reset}\n'
-                    )
+                    print(f'\nУ вас на руках: {Colors.red}{player_score}{Colors.reset} очков')
+                    print(f'\n{Colors.red}💥 Перебор! Вы проиграли свою ставку!{Colors.reset}')
 
                     player_overflow = True
                     break
@@ -110,9 +106,7 @@ class BlackjackGame(AbstractGame):
             bot_card = random.choice(cards)
             bot_score += bot_card
 
-            print(
-                f'🤖 Бот вытянул карту: {Colors.yellow}{bot_card}{Colors.reset} (Всего у бота: {bot_score})'
-            )
+            print(f'🤖 Бот вытянул карту: {Colors.yellow}{bot_card}{Colors.reset} (Всего у бота: {bot_score})')
 
             sleep(0.6)
 
@@ -132,30 +126,20 @@ class BlackjackGame(AbstractGame):
             self._player.xp += reward_xp
 
             if bot_score > 21:
-                print(
-                    f'\n🎉 {Colors.green}Бот перебрал ({bot_score} очков)! Вы победили!{Colors.reset}'
-                )
+                print(f'\n🎉 {Colors.green}Бот перебрал ({bot_score} очков)! Вы победили!{Colors.reset}')
 
             else:
-                print(
-                    f'\n🎉 {Colors.green}Поздравляю! У вас больше очков. Вы победили дилера!{Colors.reset}'
-                )
+                print(f'\n🎉 {Colors.green}Поздравляю! У вас больше очков. Вы победили дилера!{Colors.reset}')
 
-            print(
-                f'💰 Вы получили {Colors.yellow}{fmt(reward_coins)}{Colors.reset} монет (Множитель уровня: {Colors.yellow}{level_multiplier:.1f}x{Colors.reset})!'
-            )
-            print(f'📈 Вам начислено {Colors.yellow}{fmt(reward_xp)}{Colors.reset} XP!\n')
+            print(f'💰 Вы получили {Colors.yellow}{fmt(reward_coins)}{Colors.reset} монет (Множитель уровня: {Colors.yellow}{level_multiplier:.1f}x{Colors.reset})!')
+            print(f'📈 Вам начислено {Colors.yellow}{fmt(reward_xp)}{Colors.reset} XP!')
 
         elif player_score == bot_score:
             self._player.balance += money_player
 
-            print(
-                f'\n{Colors.yellow}🤝 Ничья! Очков поровну ({player_score} vs {bot_score}). Ставка возвращена на баланс.{Colors.reset}\n'
-            )
+            print(f'\n{Colors.yellow}🤝 Ничья! Очков поровну ({player_score} vs {bot_score}). Ставка возвращена на баланс.{Colors.reset}')
 
         else:
-            print(
-                f'\n{Colors.red}🔴 У дилера больше очков ({bot_score}). Вы проиграли свою ставку!{Colors.reset}\n'
-            )
+            print(f'\n{Colors.red}🔴 У дилера больше очков ({bot_score}). Вы проиграли свою ставку!{Colors.reset}')
 
         return
