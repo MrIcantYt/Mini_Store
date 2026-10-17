@@ -33,6 +33,8 @@ class GuessNumberGame(AbstractGame):
     def play(self):
         print(f'\n {Colors.yellow}== Игра: Угадай число == {Colors.reset}\n')
 
+        ticket = self._player.lucky_ticket
+
         try:
             level_choose = self._choose_level()
             to_range = TO_RANGE[level_choose]
@@ -49,8 +51,8 @@ class GuessNumberGame(AbstractGame):
                     )
                     continue
 
-                if self._player.lucky_ticket:
-                    self._player.lucky_ticket = False
+                if ticket:
+                    ticket = False
                     print(
                         f'\n🎫 {Colors.yellow}Счастливый тикет сработал и спас вашу жизнь!{Colors.reset}'
                     )
