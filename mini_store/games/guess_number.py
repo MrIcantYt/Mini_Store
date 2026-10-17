@@ -74,7 +74,7 @@ class GuessNumberGame(AbstractGame):
                     print(
                         f'\n🎉 {Colors.green}Поздравляю! Вы победили! {Colors.reset}',
                         self._player.add_coins_and_xp(coins=reward, xp=reward),
-                        sep='\n'
+                        sep='\n',
                     )
 
                     return
