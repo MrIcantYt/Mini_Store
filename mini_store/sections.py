@@ -446,13 +446,13 @@ def stranger(ctx: GameContext) -> None:
             ctx.player.quest_id = 2
 
             print(
-                f'\n{Colors.green}🎉 Квест выполнен! Награда: +150 XP. Открыто новое задание!{Colors.reset}\n'
+                f'\n{Colors.green}🎉 Квест выполнен! Награда: +150 XP. Открыто новое задание!{Colors.reset}'
             )
 
             ctx.player.add_xp(150)
 
         else:
-            print(f'\n{Colors.red}Задание не выполнено. Копи монеты.{Colors.reset}\n')
+            print(f'\n{Colors.red}Задание не выполнено. Копи монеты.{Colors.reset}')
 
         time.sleep(3)
 
@@ -467,14 +467,14 @@ def stranger(ctx: GameContext) -> None:
             ctx.player.quest_id = 3
 
             print(
-                f'\n{Colors.green}🎉 Квест выполнен! Награда: +1.000 монет. Открыто новое задание!{Colors.reset}\n'
+                f'\n{Colors.green}🎉 Квест выполнен! Награда: +1.000 монет. Открыто новое задание!{Colors.reset}'
             )
 
             ctx.player.add_coins(1000)
 
         else:
             print(
-                f'\n{Colors.red}Задание не выполнено. Улучши ферму в Каталоге до 3 лвл.{Colors.reset}\n'
+                f'\n{Colors.red}Задание не выполнено. Улучши ферму в Каталоге до 3 лвл.{Colors.reset}'
             )
 
         time.sleep(3)
@@ -491,21 +491,21 @@ def stranger(ctx: GameContext) -> None:
             ctx.player.quest_progress = 0
 
             print(
-                f'\n{Colors.green}🎉 Все задания Незнакомца выполнены! Награда: +500 монет и +300 XP!{Colors.reset}\n'
+                f'\n{Colors.green}🎉 Все задания Незнакомца выполнены! Награда: +500 монет и +300 XP!{Colors.reset}'
             )
 
             ctx.player.add_coins_and_xp(coins=500, xp=300)
 
         else:
             print(
-                f'\n{Colors.red}Задание выполняется в казино (Пункт 2 -> Игра 3).{Colors.reset}\n'
+                f'\n{Colors.red}Задание выполняется в казино (Пункт 2 -> Игра 3).{Colors.reset}'
             )
 
         time.sleep(3)
 
     else:
         print(
-            f'{Colors.yellow}Незнакомец: Контракты закончились. Ты выполнил всё, что я просил. Жди обновлений!{Colors.reset}\n'
+            f'{Colors.yellow}Незнакомец: Контракты закончились. Ты выполнил всё, что я просил. Жди обновлений!{Colors.reset}'
         )
 
         time.sleep(3)
@@ -520,14 +520,14 @@ def promocode(ctx: GameContext) -> None:
 
             print(
                 f'\n🎉 {Colors.green}Успешно, промокод был активирован!{Colors.reset}'
-                f'\n{ctx.player.add_coins_and_xp(coins=50, xp=30)}\n'
+                f'\n{ctx.player.add_coins_and_xp(coins=50, xp=30)}'
             )
 
         else:
-            print(f'\n{Colors.red}Промокод не верен! {Colors.reset}\n')
+            print(f'\n{Colors.red}Промокод не верен! {Colors.reset}')
 
     else:
-        print(f'\n{Colors.yellow}Промокод уже был введён!{Colors.reset}\n')
+        print(f'\n{Colors.yellow}Промокод уже был введён!{Colors.reset}')
 
 
 def game_exit(ctx: GameContext) -> None:
@@ -551,7 +551,7 @@ def reset(ctx: GameContext) -> None:
 def easter_egg(ctx: GameContext) -> None:
     if not ctx.player.secret_used:
         print(f'\n{Colors.green}Успешно! Вы нашли пасхалку!{Colors.reset}\n'
-              f'\n{ctx.player.add_coins(10000000000)}\n')
+              f'\n{ctx.player.add_coins(10000000000)}')
 
         ctx.player.secret_used = True
 
