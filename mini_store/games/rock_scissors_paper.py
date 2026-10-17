@@ -47,8 +47,8 @@ class RockScissorsPaperGame(AbstractGame):
                     )
 
                 print(
-                    f'🎉 {Colors.green}Поздравляю! Вы победили! {Colors.reset}'
-                    f'{self._player.add_coins_and_xp(coins=reward_coins, xp=reward_xp)}\n'
+                    f'🎉 {Colors.green}Поздравляю! Вы победили! {Colors.reset}\n'
+                    f'{self._player.add_coins_and_xp(coins=reward_coins, xp=reward_xp)}'
                 )
 
                 return
@@ -71,7 +71,7 @@ class RockScissorsPaperGame(AbstractGame):
 
                 if life == 0:
                     print(
-                        f'{Colors.red}Вы полностью проиграли в этой игре! {Colors.reset}\n'
+                        f'{Colors.red}Вы полностью проиграли в этой игре! {Colors.reset}'
                     )
 
         return
