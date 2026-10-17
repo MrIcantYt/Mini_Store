@@ -70,7 +70,7 @@ class Slot(Enum):
         return self.symbol
 
     @classmethod
-    def from_symbol(cls, symbol: str) -> 'Slot | None':
+    def from_symbol(cls, symbol: str) -> Slot | None:
         return next((s for s in cls if s.symbol == symbol), None)
 
 
