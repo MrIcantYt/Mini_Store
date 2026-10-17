@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from dataclasses import dataclass
 
 from mini_store.colors import Colors
@@ -36,6 +37,9 @@ class Spacer:
     """A spacer that adds blank lines to the menu output."""
 
     lines: int = 1
+
+
+type OptionLike[T] = Option[T] | HiddenOption[T] | Spacer
 
 
 def ask_number(
@@ -103,7 +107,7 @@ def ask_number(
 
 def ask_option[T](
     prompt: str,
-    options: list[Option[T] | HiddenOption[T] | Spacer],
+    options: Sequence[OptionLike[T]],
     *,
     allow_cancel: bool = False,
     cancel_on: str = 'q',

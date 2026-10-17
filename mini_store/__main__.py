@@ -58,7 +58,7 @@ def main():
             )
 
         section: SectionFunc | None = ask_option('Выберите пункт меню: ', options)
-        if not section:
+        if section is None:
             continue
 
         section(ctx)

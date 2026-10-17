@@ -2,7 +2,7 @@ from hashlib import sha256
 from hmac import compare_digest, new
 from json import dumps, loads
 from os import path
-from typing import Final
+from typing import Any, Final
 
 from mini_store.exceptions import SignCheckError
 
@@ -32,7 +32,8 @@ class SignedJson:
         with open(self.file_path, 'w', encoding='utf-8') as f:
             f.write(signed_save)
 
-    def load(self, check_sign: bool = True) -> dict:
+    def load(self, force_check: bool = True) -> dict[str, Any]:
+        """Load save from file with checking sign if `self._check_sign` and `force_check`"""
         if not path.exists(self.file_path):
             return {}
 

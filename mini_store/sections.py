@@ -65,7 +65,7 @@ def shop(ctx: GameContext) -> None:
         cancel_on='3',
     )
 
-    if not user_action:
+    if user_action is None:
         return
 
     if user_action == 1:
