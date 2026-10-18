@@ -11,9 +11,7 @@ class RockScissorsPaperGame(AbstractGame):
         print(f'\n {Colors.yellow}== Игра: Камень, ножницы, бумага == {Colors.reset}\n')
 
         ticket = self._player.lucky_ticket
-
         variants = ['камень', 'ножницы', 'бумага']
-
         life = 4 if self._player.lucky_amulet else 3
 
         while life > 0:
@@ -38,11 +36,10 @@ class RockScissorsPaperGame(AbstractGame):
                 chance = 35 if self._player.potion_luck else 15
                 is_win = luck <= chance
 
-                reward_coins = 50 if is_win else 25
-                reward_xp = self._player.xp_multiplier
+                reward = 25
 
                 if is_win:
-                    reward_xp *= 2
+                    reward *= 2
 
                     print(
                         '💥 КРИТИЧЕСКИЙ УДАР! Вы разнесли систему в пух и прах! Награда умножена!\n'
@@ -50,7 +47,7 @@ class RockScissorsPaperGame(AbstractGame):
 
                 print(
                     f'🎉 {Colors.green}Поздравляю! Вы победили! {Colors.reset}\n'
-                    f'{self._player.add_coins_and_xp(coins=reward_coins, xp=reward_xp)}'
+                    f'{self._player.add_coins_and_xp(coins=reward, xp=reward)}'
                 )
 
                 return
