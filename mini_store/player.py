@@ -48,6 +48,8 @@ class Player:
     quest_id: int = 1
     quest_progress: int = 0
     rebirths: int = 0
+    bank_deposit: int = 0
+    bank_turns: int = 0
 
     def to_row(self) -> dict[str, object]:
         data = self.to_dict()
