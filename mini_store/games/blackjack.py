@@ -17,9 +17,26 @@ class BlackjackGame(AbstractGame):
 
         cards: tuple[int, ...] = (2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11)
 
+        if self._player.bank_deposit > 0:
+            self._player.bank_turns += 1
+            
+            if self._player.bank_turns >= 3:
+                bonus = int(self._player.bank_deposit * 0.10)
+                
+                self._player.bank_deposit += bonus
+                self._player.bank_turns = 0 
+                
+                print(f"{Colors.blue}📈 Инвестиции Незнакомца принесли плоды!{Colors.reset}")
+                print(f"Ваш вклад увеличился: {Colors.green}+{fmt(bonus)}{Colors.reset} монет (Новый баланс вклада: {Colors.yellow}{fmt(self._player.bank_deposit)}{Colors.reset} монет).\n")
+            
+            else:
+                turns_left = 3 - self._player.bank_turns
+                
+                print(f"⏳ До начисления процентов по вкладу осталось сыграть раундов: {turns_left} {"раз" if turns_left == 1 else "раза"}\n")
+
         user_input = (
             input(
-                f"Введите вашу ставку или 'all'/'все', чтобы поставить всё (Ваш баланс: {fmt(self._player.balance)}): "
+                f"Введите вашу ставку или 'all'/'все', чтобы поставить всё (Ваш баланс: {Colors.yellow}{fmt(self._player.balance)}{Colors.reset} монет): "
             )
             .strip()
             .lower()
@@ -92,7 +109,7 @@ class BlackjackGame(AbstractGame):
 
             else:
                 print(
-                    f'{Colors.red}У вас недостаточно монет для покупки страховки (нужно {fmt(insurance_cost)}).{Colors.reset}'
+                    f'{Colors.red}У вас недостаточно монет для покупки страховки (нужно {fmt(insurance_cost)} монет).{Colors.reset}'
                 )
 
         can_split = (player_card1 == player_card2) and (
