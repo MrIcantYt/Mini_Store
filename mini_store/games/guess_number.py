@@ -1,99 +1,84 @@
-import random
+from enum import Enum
+from random import randint
 
 from mini_store.colors import Colors
+from mini_store.utils import cls
+from mini_store.utils.ask_functions import Option, ask_number, ask_option
 
 from .abstract import AbstractGame
 
-TO_RANGE = {1: 15, 2: 25, 3: 50}
-WIN_BASE_REWARDS = {1: 25, 2: 50, 3: 75}
+
+class Levels(Enum):
+    easy = (15, 25, 'Лёгкая', Colors.green)
+    middle = (25, 50, 'Средняя', Colors.yellow)
+    hard = (50, 75, 'Сложная', Colors.red)
+
+    def __init__(self, to_range: int, win_base_reward: int, title: str, color: Colors):
+        self.to_range = to_range
+        self.win_reward = win_base_reward
+        self.title = title
+        self.color = color
 
 
 class GuessNumberGame(AbstractGame):
-    def _choose_level(self) -> int:
-        while True:
-            try:
-                level_choose = int(
-                    input(
-                        f'Выберите сложность: {Colors.green}\nЛёгкая (1){Colors.reset}\n{Colors.yellow}Средняя (2){Colors.reset}\n{Colors.red}Сложная (3){Colors.reset}\n: '
-                    )
-                )
-            except ValueError:
-                print(
-                    f'\n{Colors.red}Ошибка! Выбрана несуществующая сложность.{Colors.reset}\n'
-                )
-                continue
-
-            if level_choose not in TO_RANGE:
-                print(
-                    f'\n{Colors.red}Ошибка! Выбрана несуществующая сложность.{Colors.reset}\n'
-                )
-                continue
-            return level_choose
-
     def play(self):
-        print(f'\n {Colors.yellow}== Игра: Угадай число == {Colors.reset}\n')
+        cls()
+        print(f'{Colors.yellow}=== Игра: Угадай число ==={Colors.reset}\n')
 
-        ticket = self._player.lucky_ticket
+        level_choose = ask_option(
+            'Выберите сложность: ', [Option(l.title, l, color=l.color) for l in Levels]
+        )
 
-        try:
-            level_choose = self._choose_level()
-            to_range = TO_RANGE[level_choose]
-            guess_number = random.randint(1, to_range)
-
-            life = 4 if self._player.lucky_amulet else 3
-
-            while life > 0:
-                user_number = int(input(f'Введите число (От 1 до {to_range}): '))
-
-                if user_number < 1 or user_number > to_range:
-                    print(
-                        f'\n{Colors.red}Ошибка! Введите число в диапазоне от 1 до {to_range}.{Colors.reset}\n'
-                    )
-                    continue
-
-                if ticket:
-                    ticket = False
-                    print(
-                        f'\n🎫 {Colors.yellow}Счастливый тикет сработал и спас вашу жизнь!{Colors.reset}'
-                    )
-                else:
-                    life -= 1
-
-                if user_number == guess_number:
-                    luck = random.randint(1, 100)
-                    win_chance = 35 if self._player.potion_luck else 15
-                    is_win = luck <= win_chance
-                    reward = WIN_BASE_REWARDS[level_choose]
-
-                    if is_win:
-                        reward *= 2
-                        print(
-                            '\n💥 КРИТИЧЕСКИЙ УДАР! Вы разнесли систему в пух и прах! Награда умножена!'
-                        )
-
-                    print(
-                        f'\n🎉 {Colors.green}Поздравляю! Вы победили! {Colors.reset}',
-                        self._player.add_coins_and_xp(coins=reward, xp=reward),
-                        sep='\n',
-                    )
-
-                    return
-
-                elif life == 0:
-                    print(
-                        f'\n{Colors.red}Вы програли! Загаданное число было: {guess_number}. {Colors.reset}'
-                    )
-                    return
-
-                elif user_number > guess_number:
-                    print(f'\nЗагаданное число меньше! Осталось жизней: {life}\n')
-
-                elif user_number < guess_number:
-                    print(f'\nЗагаданное число больше! Осталось жизней: {life}\n')
-
+        if level_choose is None:
             return
 
-        except ValueError, TypeError:
-            print(f'\n{Colors.red}Ошибка! Введите корректное число. {Colors.reset}')
+        guess_number = randint(1, level_choose.to_range)
 
-            return
+        life = 3
+
+        if self._player.lucky_amulet:
+            life += 1
+            print(
+                f'\nТак как у вас имеется {Colors.yellow}счастливый билет{Colors.reset}, вам {Colors.yellow}+1{Colors.reset} жизнь.\n'
+            )
+
+        while life > 0:
+            user_number = ask_number(
+                f'Введите число (От 1 до {level_choose.to_range}): ',
+                max=level_choose.to_range,
+            )
+
+            if user_number is None:
+                return
+
+            life -= 1
+
+            if user_number == guess_number:
+                cls()
+                is_win = self._player.check_luck()
+                reward = level_choose.win_reward
+
+                if is_win:
+                    reward *= 2
+                    print(
+                        '\n💥 КРИТИЧЕСКИЙ УДАР! Вы разнесли систему в пух и прах! Награда умножена!'
+                    )
+
+                print(
+                    f'\n🎉 {Colors.green}Поздравляю! Вы победили! {Colors.reset}\n{self._player.add_coins_and_xp(coins=reward, xp=reward)}\n',
+                )
+
+                break
+
+            elif life == 0:
+                cls()
+                print(
+                    f'\n{Colors.red}Вы програли! Загаданное число было: {guess_number}.{Colors.reset}\n'
+                )
+
+                break
+
+            else:
+                print(
+                    f'\nЗагаданное число {"меньше" if user_number > guess_number else "больше"}! Осталось жизней: {life}\n'
+                )
