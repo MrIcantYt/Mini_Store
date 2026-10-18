@@ -19,13 +19,15 @@ def init_game(player_id: int) -> GameContext:
 
     try:
         player = db.get_player_by_id(player_id)
+    
     except FileNotFoundError:
-        print(
-            f'\n{Colors.red}Файл сохранения не был найден. Ваш прогресс сброшен!{Colors.reset}'
-        )
+        print(f'\n{Colors.red}Файл сохранения не был найден. Ваш прогресс сброшен!{Colors.reset}')
+        
         player = None
+    
     except SignCheckError as e:
         print(f'\n{Colors.red}{e.message}. Ваш прогресс сброшен!{Colors.reset}')
+        
         player = None
 
     if player is None:
@@ -41,9 +43,8 @@ def main():
     ctx = init_game(player_id)
 
     if is_debug:
-        print(
-            f"{Colors.green}You're in debug mode. The save's sign check is disabled.{Colors.reset}\n"
-        )
+        print(f"{Colors.green}You're in debug mode. The save's sign check is disabled.{Colors.reset}\n")
+    
     while True:
         print('=== Добро пожаловать в "Мини Магазин" ===\n')
 
@@ -53,6 +54,7 @@ def main():
             Option('Профиль', profile),
             Option('Майнинг ферма', mining),
             Option('Задания незнакомца', stranger),
+            Option('Банк', bank_menu),
             Option('Сброс', reset, color=Colors.red),
             Spacer(),
             Option('Выход', game_exit),
@@ -67,11 +69,10 @@ def main():
                 ]
             )
         if is_debug:
-            options.extend(
-                [Spacer(), Option('Debug menu', debug_menu, color=Colors.green)]
-            )
+            options.extend([Spacer(), Option('Debug menu', debug_menu, color=Colors.green)])
 
         section: SectionFunc | None = ask_option('Выберите пункт меню: ', options)
+        
         if section is None:
             continue
 
@@ -79,9 +80,7 @@ def main():
 
         # Passive business
         if ctx.player.business:
-            print(
-                f'\nНезнакомец: {Colors.blue_dark}Ваш стартап принёс доход {Colors.yellow}+25 монет{Colors.blue_dark}.{Colors.reset}'
-            )
+            print(f'\nНезнакомец: {Colors.blue_dark}Ваш стартап принёс доход {Colors.yellow}+25 монет{Colors.blue_dark}.{Colors.reset}\n')
 
             ctx.player.balance += 25
 
