@@ -4,6 +4,10 @@ from dataclasses import dataclass
 from mini_store.colors import Colors
 
 
+def ask_confirmation(prompt: str) -> bool:
+    return 'д' in input(prompt + '\n[Да/Нет]: ').lower()
+
+
 @dataclass(slots=True)
 class Option[T]:
     """A visible menu option, printed and numbered automatically.

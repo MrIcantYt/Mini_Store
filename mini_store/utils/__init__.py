@@ -13,7 +13,3 @@ def cls() -> None:
         run('cls', shell=True, check=False)
     else:
         run('clear', check=False)
-
-
-def confirm(prompt: str) -> bool:
-    return 'д' in input(prompt + '\n[Да/Нет]: ').lower()

@@ -91,7 +91,7 @@ def shop(ctx: GameContext) -> None:
                     )
                     return
 
-                if not confirm(
+                if not ask_confirmation(
                     f'\nУлучшение множителя монет обойдётся вам в {Colors.yellow}{fmt(upgrade_cost)} монет{Colors.reset}. Купить?'
                 ):
                     return
@@ -120,7 +120,7 @@ def shop(ctx: GameContext) -> None:
                     )
                     return
 
-                if not confirm(
+                if not ask_confirmation(
                     f'\nУлучшение множителя опыта обойдётся вам в {Colors.yellow}{fmt(upgrade_cost)} монет{Colors.reset}. Купить?'
                 ):
                     return
@@ -224,7 +224,7 @@ def shop(ctx: GameContext) -> None:
                     )
                     return
 
-                user_confirm = confirm(
+                user_confirm = ask_confirmation(
                     f'\nНезнакомец: {Colors.blue_dark}Хм... Кофе? Ты уверен? Это не обычный напиток. Его аромат способен разогнать до предела любую электронику... Точно берешь?{Colors.reset}'
                 )
 
@@ -624,7 +624,7 @@ def game_exit(ctx: GameContext) -> None:
 
 
 def reset(ctx: GameContext) -> None:
-    if not confirm(
+    if not ask_confirmation(
         f'\nНезнакомец: {Colors.blue_dark}Вы уверенны, что хотите сбросить весь свой прогресс?{Colors.reset}\n'
     ):
         return
@@ -689,55 +689,68 @@ def debug_menu(ctx: GameContext) -> None:
             ctx.player.lvl = level
             print(f'Был установлен {level} уровень.')
 
+
 def bank_menu(ctx: GameContext) -> None:
-    print(f"\n{Colors.blue}=== 🏦 Инвестиции Незнакомца ==={Colors.reset}")
-    print(f"\n{Colors.yellow}Правила{Colors.reset}: Сложный процент ({Colors.yellow}+10%{Colors.reset}) начисляется каждые 3 сыгранных раунда в Блекджек.")
+    print(f'\n{Colors.blue}=== 🏦 Инвестиции Незнакомца ==={Colors.reset}')
+    print(
+        f'\n{Colors.yellow}Правила{Colors.reset}: Сложный процент ({Colors.yellow}+10%{Colors.reset}) начисляется каждые 3 сыгранных раунда в Блекджек.'
+    )
 
     if ctx.player.bank_deposit > 0:
-        print(f"\nВаш текущий вклад: {Colors.yellow}{fmt(ctx.player.bank_deposit)}{Colors.reset} монет.")
+        print(
+            f'\nВаш текущий вклад: {Colors.yellow}{fmt(ctx.player.bank_deposit)}{Colors.reset} монет.'
+        )
 
     else:
-        print("\nУ вас пока нет активных вкладов.")
-        
-    print(f"\n1. Положить монеты на депозит (Ваш баланс: {Colors.yellow}{fmt(ctx.player.balance)}{Colors.reset} монет)")
-    print("2. Снять все деньги с депозита")
-    print("3. Назад")
-    
+        print('\nУ вас пока нет активных вкладов.')
+
+    print(
+        f'\n1. Положить монеты на депозит (Ваш баланс: {Colors.yellow}{fmt(ctx.player.balance)}{Colors.reset} монет)'
+    )
+    print('2. Снять все деньги с депозита')
+    print('3. Назад')
+
     try:
-        action = int(input("\nВыберите действие: "))
-    
+        action = int(input('\nВыберите действие: '))
+
     except ValueError:
         return
 
     if action == 1:
         try:
-            dep_input = input("\nВведите сумму для вклада или 'all'/'все': ").strip().lower()
-            
+            dep_input = (
+                input("\nВведите сумму для вклада или 'all'/'все': ").strip().lower()
+            )
+
             if dep_input in ('all', 'все'):
                 dep_amount = ctx.player.balance
             else:
                 dep_amount = int(dep_input)
-            
+
             if 0 < dep_amount <= ctx.player.balance:
                 ctx.player.balance -= dep_amount
                 ctx.player.bank_deposit += dep_amount
-            
-                print(f"\n{Colors.green}✅ Вы успешно инвестировали {fmt(dep_amount)} монет!{Colors.reset}")
+
+                print(
+                    f'\n{Colors.green}✅ Вы успешно инвестировали {fmt(dep_amount)} монет!{Colors.reset}'
+                )
             else:
-                print(f"\n{Colors.red}Ошибка! Некорректная сумма.{Colors.reset}")
-        
+                print(f'\n{Colors.red}Ошибка! Некорректная сумма.{Colors.reset}')
+
         except ValueError:
-            print(f"\n{Colors.red}Ошибка ввода.{Colors.reset}")
+            print(f'\n{Colors.red}Ошибка ввода.{Colors.reset}')
 
     elif action == 2:
         if ctx.player.bank_deposit > 0:
             withdrawn = ctx.player.bank_deposit
-            
+
             ctx.player.balance += withdrawn
             ctx.player.bank_deposit = 0
-            ctx.player.bank_turns = 0 
-            
-            print(f"\n{Colors.green}💰 Вы сняли весь свой вклад: {fmt(withdrawn)} монет!{Colors.reset}")
-        
+            ctx.player.bank_turns = 0
+
+            print(
+                f'\n{Colors.green}💰 Вы сняли весь свой вклад: {fmt(withdrawn)} монет!{Colors.reset}'
+            )
+
         else:
-            print(f"\n{Colors.red}У вас нет денег на депозите!{Colors.reset}")
+            print(f'\n{Colors.red}У вас нет денег на депозите!{Colors.reset}')
