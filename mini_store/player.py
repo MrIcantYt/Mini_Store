@@ -89,14 +89,14 @@ class Player:
 
     def add_coins(self, amount: int, apply_multipliers: bool = True) -> str:
         multiplier = self.balance_multiplier * self.level_multiplier
-        final_amount = int(amount * multiplier) if apply_multipliers else amount
+        final_amount = int(amount * multiplier if apply_multipliers else amount)
         self.balance += final_amount
 
         return f'💰 Вы получили {Colors.yellow}{fmt(final_amount)}{Colors.reset} монет (У вас {Colors.yellow}{fmt(self.balance)}{Colors.reset} монет на счету)'
 
     def add_xp(self, amount: int, apply_multipliers: bool = True) -> str:
         multiplier = self.xp_multiplier * self.level_multiplier
-        final_amount = int(amount * multiplier) if apply_multipliers else amount
+        final_amount = int(amount * multiplier if apply_multipliers else amount)
         self.xp += final_amount
 
         level_msg = self.check_level_up()
