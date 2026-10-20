@@ -2,6 +2,7 @@ import random
 import sys
 import time
 from collections.abc import Callable
+from datetime import date, datetime
 from typing import Final
 
 from mini_store.colors import Colors
@@ -43,7 +44,7 @@ def game(ctx: GameContext) -> None:
     if game_type is None:
         return
 
-    game: AbstractGame = game_type(ctx.player)
+    game: AbstractGame = game_type(ctx)
     game.play()
 
 
@@ -78,16 +79,14 @@ def shop(ctx: GameContext) -> None:
         match user_id_buy:
             case 1:
                 if ctx.player.balance_multiplier == 5:
-                    print(
-                        f'\n{Colors.yellow}Вы уже имеете максимальный уровень прокачки этого улучшения!{Colors.reset}'
-                    )
+                    print(f'\n{Colors.yellow}Вы уже имеете максимальный уровень прокачки этого улучшения!{Colors.reset}\n')
                     return
 
                 upgrade_cost = 100 * 2**ctx.player.balance_multiplier
 
                 if ctx.player.balance < upgrade_cost:
                     print(
-                        f'\n{Colors.red}Недостаточно монет! Нужно {fmt(upgrade_cost)} монет, а у вас {fmt(ctx.player.balance)} монет.{Colors.reset}'
+                        f'\n{Colors.red}Недостаточно монет! Нужно {fmt(upgrade_cost)} монет, а у вас {fmt(ctx.player.balance)} монет.{Colors.reset}\n'
                     )
                     return
 
@@ -100,7 +99,7 @@ def shop(ctx: GameContext) -> None:
                 ctx.player.balance_multiplier += 1
 
                 print(
-                    f'\n{Colors.green}Успешно! Списано {fmt(upgrade_cost)} монет. Ваш множитель монет {ctx.player.balance_multiplier}x{Colors.reset}'
+                    f'\n{Colors.green}Успешно! Списано {fmt(upgrade_cost)} монет. Ваш множитель монет {ctx.player.balance_multiplier}x{Colors.reset}\n'
                 )
 
                 time.sleep(3)
@@ -108,7 +107,7 @@ def shop(ctx: GameContext) -> None:
             case 2:
                 if ctx.player.xp_multiplier == 5:
                     print(
-                        f'\n{Colors.yellow}Вы уже имеете максимальный уровень прокачки этого улучшения!{Colors.reset}'
+                        f'\n{Colors.yellow}Вы уже имеете максимальный уровень прокачки этого улучшения!{Colors.reset}\n'
                     )
                     return
 
@@ -116,7 +115,7 @@ def shop(ctx: GameContext) -> None:
 
                 if ctx.player.balance < upgrade_cost:
                     print(
-                        f'\n{Colors.red}Недостаточно монет! Нужно {fmt(upgrade_cost)} монет, а у вас {fmt(ctx.player.balance)} монет.{Colors.reset}'
+                        f'\n{Colors.red}Недостаточно монет! Нужно {fmt(upgrade_cost)} монет, а у вас {fmt(ctx.player.balance)} монет.{Colors.reset}\n'
                     )
                     return
 
@@ -129,32 +128,32 @@ def shop(ctx: GameContext) -> None:
                 ctx.player.xp_multiplier += 1
 
                 print(
-                    f'\n{Colors.green}Успешно! Списано {fmt(upgrade_cost)} монет. Ваш множитель опыта {ctx.player.xp_multiplier}x{Colors.reset}'
+                    f'\n{Colors.green}Успешно! Списано {fmt(upgrade_cost)} монет. Ваш множитель опыта {ctx.player.xp_multiplier}x{Colors.reset}\n'
                 )
 
                 time.sleep(3)
 
             case 3:
                 if ctx.player.lucky_amulet:
-                    print(f'\n{Colors.yellow}Вы уже купили этот товар!{Colors.reset}')
+                    print(f'\n{Colors.yellow}Вы уже купили этот товар!{Colors.reset}\n')
 
                 elif ctx.player.balance >= 300:
                     ctx.player.balance -= 300
                     ctx.player.lucky_amulet = True
 
-                    print(
-                        f'\n{Colors.green}Успешно! Списано 300 монет, теперь у вас есть Счастливый Амулет (+1 жизнь)!{Colors.reset}'
-                    )
+                    cls()
+
+                    print(f'\n{Colors.green}Успешно! Списано 300 монет, теперь у вас есть Счастливый Амулет (+1 жизнь)!{Colors.reset}\n')
 
                 else:
                     print(
-                        f'\n{Colors.red}Недостаточно монет! Нужно 300, а у вас {ctx.player.balance}.{Colors.reset}'
+                        f'\n{Colors.red}Недостаточно монет! Нужно 300, а у вас {ctx.player.balance}.{Colors.reset}\n'
                     )
 
             case 4:
                 if ctx.player.mining_lvl >= 10:
                     print(
-                        f'\n{Colors.yellow}Вы уже купили Майнинг-ферму по максималке!{Colors.reset}'
+                        f'\n{Colors.yellow}Вы уже купили Майнинг-ферму по максималке!{Colors.reset}\n'
                     )
 
                 else:
@@ -171,56 +170,56 @@ def shop(ctx: GameContext) -> None:
                         print(
                             f'\n{Colors.green}Успешно! Списано {fmt(result_mining_lvl_mon)} монет, теперь у вас есть Майнинг ферма (лвл: {ctx.player.mining_lvl})!'
                             f'Следующая прокачка будет стоить: {f"{fmt(300 * (ctx.player.mining_lvl + 1))} монет." if ctx.player.mining_lvl != 10 else "MAX прокачка."}'
-                            f'\nУ вас на балансе: {fmt(ctx.player.balance)} монет.{Colors.reset}'
+                            f'\nУ вас на балансе: {fmt(ctx.player.balance)} монет.{Colors.reset}\n'
                         )
 
                     else:
                         print(
-                            f'\n{Colors.red}Недостаточно монет! Нужно {fmt(result_mining_lvl_mon)}, а у вас {fmt(ctx.player.balance)}.{Colors.reset}'
+                            f'\n{Colors.red}Недостаточно монет! Нужно {fmt(result_mining_lvl_mon)}, а у вас {fmt(ctx.player.balance)}.{Colors.reset}\n'
                         )
 
             case 5:
                 if ctx.player.potion_luck:
-                    print(f'\n{Colors.yellow}Вы уже купили этот товар!{Colors.reset}')
+                    print(f'\n{Colors.yellow}Вы уже купили этот товар!{Colors.reset}\n')
 
                 elif ctx.player.balance >= 500:
                     ctx.player.balance -= 500
                     ctx.player.potion_luck = True
 
                     print(
-                        f'\n{Colors.green}Успешно! Списано 500 монет, теперь у вас есть Счастливое Зелье (Больше шансов в Казино)!{Colors.reset}'
+                        f'\n{Colors.green}Успешно! Списано 500 монет, теперь у вас есть Счастливое Зелье (Больше шансов в Казино)!{Colors.reset}\n'
                     )
 
                 else:
                     print(
-                        f'\n{Colors.red}Недостаточно монет! Нужно 500, а у вас {ctx.player.balance}.{Colors.reset}'
+                        f'\n{Colors.red}Недостаточно монет! Нужно 500, а у вас {ctx.player.balance}.{Colors.reset}\n'
                     )
 
             case 6:
                 if ctx.player.lucky_ticket:
-                    print(f'\n{Colors.yellow}Вы уже купили этот товар!{Colors.reset}')
+                    print(f'\n{Colors.yellow}Вы уже купили этот товар!{Colors.reset}\n')
 
                 elif ctx.player.balance >= 400:
                     ctx.player.balance -= 400
                     ctx.player.lucky_ticket = True
 
                     print(
-                        f'\n{Colors.green}Успешно! Списано 400 монет, теперь у вас есть Счастливый Тикет (Не вычитается жизнь при первой попыткой)!{Colors.reset}'
+                        f'\n{Colors.green}Успешно! Списано 400 монет, теперь у вас есть Счастливый Тикет (Не вычитается жизнь при первой попыткой)!{Colors.reset}\n'
                     )
 
                 else:
                     print(
-                        f'\n{Colors.red}Недостаточно монет! Нужно 400, а у вас {ctx.player.balance}.{Colors.reset}'
+                        f'\n{Colors.red}Недостаточно монет! Нужно 400, а у вас {ctx.player.balance}.{Colors.reset}\n'
                     )
 
             case 7:
                 if ctx.player.mining_multiplier == 2:
-                    print(f'\n{Colors.yellow}Вы уже купили этот товар!{Colors.reset}')
+                    print(f'\n{Colors.yellow}Вы уже купили этот товар!{Colors.reset}\n')
                     return
 
                 if ctx.player.balance < 700:
                     print(
-                        f'\n{Colors.red}Недостаточно монет! Нужно 700, а у вас {ctx.player.balance}.{Colors.reset}'
+                        f'\n{Colors.red}Недостаточно монет! Нужно 700, а у вас {ctx.player.balance}.{Colors.reset}\n'
                     )
                     return
 
@@ -239,7 +238,7 @@ def shop(ctx: GameContext) -> None:
                 ctx.player.mining_multiplier = 2
 
                 print(
-                    f'\n{Colors.green}Успешно! Списано 700 монет, теперь у вас есть Кофе (Майнинг ускорен)!{Colors.reset}'
+                    f'\n{Colors.green}Успешно! Списано 700 монет, теперь у вас есть Кофе (Майнинг ускорен)!{Colors.reset}\n'
                 )
 
             case 8:
@@ -610,11 +609,11 @@ def promocode(ctx: GameContext) -> None:
 
         print(
             f'\n🎉 {Colors.green}Успешно, промокод был активирован!{Colors.reset}'
-            f'\n{ctx.player.add_coins_and_xp(coins=50, xp=30)}'
+            f'\n{ctx.player.add_coins_and_xp(coins=50, xp=30)}\n'
         )
 
     else:
-        print(f'\n{Colors.red}Промокод не верен! {Colors.reset}')
+        print(f'\n{Colors.red}Промокод не верен! {Colors.reset}\n')
 
 
 def game_exit(ctx: GameContext) -> None:
@@ -644,13 +643,13 @@ def easter_egg(ctx: GameContext) -> None:
     if not ctx.player.secret_used:
         print(
             f'\n{Colors.green}Успешно! Вы нашли пасхалку!{Colors.reset}\n'
-            f'\n{ctx.player.add_coins(10000000000)}'
+            f'\n{ctx.player.add_coins(10000000000)}\n'
         )
 
         ctx.player.secret_used = True
 
     else:
-        print(f'\n{Colors.red}Ошибка 666! Вы уже нашли пасхалку!{Colors.reset}')
+        print(f'\n{Colors.red}Ошибка 666! Вы уже нашли пасхалку!{Colors.reset}\n')
 
 
 def debug_menu(ctx: GameContext) -> None:
@@ -754,3 +753,62 @@ def bank_menu(ctx: GameContext) -> None:
 
         else:
             print(f'\n{Colors.red}У вас нет денег на депозите!{Colors.reset}')
+
+def merchant_contracts(ctx):
+    print(f"\n {Colors.yellow}== 📅 Ежедневные Контракты Торговца =={Colors.reset}\n")
+
+    player = ctx.player
+    daily = ctx.daily
+    today = date.today()  # noqa: DTZ011
+
+    now = datetime.now()  # noqa: DTZ005
+    midnight = datetime.combine(today, datetime.max.time())
+    time_left = midnight - now
+    hours, remainder = divmod(time_left.seconds, 3600)
+    minutes, _ = divmod(remainder, 60)
+    timer_str = f"{hours:2d}ч {minutes:02d}м"
+
+    available_contracts = [
+        {"text": "Сыграть {target} раундов в Блекджек", "min": 3, "max": 7, "reward_base": 150},
+        {"text": "Набрать ровно 21 очко {target} раз(а)", "min": 1, "max": 2, "reward_base": 300},
+        {"text": "Разделить карты (Сплит) хотя бы {target} раз", "min": 1, "max": 1, "reward_base": 250},
+    ]
+
+    if daily.last_update != today:
+        selected = random.choice(available_contracts)
+        target_value = random.randint(selected["min"], selected["max"])
+        
+        daily.contract = selected["text"].format(target=target_value)
+        daily.target = target_value
+        daily.progress = 0
+        daily.reward = target_value * selected["reward_base"]
+        daily.last_update = today
+        daily.completed = False
+        
+        print(f"{Colors.blue}🛒 Торговец обновил ассортимент контрактов на сегодня!{Colors.reset}\n")
+
+    print(f"🕒 Время до обновления контракта:{Colors.red}{timer_str}{Colors.reset}")
+    print(f"📜 Задание: {Colors.yellow}{daily.contract}{Colors.reset}")
+
+    if daily.completed:
+        print(f"📊 Прогресс: [{Colors.green}ВЫПОЛНЕНО{Colors.reset}] ({daily.progress}/{daily.target})")
+        print("🎉 Вы уже забрали награду за этот контракт!")
+
+    else:
+        print(f"📊 Прогресс: {Colors.blue}{daily.progress}/{daily.target}{Colors.reset}")
+        print(f"💰 Награда за выполнение: {Colors.yellow}{fmt(daily.reward)}{Colors.reset} монет")
+
+        if daily.progress >= daily.target:
+            print(f"\n{Colors.green}⭐ Контракт выполнен! Торговец готов заплатить. {Colors.reset}")
+
+            if ask_confirmation("\nЗабрать награду?"):
+                player.balance += daily.reward
+                daily.completed = True
+
+                print(f"\n💰 {Colors.green}Вы получили {fmt(daily.reward)} монет от Торговца!{Colors.reset}")
+
+        else:
+            print("\nВозвращайтесь за наградой, когда выполните условия контракта.")
+
+    input("\nНажмите Enter, чтобы вернуться в меню...")
+    print()
