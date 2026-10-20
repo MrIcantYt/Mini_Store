@@ -45,7 +45,7 @@ class RawTerminal:
 
     def __exit__(self, *exc) -> None:
         if self._fd is not None and self._old_settings is not None:
-            termios.tcsetattr(self._fd, termios.TCSADRAIN, self._old_settings)
+            termios.tcsetattr(self._fd, termios.TCSADRAIN, self._old_settings) # type: ignore
 
 
 def is_pressed(key: str, *, interval: float = 0.0) -> bool:
