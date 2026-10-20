@@ -2,17 +2,26 @@ import random
 from typing import Any
 
 from mini_store.colors import Colors
+from mini_store.context import GameContext
 
 from .abstract import AbstractGame
 
 
 class RockScissorsPaperGame(AbstractGame):
+    def __init__(self, ctx: GameContext):
+        self._ctx = ctx
+        self._player = ctx.player
+
     def play(self) -> Any:
         print(f'\n {Colors.yellow}== Игра: Камень, ножницы, бумага == {Colors.reset}\n')
 
         ticket = self._player.lucky_ticket
         variants = ['камень', 'ножницы', 'бумага']
         life = 4 if self._player.lucky_amulet else 3
+
+        if ticket:
+            life += 1
+            print(f'Так как у вас имеется {Colors.yellow}счастливый билет{Colors.reset}, вам {Colors.yellow}+1{Colors.reset} жизнь.\n')
 
         while life > 0:
             user_choice = input('Выберите (Камень, Ножницы, Бумага): ').lower().strip()
@@ -47,7 +56,7 @@ class RockScissorsPaperGame(AbstractGame):
 
                 print(
                     f'🎉 {Colors.green}Поздравляю! Вы победили! {Colors.reset}\n'
-                    f'{self._player.add_coins_and_xp(coins=reward, xp=reward)}'
+                    f'{self._player.add_coins_and_xp(coins=reward, xp=reward)}\n'
                 )
 
                 return
@@ -57,14 +66,6 @@ class RockScissorsPaperGame(AbstractGame):
 
             else:
                 life -= 1
-
-                if ticket:
-                    ticket = False
-                    life += 1
-
-                    print(
-                        f'🎫 {Colors.yellow}Счастливый тикет сработал и спас вашу жизнь!{Colors.reset}\n'
-                    )
 
                 print(f'Вы не угадали! У вас осталось {life} жизни!\n')
 
