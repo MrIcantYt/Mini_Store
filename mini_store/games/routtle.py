@@ -2,18 +2,24 @@ import random
 import time
 
 from mini_store.colors import Colors
+from mini_store.context import GameContext
 from mini_store.utils import *
 
 from .abstract import AbstractGame
 
 
 class RouttleGame(AbstractGame):
+    def __init__(self, ctx: GameContext):
+        super().__init__(ctx.player)
+        self._ctx = ctx
+        self._player = ctx.player
+
     def play(self) -> None:
         print(f'\n {Colors.yellow}== Игра: Рулетка Казино =={Colors.reset}\n')
 
         user_input = (
             input(
-                f"Введите вашу ставку или 'all'/'все' (Ваш баланс: {fmt(self._player.balance)}): "
+                f"Введите вашу ставку или 'all'/'все' (Ваш баланс: {Colors.yellow}{fmt(self._player.balance)}{Colors.reset} монет): "
             )
             .strip()
             .lower()
@@ -27,7 +33,7 @@ class RouttleGame(AbstractGame):
         else:
             if not user_input.isdigit():
                 print(
-                    f"\n{Colors.red}Ошибка! Введите корректное число или слово 'all'/'все'.{Colors.reset}"
+                    f"{Colors.red}Ошибка! Введите корректное число или слово 'all'/'все'.{Colors.reset}\n"
                 )
                 return
 
@@ -35,7 +41,7 @@ class RouttleGame(AbstractGame):
 
         if bet <= 0:
             print(
-                f'\n{Colors.red}Ошибка! Ставка {fmt(bet)} монет невозможна! Нельзя играть на 0 или меньше.{Colors.reset}'
+                f'{Colors.red}Ошибка! Ставка {fmt(bet)} монет невозможна! Нельзя играть на 0 или меньше.{Colors.reset}\n'
             )
             return
 
@@ -112,11 +118,11 @@ class RouttleGame(AbstractGame):
 
             reward_coins = int(bet * mult)
 
-            print(self._player.add_coins_and_xp(coins=reward_coins, xp=reward_xp))
+            print(f'{self._player.add_coins_and_xp(coins=reward_coins, xp=reward_xp)}\n')
 
         else:
             print(
-                f'\n{Colors.red}🔴 Увы, ставка не сыграла. Незнакомец забирает монеты!{Colors.reset}'
+                f'\n{Colors.red}🔴 Увы, ставка не сыграла. Незнакомец забирает монеты!{Colors.reset}\n'
             )
 
         return
