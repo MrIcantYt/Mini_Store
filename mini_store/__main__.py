@@ -5,7 +5,7 @@ from mini_store.config import is_debug
 from mini_store.db import JsonDataBase
 from mini_store.exceptions import SignCheckError
 from mini_store.games import *
-from mini_store.player import Player
+from mini_store.player import Daily, Player
 from mini_store.sections import *
 from mini_store.utils import *
 
@@ -16,6 +16,9 @@ def init_game(player_id: int) -> GameContext:
     cls()
     db = JsonDataBase()
     db.init_db()
+
+    player = None
+    daily = None
 
     try:
         player = db.get_player_by_id(player_id)
@@ -34,7 +37,9 @@ def init_game(player_id: int) -> GameContext:
         player = Player(id=player_id)
         db.save_player(player)
 
-    return GameContext(player, db)
+    daily = Daily()
+
+    return GameContext(player, db, daily)
 
 
 def main():
@@ -55,6 +60,7 @@ def main():
             Option('Майнинг ферма', mining),
             Option('Задания незнакомца', stranger),
             Option('Банк', bank_menu),
+            Option('Контракты Торговца', merchant_contracts),
             Option('Сброс', reset, color=Colors.red),
             Spacer(),
             Option('Выход', game_exit),
