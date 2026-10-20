@@ -1,3 +1,4 @@
+import datetime
 from dataclasses import asdict, dataclass, fields
 from random import randint
 from typing import NamedTuple
@@ -25,6 +26,14 @@ class Converted(NamedTuple):
     xp_converted: int
     gold: int
 
+@dataclass(slots=True)
+class Daily:
+    contract: str = None
+    target: int = 0
+    progress: int = 0
+    reward: int = 0
+    last_update: datetime.date = None
+    completed: bool = False
 
 @dataclass(slots=True)
 class Player:
@@ -57,7 +66,7 @@ class Player:
         return data
 
     @classmethod
-    def from_row(cls, row) -> Player:
+    def from_row(cls, row) -> Player: # type: ignore
         data = {f.name: row[f.name] for f in fields(cls)}
         for name in BOOL_FIELDS:
             data[name] = bool(data[name])
@@ -69,7 +78,7 @@ class Player:
         return data
 
     @classmethod
-    def from_dict(cls, data: dict[str, object]) -> Player:
+    def from_dict(cls, data: dict[str, object]) -> Player: # type: ignore
         data['_balance'] = data.pop('balance')
         return cls(**data)  # pyright: ignore[reportArgumentType]  # ty: ignore[invalid-argument-type]
 
