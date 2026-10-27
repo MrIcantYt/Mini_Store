@@ -58,7 +58,6 @@ def main():
             Option('Игры', game),
             Option('Профиль', profile),
             Option('Майнинг ферма', mining),
-            Option('Задания незнакомца', stranger),
             Option('Банк', bank_menu),
             Option('Контракты Торговца', merchant_contracts),
             Option('Сброс', reset, color=Colors.red),
@@ -84,11 +83,11 @@ def main():
 
         section(ctx)
 
-        # Passive business
-        if ctx.player.business:
-            print(f'\nНезнакомец: {Colors.blue_dark}Ваш стартап принёс доход {Colors.yellow}+25 монет{Colors.blue_dark}.{Colors.reset}\n')
+        # # Passive business
+        # if ctx.player.business:
+        #     print(f'Незнакомец: {Colors.blue_dark}Ваш стартап принёс доход {Colors.yellow}+25 монет{Colors.blue_dark}.{Colors.reset}\n')
 
-            ctx.player.balance += 25
+        #     ctx.player.balance += 25
 
         ctx.db.save_player(ctx.player)
 
