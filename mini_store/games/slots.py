@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import random
 from enum import Enum
 from time import sleep
