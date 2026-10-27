@@ -7,4 +7,6 @@ class Colors(StrEnum):
     yellow = '\033[33m'
     blue_dark = '\033[34m'
     blue = '\033[36m'
+    purple = '\033[35m'
     reset = '\033[0m'
+    
