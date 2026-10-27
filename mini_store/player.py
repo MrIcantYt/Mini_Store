@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 import datetime
 from dataclasses import asdict, dataclass, fields
 from random import randint
-from typing import NamedTuple
+from typing import Any, NamedTuple
 
 from mini_store.colors import Colors
 from mini_store.utils import fmt
@@ -35,6 +37,9 @@ class Daily:
     last_update: datetime.date = None
     completed: bool = False
 
+    discount_id: int | None = None
+    discount_checked: Any = None
+
 @dataclass(slots=True)
 class Player:
     id: int
@@ -66,7 +71,7 @@ class Player:
         return data
 
     @classmethod
-    def from_row(cls, row) -> Player: # type: ignore
+    def from_row(cls, row) -> Player:
         data = {f.name: row[f.name] for f in fields(cls)}
         for name in BOOL_FIELDS:
             data[name] = bool(data[name])
@@ -78,9 +83,9 @@ class Player:
         return data
 
     @classmethod
-    def from_dict(cls, data: dict[str, object]) -> Player: # type: ignore
+    def from_dict(cls, data: dict[str, object]) -> Player:
         data['_balance'] = data.pop('balance')
-        return cls(**data)  # pyright: ignore[reportArgumentType]  # ty: ignore[invalid-argument-type]
+        return cls(**data)
 
     @property
     def balance(self) -> int:
