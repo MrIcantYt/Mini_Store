@@ -26,6 +26,7 @@ def game(ctx: GameContext) -> None:
             Option('Игровой автомат (Слоты)', SlotsGame),
             Option('Блекдежек (21 очко)', BlackjackGame),
             Option('Колесо Рулетки', RouttleGame),
+            Option('Кости (Craps)', CrapsGame),
         ],
         allow_cancel=True,
     )
@@ -354,6 +355,7 @@ def shop(ctx: GameContext) -> None:
             case _:
                 print(f'\n{Colors.red}Товара с таким ID не существует в системе возврата!{Colors.reset}\n')
 
+
 def profile(ctx: GameContext) -> None:
     cls()
 
@@ -646,6 +648,7 @@ def bank_menu(ctx: GameContext) -> None:
 
         else:
             print(f'\n{Colors.red}У вас нет денег на депозите!{Colors.reset}\n')
+
 
 def merchant_contracts(ctx):
     print(f"\n {Colors.yellow}== 📅 Ежедневные Контракты Торговца =={Colors.reset}\n")
