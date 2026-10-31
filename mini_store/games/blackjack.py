@@ -184,7 +184,7 @@ class BlackjackGame(AbstractGame):
 
                 self._player.balance += insurance_payout
 
-                print(f'\n💰 {Colors.green}Страховка сработала! У дилера Блекджек! Выплата: {fmt(insurance_payout)} монет.{Colors.reset}')
+                print(f'💰 {Colors.green}Страховка сработала! У дилера Блекджек! Выплата: {fmt(insurance_payout)} монет.{Colors.reset}')
 
             else:
                 print(f'🔴 {Colors.red}У дилера нет Блекджека на старте. Страховка сгорела.{Colors.reset}\n')
@@ -198,19 +198,20 @@ class BlackjackGame(AbstractGame):
                 continue
 
             if bot_score > 21 or hand.score > bot_score:
-                reward = hand.bet
+                reward_money = hand.bet
+                reward_xp = 25
 
                 if bot_score > 21:
                     print(
                         f'🎉 {Colors.green}Бот перебрал ({bot_score} очков)! Вы победили!{Colors.reset}',
-                        f'{self._player.add_coins_and_xp(coins=reward, xp=reward)}\n',
+                        f'{self._player.add_coins_and_xp(coins=reward_money, xp=reward_xp)}\n',
                         sep='\n',
                     )
 
                 else:
                     print(
                         f'🎉 {Colors.green}Вы победили дилера ({hand.score} vs {bot_score})!{Colors.reset}',
-                        self._player.add_coins_and_xp(coins=reward, xp=reward),
+                        f'{self._player.add_coins_and_xp(coins=reward_money, xp=reward_xp)}\n',
                         sep='\n',
                     )
 
