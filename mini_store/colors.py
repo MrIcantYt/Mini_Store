@@ -9,4 +9,3 @@ class Colors(StrEnum):
     blue = '\033[36m'
     purple = '\033[35m'
     reset = '\033[0m'
-    

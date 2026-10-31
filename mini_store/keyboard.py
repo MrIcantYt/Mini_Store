@@ -25,27 +25,26 @@ else:
             return None
         return sys.stdin.read(1)
 
+    class RawTerminal:
+        """Контекстный менеджер: переводит терминал в raw-режим на Unix.
 
-class RawTerminal:
-    """Контекстный менеджер: переводит терминал в raw-режим на Unix.
+        На Windows ничего не делает (msvcrt и так работает без Enter).
+        """
 
-    На Windows ничего не делает (msvcrt и так работает без Enter).
-    """
+        def __init__(self) -> None:
+            self._fd: int | None = None
+            self._old_settings = None
 
-    def __init__(self) -> None:
-        self._fd: int | None = None
-        self._old_settings = None
+        def __enter__(self) -> Self:
+            if sys.platform != 'win32':
+                self._fd = sys.stdin.fileno()
+                self._old_settings = termios.tcgetattr(self._fd)
+                tty.setcbreak(self._fd)
+            return self
 
-    def __enter__(self) -> Self:
-        if sys.platform != 'win32':
-            self._fd = sys.stdin.fileno()
-            self._old_settings = termios.tcgetattr(self._fd)
-            tty.setcbreak(self._fd)
-        return self
-
-    def __exit__(self, *exc) -> None:
-        if self._fd is not None and self._old_settings is not None:
-            termios.tcsetattr(self._fd, termios.TCSADRAIN, self._old_settings) # type: ignore
+        def __exit__(self, *exc) -> None:
+            if self._fd is not None and self._old_settings is not None:
+                termios.tcsetattr(self._fd, termios.TCSADRAIN, self._old_settings)
 
 
 def is_pressed(key: str, *, interval: float = 0.0) -> bool:
