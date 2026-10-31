@@ -10,7 +10,9 @@ SECRET: Final[bytes] = ('o@k!' + '9dNz' + 'H#SC' + 'vb4d' + '!3y*').encode()
 
 
 class SignedJson:
-    def __init__(self, file_path: str, *, secret: bytes = SECRET, check_sign: bool = True) -> None:
+    def __init__(
+        self, file_path: str, *, secret: bytes = SECRET, check_sign: bool = True
+    ) -> None:
         self.file_path = file_path
         self.secret = secret
         self._need_check_sign = check_sign
@@ -20,13 +22,13 @@ class SignedJson:
 
     def _sign_check(self, sign: str, save: str) -> bool:
         expected_sign = self._get_save_sign(save)
-        
+
         return compare_digest(sign, expected_sign)
 
     def _split_sign_and_save(self, signed_save: str) -> list[str]:
         if '\n' not in signed_save:
             raise ValueError('Файл повреждён')
-        
+
         return signed_save.split('\n', 1)
 
     def dump(self, save: dict) -> None:

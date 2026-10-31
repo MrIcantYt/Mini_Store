@@ -1,6 +1,6 @@
 from dataclasses import asdict, dataclass, fields
 from random import randint
-from typing import NamedTuple
+from typing import Any, NamedTuple, cast
 
 from mini_store.colors import Colors
 from mini_store.utils import fmt
@@ -74,7 +74,7 @@ class Player:
     @classmethod
     def from_dict(cls, data: dict[str, object]) -> Player:
         data['_balance'] = data.pop('balance')
-        return cls(**data)  # pyright: ignore[reportArgumentType]
+        return cls(**cast(Any, data))
 
     @property
     def balance(self) -> int:

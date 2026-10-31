@@ -1,8 +1,7 @@
 import pytest
 
 import mini_store.shop as shop_module
-from mini_store.context import Daily, GameContext
-from mini_store.player import Player
+from mini_store.context import GameContext
 from mini_store.shop import Shop, ShopAction, ShopItem
 
 
@@ -393,9 +392,7 @@ def test_shop_action_values() -> None:
     assert ShopAction.RETURN == 2
 
 
-def test_shop_daily_is_used_for_discount() -> None:
-    ctx = GameContext(player=Player(id=1), db=None, daily=Daily())  # type: ignore[arg-type]
-    shop = Shop(ctx)
-    ctx.daily.discount_item_id = 3
+def test_shop_daily_is_used_for_discount(shop: Shop) -> None:
+    shop.ctx.daily.discount_item_id = 3
 
     assert shop._final_price(shop.catalog_by_id[3]) == 240

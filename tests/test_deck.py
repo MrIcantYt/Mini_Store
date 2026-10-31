@@ -33,7 +33,7 @@ class TestCard:
         card = Card(Suit.HEARTS, 1)
 
         with pytest.raises(AttributeError):
-            card.rank = 2  # type: ignore[misc]
+            card.rank = 2  # ty: ignore[invalid-assignment]
 
 
 class TestDeck:

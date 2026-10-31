@@ -1,6 +1,8 @@
 from datetime import UTC, date, datetime
+from typing import Self
 
 import pytest
+from conftest import FakeDB
 
 from mini_store import sections
 from mini_store.context import GameContext
@@ -189,7 +191,10 @@ class TestEasterEgg:
 
 class TestReset:
     def test_reset_confirmed(
-        self, ctx: GameContext, monkeypatch: pytest.MonkeyPatch
+        self,
+        ctx: GameContext,
+        db: FakeDB,
+        monkeypatch: pytest.MonkeyPatch,
     ) -> None:
         old_player = ctx.player
         old_player.balance = 500
@@ -200,16 +205,19 @@ class TestReset:
 
         assert ctx.player is not old_player
         assert ctx.player.balance == 0
-        assert ctx.db.resets == 1
+        assert db.resets == 1
 
     def test_reset_cancelled(
-        self, ctx: GameContext, monkeypatch: pytest.MonkeyPatch
+        self,
+        ctx: GameContext,
+        db: FakeDB,
+        monkeypatch: pytest.MonkeyPatch,
     ) -> None:
         monkeypatch.setattr(sections, 'ask_confirmation', lambda _prompt: False)
 
         sections.reset(ctx)
 
-        assert ctx.db.resets == 0
+        assert db.resets == 0
 
 
 class TestDebugMenu:
@@ -357,8 +365,8 @@ class TestBank:
 
 class FakeDateTime(datetime):
     @classmethod
-    def now(cls, tz=None) -> datetime:
-        return datetime(2026, 1, 1, 12, 0, tzinfo=tz or UTC)
+    def now(cls, tz=None) -> Self:
+        return cls(2026, 1, 1, 12, 0, tzinfo=tz or UTC)
 
 
 class TestTimeUntilMidnight:
@@ -508,12 +516,13 @@ class TestExitAndDelegation:
     def test_game_exit_saves_and_exits(
         self,
         ctx: GameContext,
+        db: FakeDB,
         capsys: pytest.CaptureFixture[str],
     ) -> None:
         with pytest.raises(SystemExit):
             sections.game_exit(ctx)
 
-        assert ctx.db.saved == [ctx.player]
+        assert db.saved == [ctx.player]
         assert 'Прогресс сохранен' in capsys.readouterr().out
 
     def test_shop_delegates_to_shop_class(

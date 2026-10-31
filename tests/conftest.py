@@ -31,10 +31,15 @@ class FakeDB(AbstractDataBase):
 
 
 @pytest.fixture
+def db() -> FakeDB:
+    return FakeDB()
+
+
+@pytest.fixture
 def player() -> Player:
     return Player(id=1)
 
 
 @pytest.fixture
-def ctx(player: Player) -> GameContext:
-    return GameContext(player=player, db=FakeDB(), daily=Daily())
+def ctx(player: Player, db: FakeDB) -> GameContext:
+    return GameContext(player=player, db=db, daily=Daily())
