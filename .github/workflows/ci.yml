@@ -7,7 +7,7 @@ on:
     branches: [dev, main]
 
 jobs:
-  main:
+  quality:
     runs-on: ubuntu-latest
 
     steps:
@@ -29,6 +29,9 @@ jobs:
 
       - name: Lint
         run: uv run ruff check .
+
+      - name: Type check
+        run: uv run ty check
 
       - name: Testing
         run: uv run pytest
