@@ -26,10 +26,10 @@ jobs:
             binary: dist/mini-store.exe
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v10
         with:
           enable-cache: true
 
@@ -51,7 +51,7 @@ jobs:
         run: .\dist\mini-store.exe --version
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: mini-store-${{ github.ref_name }}-${{ matrix.platform }}
           path: ${{ matrix.binary }}
@@ -64,10 +64,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: artifacts
 
@@ -86,7 +86,7 @@ jobs:
           sha256sum * > SHA256SUMS.txt
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           name: Mini-Store ${{ github.ref_name }}
           body_path: .github/release-notes/${{ github.ref_name }}.md
