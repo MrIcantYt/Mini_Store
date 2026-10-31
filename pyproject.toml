@@ -1,0 +1,38 @@
+[project]
+name = "mini-store"
+version = "0.7.0"
+description = "Terminal game"
+readme = "README.md"
+authors = [
+    { name = "Lynx20wz", email = "maks20wz@gmail.com" },
+    { name = "MrIcant", email = "icant@example.com" }
+]
+requires-python = "==3.14.8"
+dependencies = [
+    "colorama>=0.4.6",
+]
+
+[tool.ruff]
+indent-width = 4
+line-length = 90
+
+[tool.ruff.lint]
+ignore = ['EXE002']
+
+[tool.ruff.format]
+docstring-code-format = true
+docstring-code-line-length = 60
+indent-style = "space"
+quote-style = "single"
+
+[dependency-groups]
+dev = [
+    "pyinstaller>=6.22.3",
+    "pytest>=9.2.0",
+    "ruff>=0.16.10",
+    "ty>=0.0.95",
+]
+
+[tool.pytest.ini_options]
+testpaths = ['tests']
+pythonpath = ['.']

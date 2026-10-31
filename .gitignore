@@ -1,0 +1,10 @@
+**/__pycache__
+.venv
+game.db
+game.json
+.ruff_cache
+.zed
+.pytest_cache
+build/
+dist/
+*.spec
