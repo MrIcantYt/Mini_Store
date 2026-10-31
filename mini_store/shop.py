@@ -81,16 +81,17 @@ class Shop:
         print(f'\n{Colors.blue}🛒 Добро пожаловать в Каталог Незнакомца!{Colors.reset}\n')
 
         self._roll_discount()
-        print(
-            f'Ваш баланс: {Colors.yellow}{fmt(self.player.balance)} монет{Colors.reset}.\n\n{"=" * 30}'
-        )
+        
+        print(f'Ваш баланс: {Colors.yellow}{fmt(self.player.balance)} монет{Colors.reset}.\n')
 
         item = self._choose_item()
+        
         if item is None:
             cls()
             return
 
         action = self._choose_action()
+        
         if action is None:
             cls()
             return
@@ -137,14 +138,33 @@ class Shop:
         )
 
     def _choose_item(self) -> ShopItem | None:
-        options = [
-            Option(f'{item.name} — Цена: {self._price_label(item)}', item)
-            for item in self.catalog
-        ]
+        print("=" * 30)
+        for item in self.catalog:
+            print(
+                f'{item.id}. {item.name} — Цена: {self._price_label(item)}'
+            )
 
-        return ask_option(
-            f'{"=" * 30}\n\nВыберите товар для действия: ', options, blank_line=False
-        )
+        print("=" * 30)
+
+        while True:
+            value = input("\nВыберите товар для действия: ")
+
+            try:
+                choice = int(value)
+            except ValueError:
+                print(
+                    f"\n{Colors.red}Ошибка! Введите корректное число, "
+                    f"а не: '{value}'.{Colors.reset}"
+                )
+                continue
+
+            if 1 <= choice <= len(self.catalog):
+                return self.catalog[choice - 1]
+
+            print(
+                f"{Colors.red}Ошибка! Выберите число от 1 "
+                f"до {len(self.catalog)}.{Colors.reset}"
+            )
 
     def _choose_action(self) -> ShopAction | None:
         action = ask_number(
@@ -175,9 +195,7 @@ class Shop:
 
     def _buy(self, item: ShopItem) -> None:
         if item.price is None:
-            print(
-                f'\n{Colors.yellow}Вы уже имеете максимальный уровень прокачки этого улучшения!{Colors.reset}\n'
-            )
+            print(f'\n{Colors.yellow}Вы уже имеете максимальный уровень прокачки этого улучшения!{Colors.reset}\n')
             return
 
         handler = self._buy_handlers.get(item.id)

@@ -4,7 +4,7 @@ from time import sleep
 from typing import Any
 
 from mini_store.colors import Colors
-from mini_store.utils import ask_confirmation, fmt
+from mini_store.utils import ask_confirmation, cls, fmt
 
 from .abstract import AbstractGame
 
@@ -18,6 +18,7 @@ class Hand:
 
 class BlackjackGame(AbstractGame):
     def play(self) -> Any:
+        cls()
         print(f'\n {Colors.yellow}== Игра: Блекджек (21 очко) =={Colors.reset}\n')
 
         cards: tuple[int, ...] = (2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11)
@@ -47,7 +48,7 @@ class BlackjackGame(AbstractGame):
 
         user_input = (
             input(
-                f"Введите вашу ставку или 'all'/'все', чтобы поставить всё (Ваш баланс: {Colors.yellow}{fmt(self._player.balance)}{Colors.reset} монет): "
+                f"Введите вашу ставку или 'all'/'все' (Ваш баланс: {Colors.yellow}{fmt(self._player.balance)}{Colors.reset} монет): "
             )
             .strip()
             .lower()
@@ -62,19 +63,19 @@ class BlackjackGame(AbstractGame):
 
         except ValueError:
             print(
-                f"\n{Colors.red}Ошибка! Введите корректное число или слово 'all'/'все'.{Colors.reset}"
+                f"\n{Colors.red}Ошибка! Введите корректное число или слово 'all'/'все'.{Colors.reset}\n"
             )
             return
 
         if money_player <= 0:
             print(
-                f'\n{Colors.red}Ошибка! Ставка {fmt(money_player)} монет невозможна! Нельзя играть на 0 или меньше.{Colors.reset}'
+                f'\n{Colors.red}Ошибка! Ставка {fmt(money_player)} монет невозможна! Нельзя играть на 0 или меньше.{Colors.reset}\n'
             )
             return
 
         elif money_player > self._player.balance:
             print(
-                f'\n{Colors.red}Ошибка! Нельзя вводить ставку больше своего баланса!{Colors.reset}'
+                f'\n{Colors.red}Ошибка! Нельзя вводить ставку больше своего баланса!{Colors.reset}\n'
             )
             return
 

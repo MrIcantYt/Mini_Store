@@ -3,7 +3,7 @@ from time import sleep
 from typing import Any
 
 from mini_store.colors import Colors
-from mini_store.utils import ask_confirmation, fmt
+from mini_store.utils import ask_confirmation, cls, fmt
 
 from .abstract import AbstractGame
 
@@ -23,6 +23,8 @@ class CrapsGame(AbstractGame):
         return die1, die2
 
     def play(self) -> Any:
+        cls()
+
         print(f'\n {Colors.yellow}== Игра: Кости (Craps) =={Colors.reset}\n')
 
         user_input = (

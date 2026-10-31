@@ -7,7 +7,7 @@ from typing import Any
 
 from mini_store.colors import Colors
 from mini_store.context import GameContext
-from mini_store.utils import fmt
+from mini_store.utils import cls, fmt
 
 from .abstract import AbstractGame
 
@@ -105,6 +105,8 @@ class SlotsGame(AbstractGame):
         return next(iter(set_)) if len(set_) == 1 else None
 
     def play(self) -> Any:
+        cls()
+
         print(f'\n {Colors.yellow}== Игра: Игровой Автомат =={Colors.reset}\n')
 
         if self._player.quest_id == 3:
@@ -126,20 +128,26 @@ class SlotsGame(AbstractGame):
                 money_player = int(user_bet)
 
         except ValueError:
+            cls()
+
             print(
-                f"\n{Colors.red}Ошибка! Введите корректное число или слово 'all'/'все'.{Colors.reset}"
+                f"\n{Colors.red}Ошибка! Введите корректное число или слово 'all'/'все'.{Colors.reset}\n"
             )
             return
 
         if money_player <= 0:
+            cls()
+
             print(
-                f'\n{Colors.red}Ошибка! Ставка {fmt(self._player.balance)} монет невозможна! Нельзя играть на 0 или меньше.{Colors.reset}'
+                f'\n{Colors.red}Ошибка! Ставка {fmt(self._player.balance)} монет невозможна! Нельзя играть на 0 или меньше.{Colors.reset}\n'
             )
             return
 
         elif money_player > self._player.balance:
+            cls()
+
             print(
-                f'\n{Colors.red}Ошибка! Нельзя вводить ставку больше своего баланса! {Colors.reset}'
+                f'\n{Colors.red}Ошибка! Нельзя вводить ставку больше своего баланса! {Colors.reset}\n'
             )
             return
 

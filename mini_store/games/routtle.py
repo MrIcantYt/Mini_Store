@@ -9,6 +9,8 @@ from .abstract import AbstractGame
 
 class RouttleGame(AbstractGame):
     def play(self) -> None:
+        cls()
+
         print(f'\n {Colors.yellow}== Игра: Рулетка Казино =={Colors.reset}\n')
 
         user_input = (

@@ -219,6 +219,8 @@ def promocode(ctx: GameContext) -> None:
     user_promo = input('\nВведите промокод: ').strip()
 
     if user_promo == PROMO:
+        cls()
+
         ctx.player.promo_used = True
 
         print(
@@ -461,3 +463,4 @@ def merchant_contracts(ctx: GameContext):
 
     input('\nНажмите Enter, чтобы вернуться в меню...')
     print()
+    cls()
