@@ -1,5 +1,8 @@
+import sys
+
 from colorama import init as colorama_init
 
+from mini_store import __version__
 from mini_store.colors import Colors
 from mini_store.config import is_debug
 from mini_store.context import *
@@ -43,7 +46,11 @@ def init_game(player_id: int) -> GameContext:
     return GameContext(player, db, daily)
 
 
-def main():
+def main() -> None:
+    if '--version' in sys.argv[1:]:
+        print(f'Mini-Store {__version__}')
+        return
+
     # TODO: choose id
     player_id = 1
     ctx = init_game(player_id)
