@@ -51,6 +51,9 @@ class Player:
     bank_deposit: int = 0
     bank_turns: int = 0
 
+    def __post_init__(self) -> None:
+        self.balance = self._balance
+
     def to_row(self) -> dict[str, object]:
         data = self.to_dict()
         data.pop('id')
@@ -78,7 +81,17 @@ class Player:
         return self._balance
 
     @balance.setter
-    def balance(self, value: int):
+    def balance(self, value: int) -> None:
+        if value < 0:
+            missing = -value
+            print(
+                f'{Colors.red}Ошибка! Недостаточно монет: '
+                f'на балансе {fmt(self._balance)}, '
+                f'не хватает {fmt(missing)}.{Colors.reset}'
+            )
+            self._balance = 0
+            return
+
         self._balance = min(value, MAX_BALANCE)
 
     @property

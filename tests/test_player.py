@@ -22,10 +22,45 @@ class TestBalance:
 
         assert player.balance == MAX_BALANCE
 
-    def test_negative_balance_is_allowed(self, player: Player) -> None:
+    def test_negative_balance_is_clamped_to_zero(
+        self, player: Player, capsys: pytest.CaptureFixture[str]
+    ) -> None:
         player.balance = -100
 
-        assert player.balance == -100
+        assert player.balance == 0
+        assert 'Ошибка! Недостаточно монет' in capsys.readouterr().out
+
+    def test_subtraction_below_zero_is_clamped(
+        self, player: Player, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        player.balance = 100
+
+        player.balance -= 500
+
+        assert player.balance == 0
+        output = capsys.readouterr().out
+        assert 'Ошибка! Недостаточно монет' in output
+        assert 'не хватает 400' in output
+        assert 'на балансе 100' in output
+
+    def test_negative_balance_in_constructor_is_clamped(
+        self, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        player = Player(id=1, _balance=-50)
+
+        assert player.balance == 0
+        assert 'Ошибка! Недостаточно монет' in capsys.readouterr().out
+
+    def test_balance_is_capped_and_never_negative(
+        self, player: Player, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        player.balance = MAX_BALANCE + 500
+        assert player.balance == MAX_BALANCE
+
+        player.balance = -MAX_BALANCE
+
+        assert player.balance == 0
+        assert 'Ошибка! Недостаточно монет' in capsys.readouterr().out
 
 
 class TestProperties:
@@ -164,6 +199,17 @@ class TestSerialization:
         restored = Player.from_dict(data)
 
         assert restored == player
+
+    def test_from_dict_clamps_negative_balance(
+        self, player: Player, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        data = player.to_dict()
+        data['balance'] = -500
+
+        restored = Player.from_dict(data)
+
+        assert restored.balance == 0
+        assert 'Ошибка! Недостаточно монет' in capsys.readouterr().out
 
     def test_to_row_omits_id(self, player: Player) -> None:
         row = player.to_row()
