@@ -1,6 +1,6 @@
 [project]
 name = "mini-store"
-version = "0.5.0"
+version = "0.7.0"
 description = "Terminal game"
 readme = "README.md"
 authors = [
@@ -28,5 +28,10 @@ quote-style = "single"
 
 [dependency-groups]
 dev = [
+    "pytest>=9.2.0",
     "ruff>=0.16.10",
 ]
+
+[tool.pytest.ini_options]
+testpaths = ['tests']
+pythonpath = ['.']

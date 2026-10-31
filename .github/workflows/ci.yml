@@ -1,4 +1,4 @@
-name: Format and check
+name: CI
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [dev, main]
 
 jobs:
-  lint-and-format:
+  main:
     runs-on: ubuntu-latest
 
     steps:
@@ -29,3 +29,6 @@ jobs:
 
       - name: Lint
         run: uv run ruff check .
+
+      - name: Testing
+        run: uv run pytest
