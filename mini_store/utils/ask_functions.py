@@ -115,6 +115,7 @@ def ask_option[T](
     *,
     allow_cancel: bool = False,
     cancel_on: str = 'q',
+    blank_line: bool = True,
 ) -> T | None:
     """Prompts the user to pick a menu option by number.
 
@@ -198,7 +199,8 @@ def ask_option[T](
             number, name, color = entry
             print(f'{color or Colors.reset}{number}. {name}{Colors.reset}')
 
-    print()  # blank line before the prompt
+    if blank_line:
+        print()  # blank line before the prompt
 
     max_visible = max((num for num, _, _ in options_only), default=0)
 
