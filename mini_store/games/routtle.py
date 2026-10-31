@@ -2,18 +2,12 @@ import random
 import time
 
 from mini_store.colors import Colors
-from mini_store.context import GameContext
 from mini_store.utils import *
 
 from .abstract import AbstractGame
 
 
 class RouttleGame(AbstractGame):
-    def __init__(self, ctx: GameContext):
-        super().__init__(ctx.player)
-        self._ctx = ctx
-        self._player = ctx.player
-
     def play(self) -> None:
         print(f'\n {Colors.yellow}== Игра: Рулетка Казино =={Colors.reset}\n')
 

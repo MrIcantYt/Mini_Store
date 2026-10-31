@@ -2,10 +2,11 @@ from colorama import init as colorama_init
 
 from mini_store.colors import Colors
 from mini_store.config import is_debug
+from mini_store.context import *
 from mini_store.db import JsonDataBase
 from mini_store.exceptions import SignCheckError
 from mini_store.games import *
-from mini_store.player import Daily, Player
+from mini_store.player import Player
 from mini_store.sections import *
 from mini_store.utils import *
 
@@ -18,26 +19,26 @@ def init_game(player_id: int) -> GameContext:
     db.init_db()
 
     player = None
-    daily = None
+    daily = Daily()
 
     try:
         player = db.get_player_by_id(player_id)
-    
+
     except FileNotFoundError:
-        print(f'\n{Colors.red}Файл сохранения не был найден. Ваш прогресс сброшен!{Colors.reset}')
-        
+        print(
+            f'\n{Colors.red}Файл сохранения не был найден. Ваш прогресс сброшен!{Colors.reset}'
+        )
+
         player = None
-    
+
     except SignCheckError as e:
         print(f'\n{Colors.red}{e.message}. Ваш прогресс сброшен!{Colors.reset}')
-        
+
         player = None
 
     if player is None:
         player = Player(id=player_id)
         db.save_player(player)
-
-    daily = Daily()
 
     return GameContext(player, db, daily)
 
@@ -48,8 +49,10 @@ def main():
     ctx = init_game(player_id)
 
     if is_debug:
-        print(f"{Colors.green}You're in debug mode. The save's sign check is disabled.{Colors.reset}\n")
-    
+        print(
+            f"{Colors.green}You're in debug mode. The save's sign check is disabled.{Colors.reset}\n"
+        )
+
     while True:
         print('=== Добро пожаловать в "Мини Магазин" ===\n')
 
@@ -74,10 +77,12 @@ def main():
                 ]
             )
         if is_debug:
-            options.extend([Spacer(), Option('Debug menu', debug_menu, color=Colors.green)])
+            options.extend(
+                [Spacer(), Option('Debug menu', debug_menu, color=Colors.green)]
+            )
 
         section: SectionFunc | None = ask_option('Выберите пункт меню: ', options)
-        
+
         if section is None:
             continue
 

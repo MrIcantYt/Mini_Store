@@ -1,11 +1,12 @@
 from abc import ABC, abstractmethod
 
-from mini_store.player import Player
+from mini_store.context import GameContext
 
 
 class AbstractGame(ABC):
-    def __init__(self, player: Player):
-        self._player = player
+    def __init__(self, ctx: GameContext):
+        self._ctx = ctx
+        self._player = ctx.player
 
     @abstractmethod
     def play(self) -> None:

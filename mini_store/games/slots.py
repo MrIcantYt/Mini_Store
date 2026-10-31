@@ -73,20 +73,16 @@ class Slot(Enum):
         return self.symbol
 
     @classmethod
-    def from_symbol(cls, symbol: str) -> Slot | None: # type: ignore
+    def from_symbol(cls, symbol: str) -> Slot | None:
         return next((s for s in cls if s.symbol == symbol), None)
 
 
 class SlotsGame(AbstractGame):
     def __init__(self, ctx: GameContext) -> None:
-        super().__init__(ctx.player)
-        
-        self._ctx = ctx
-        self._player = ctx.player
+        super().__init__(ctx)
 
-        self.self_slots = []
-        self.self_variants = self._setup_variants()
-        self.self_slots = random.choices(self.self_variants, k=3)
+        self._variants = self._setup_variants()
+        self._slots = random.choices(self._variants, k=3)
         self._is_vip = False
 
     def _setup_variants(self) -> list[Slot]:
@@ -105,7 +101,7 @@ class SlotsGame(AbstractGame):
         return variants
 
     def _all_slots_is(self) -> Slot | None:
-        set_ = set(self.self_slots)
+        set_ = set(self._slots)
         return next(iter(set_)) if len(set_) == 1 else None
 
     def play(self) -> Any:
@@ -160,11 +156,11 @@ class SlotsGame(AbstractGame):
             print('\n| 🎰 БAРAБAНЫ КРУТЯТСЯ... 🎰 |')
 
         sleep(0.4)
-        print(f'[{self.self_slots[0]}]')
+        print(f'[{self._slots[0]}]')
         sleep(0.4)
-        print(f'[{self.self_slots[0]}] [{self.self_slots[1]}]')
+        print(f'[{self._slots[0]}] [{self._slots[1]}]')
         sleep(0.4)
-        print(f'[{self.self_slots[0]}] [{self.self_slots[1]}] [{self.self_slots[2]}]\n')
+        print(f'[{self._slots[0]}] [{self._slots[1]}] [{self._slots[2]}]\n')
         sleep(0.4)
 
         if slot := self._all_slots_is():
@@ -180,7 +176,10 @@ class SlotsGame(AbstractGame):
                 win_xp *= 2
                 msg = slot.vip_msg
 
-            print(msg, f'\n💰 Вы выиграли {Colors.yellow}{fmt(win_coins)}{Colors.reset} монет и получили {Colors.yellow}{fmt(win_xp)}{Colors.reset} XP!\n',)
+            print(
+                msg,
+                f'\n💰 Вы выиграли {Colors.yellow}{fmt(win_coins)}{Colors.reset} монет и получили {Colors.yellow}{fmt(win_xp)}{Colors.reset} XP!\n',
+            )
 
             self._player.balance += win_coins
             self._player.xp += win_xp
@@ -189,9 +188,13 @@ class SlotsGame(AbstractGame):
 
         else:
             if self._is_vip:
-                print(f'{Colors.red}💥 КРАХ ХАЙРОЛЛЕРА! Слот заблокирован. С вашего баланса списан ДВОЙНОЙ штраф за риск!{Colors.reset}')
+                print(
+                    f'{Colors.red}💥 КРАХ ХАЙРОЛЛЕРА! Слот заблокирован. С вашего баланса списан ДВОЙНОЙ штраф за риск!{Colors.reset}'
+                )
 
                 self._player.balance -= money_player
 
             else:
-                print('🔴 Увы, комбинация пустая. Вы потеряли свою ставку. Попробуйте еще раз!\n')
+                print(
+                    '🔴 Увы, комбинация пустая. Вы потеряли свою ставку. Попробуйте еще раз!\n'
+                )

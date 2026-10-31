@@ -1,9 +1,6 @@
-from __future__ import annotations
-
-import datetime
 from dataclasses import asdict, dataclass, fields
 from random import randint
-from typing import Any, NamedTuple
+from typing import NamedTuple
 
 from mini_store.colors import Colors
 from mini_store.utils import fmt
@@ -28,17 +25,6 @@ class Converted(NamedTuple):
     xp_converted: int
     gold: int
 
-@dataclass(slots=True)
-class Daily:
-    contract: str = None
-    target: int = 0
-    progress: int = 0
-    reward: int = 0
-    last_update: datetime.date = None
-    completed: bool = False
-
-    discount_id: int | None = None
-    discount_checked: Any = None
 
 @dataclass(slots=True)
 class Player:
@@ -85,7 +71,7 @@ class Player:
     @classmethod
     def from_dict(cls, data: dict[str, object]) -> Player:
         data['_balance'] = data.pop('balance')
-        return cls(**data)
+        return cls(**data)  # pyright: ignore[reportArgumentType]
 
     @property
     def balance(self) -> int:

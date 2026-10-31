@@ -2,7 +2,6 @@ from enum import Enum
 from random import randint
 
 from mini_store.colors import Colors
-from mini_store.context import GameContext
 from mini_store.utils import cls
 from mini_store.utils.ask_functions import Option, ask_number, ask_option
 
@@ -22,10 +21,6 @@ class Levels(Enum):
 
 
 class GuessNumberGame(AbstractGame):
-    def __init__(self, ctx: GameContext):
-        self._ctx = ctx
-        self._player = ctx.player
-
     def play(self):
         cls()
         print(f'{Colors.yellow}=== Игра: Угадай число ==={Colors.reset}\n')
@@ -35,6 +30,7 @@ class GuessNumberGame(AbstractGame):
         )
 
         if level_choose is None:
+            cls()
             return
 
         guess_number = randint(1, level_choose.to_range)
@@ -43,7 +39,9 @@ class GuessNumberGame(AbstractGame):
 
         if self._player.lucky_ticket:
             life += 1
-            print(f'\nТак как у вас имеется {Colors.yellow}счастливый билет{Colors.reset}, вам {Colors.yellow}+1{Colors.reset} жизнь.\n')
+            print(
+                f'\nТак как у вас имеется {Colors.yellow}счастливый билет{Colors.reset}, вам {Colors.yellow}+1{Colors.reset} жизнь.\n'
+            )
 
         while life > 0:
             user_number = ask_number(
