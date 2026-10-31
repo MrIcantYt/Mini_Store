@@ -9,7 +9,7 @@ from mini_store.colors import Colors
 from mini_store.utils import fmt
 
 MAX_LEVEL = 100
-MAX_BALANCE = 1_000_000
+MAX_BALANCE = 999_999_999
 XP_PER_LEVEL_MULTIPLIER = 100
 GOLD_PER_XP = 2
 BOOL_FIELDS = frozenset(
