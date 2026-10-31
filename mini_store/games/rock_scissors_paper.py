@@ -9,6 +9,7 @@ from .abstract import AbstractGame
 
 class RockScissorsPaperGame(AbstractGame):
     def __init__(self, ctx: GameContext):
+        super().__init__(ctx.player)
         self._ctx = ctx
         self._player = ctx.player
 
