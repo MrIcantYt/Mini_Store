@@ -54,7 +54,7 @@ class TestDeck:
     def test_take_card(self) -> None:
         deck = Deck([Card(Suit.HEARTS, 2), Card(Suit.HEARTS, 3)])
 
-        drawn = deck.take_card()
+        drawn = deck.take_cards()
 
         assert drawn == [Card(Suit.HEARTS, 3)]
         assert len(deck) == 1
@@ -62,7 +62,7 @@ class TestDeck:
     def test_take_multiple_cards(self) -> None:
         deck = Deck()
 
-        drawn = deck.take_card(5)
+        drawn = deck.take_cards(5)
 
         assert len(drawn) == 5
         assert len(deck) == 47
@@ -70,13 +70,13 @@ class TestDeck:
     def test_take_more_than_available(self) -> None:
         deck = Deck([Card(Suit.HEARTS, 2)])
 
-        assert len(deck.take_card(10)) == 1
+        assert len(deck.take_cards(10)) == 1
         assert len(deck) == 0
 
     @pytest.mark.parametrize('count', [0, -1])
     def test_take_invalid_count(self, count: int) -> None:
         with pytest.raises(ValueError, match='count must be'):
-            Deck().take_card(count)
+            Deck().take_cards(count)
 
     def test_bool(self) -> None:
         assert Deck()

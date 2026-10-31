@@ -60,7 +60,7 @@ class Deck:
         else:
             self.cards = list(cards)
 
-    def take_card(self, count: int = 1) -> list[Card]:
+    def take_cards(self, count: int = 1) -> list[Card]:
         """Draws `count` cards from the shoe.
 
         Args:
