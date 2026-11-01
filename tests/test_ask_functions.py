@@ -140,9 +140,7 @@ class TestAskOption:
 
         assert ask_option('Выбор: ', options) == 'one'
 
-    def test_auto_numbering_skips_reserved_positions(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_auto_numbering_skips_reserved_positions(self, monkeypatch: pytest.MonkeyPatch) -> None:
         feed_input(monkeypatch, '1')
         options = [Option('Первый', 'one', pos=5), Option('Второй', 'two')]
 

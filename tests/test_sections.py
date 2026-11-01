@@ -143,9 +143,7 @@ class TestMining:
 
 
 class TestPromocode:
-    def test_valid_promocode(
-        self, ctx: GameContext, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_valid_promocode(self, ctx: GameContext, monkeypatch: pytest.MonkeyPatch) -> None:
         feed_input(monkeypatch, sections.PROMO)
 
         sections.promocode(ctx)
@@ -154,9 +152,7 @@ class TestPromocode:
         assert ctx.player.balance == 50
         assert ctx.player.xp == 30
 
-    def test_invalid_promocode(
-        self, ctx: GameContext, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_invalid_promocode(self, ctx: GameContext, monkeypatch: pytest.MonkeyPatch) -> None:
         feed_input(monkeypatch, 'wrong')
 
         sections.promocode(ctx)
@@ -164,9 +160,7 @@ class TestPromocode:
         assert ctx.player.promo_used is False
         assert ctx.player.balance == 0
 
-    def test_promocode_is_stripped(
-        self, ctx: GameContext, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_promocode_is_stripped(self, ctx: GameContext, monkeypatch: pytest.MonkeyPatch) -> None:
         feed_input(monkeypatch, f'  {sections.PROMO}  ')
 
         sections.promocode(ctx)

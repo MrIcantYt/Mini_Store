@@ -129,6 +129,4 @@ class CrapsGame(AbstractGame):
                 return
 
             else:
-                print(
-                    f'\nНичья ({current_total}). Точка по-прежнему {point}. Продолжаем...'
-                )
+                print(f'\nНичья ({current_total}). Точка по-прежнему {point}. Продолжаем...')

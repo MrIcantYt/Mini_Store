@@ -102,9 +102,7 @@ class RouttleGame(AbstractGame):
                 mult = 35
                 reward_xp = 250
 
-                print(
-                    f'\n{Colors.green}🔥 НЕВЕРОЯТНО! ВЫ СОРВАЛИ КУШ НА ЗЕРО!!! 🔥{Colors.reset}'
-                )
+                print(f'\n{Colors.green}🔥 НЕВЕРОЯТНО! ВЫ СОРВАЛИ КУШ НА ЗЕРО!!! 🔥{Colors.reset}')
 
             else:
                 mult = 2

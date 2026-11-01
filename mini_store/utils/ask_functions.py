@@ -92,9 +92,7 @@ def ask_number(
         try:
             value = int(raw)
         except ValueError:
-            print(
-                f'\n{Colors.red}Ошибка! Введите корректное число, а не: {raw!r}.{Colors.reset}\n'
-            )
+            print(f'\n{Colors.red}Ошибка! Введите корректное число, а не: {raw!r}.{Colors.reset}\n')
             continue
 
         if hidden_values is not None and value in hidden_values:

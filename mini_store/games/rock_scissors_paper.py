@@ -74,8 +74,6 @@ class RockScissorsPaperGame(AbstractGame):
                 if life == 0:
                     cls()
 
-                    print(
-                        f'{Colors.red}Вы полностью проиграли в этой игре! {Colors.reset}\n'
-                    )
+                    print(f'{Colors.red}Вы полностью проиграли в этой игре! {Colors.reset}\n')
 
         return

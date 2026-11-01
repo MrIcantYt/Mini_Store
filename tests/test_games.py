@@ -86,9 +86,7 @@ class TestSlots:
 
         assert ctx.player.balance == 1000
 
-    def test_bet_above_balance(
-        self, ctx: GameContext, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_bet_above_balance(self, ctx: GameContext, monkeypatch: pytest.MonkeyPatch) -> None:
         ctx.player.balance = 100
         game = SlotsGame(ctx)
         feed_input(monkeypatch, '500')
@@ -113,9 +111,7 @@ class TestSlots:
         assert ctx.player.balance == 4331
         assert ctx.player.xp == 40
 
-    def test_quest_progress(
-        self, ctx: GameContext, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_quest_progress(self, ctx: GameContext, monkeypatch: pytest.MonkeyPatch) -> None:
         ctx.player.quest_id = 3
         ctx.player.balance = 100
         game = SlotsGame(ctx)

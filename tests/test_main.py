@@ -8,9 +8,7 @@ from mini_store import __version__
 from mini_store.__main__ import main
 
 
-def test_version_flag(
-    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
-) -> None:
+def test_version_flag(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
     monkeypatch.setattr(sys, 'argv', ['mini-store', '--version'])
 
     main()

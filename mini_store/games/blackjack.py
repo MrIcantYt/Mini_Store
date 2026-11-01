@@ -32,9 +32,7 @@ class BlackjackGame(AbstractGame):
                 self._player.bank_deposit += bonus
                 self._player.bank_turns = 0
 
-                print(
-                    f'{Colors.blue}📈 Инвестиции Незнакомца принесли плоды!{Colors.reset}'
-                )
+                print(f'{Colors.blue}📈 Инвестиции Незнакомца принесли плоды!{Colors.reset}')
                 print(
                     f'Ваш вклад увеличился: {Colors.green}+{fmt(bonus)}{Colors.reset} монет (Новый баланс вклада: {Colors.yellow}{fmt(self._player.bank_deposit)}{Colors.reset} монет).\n'
                 )
@@ -129,8 +127,7 @@ class BlackjackGame(AbstractGame):
                 new_cards = random.choices(cards, k=2)
 
                 player_hands = [
-                    Hand(player_cards[i] + new_cards[i], money_player, False)
-                    for i in range(2)
+                    Hand(player_cards[i] + new_cards[i], money_player, False) for i in range(2)
                 ]
 
                 print(f'\n{Colors.green}✂️ Карты разделены! Текущие руки:{Colors.reset}')
@@ -143,26 +140,18 @@ class BlackjackGame(AbstractGame):
 
         for idx, hand in enumerate(player_hands):
             if len(player_hands) > 1:
-                print(
-                    f'\n{Colors.blue}=== Разыгрывается Рука №{idx + 1} ==={Colors.reset}'
-                )
+                print(f'\n{Colors.blue}=== Разыгрывается Рука №{idx + 1} ==={Colors.reset}')
 
             while hand.score < 21:
-                print(
-                    f'\nУ вас на руках: {Colors.yellow}{hand.score}{Colors.reset} очков'
-                )
+                print(f'\nУ вас на руках: {Colors.yellow}{hand.score}{Colors.reset} очков')
 
                 if ask_confirmation('Взять ещё карту?'):
                     random_card = random.choice(cards)
                     hand.score += random_card
-                    print(
-                        f'\nВы вытянули карту: {Colors.yellow}{random_card}{Colors.reset}'
-                    )
+                    print(f'\nВы вытянули карту: {Colors.yellow}{random_card}{Colors.reset}')
 
                     if hand.score > 21:
-                        print(
-                            f'\nУ вас на руках: {Colors.red}{hand.score}{Colors.reset} очков'
-                        )
+                        print(f'\nУ вас на руках: {Colors.red}{hand.score}{Colors.reset} очков')
                         print(f'\n{Colors.red}💥 Перебор на этой руке!{Colors.reset}')
 
                         hand.overflow = True
@@ -171,9 +160,7 @@ class BlackjackGame(AbstractGame):
                     break
 
             if hand.score == 21:
-                print(
-                    f'\n🎉 {Colors.green}ОГО! На этой руке ровно 21 очко!{Colors.reset}'
-                )
+                print(f'\n🎉 {Colors.green}ОГО! На этой руке ровно 21 очко!{Colors.reset}')
 
                 if (
                     self._ctx.daily.contract
@@ -185,9 +172,7 @@ class BlackjackGame(AbstractGame):
         all_overflow = all(hand.overflow for hand in player_hands)
 
         if all_overflow and insurance_bet == 0:
-            print(
-                f'\n{Colors.red}💥 Все ваши руки сгорели. Вы проиграли раунд!{Colors.reset}\n'
-            )
+            print(f'\n{Colors.red}💥 Все ваши руки сгорели. Вы проиграли раунд!{Colors.reset}\n')
 
             if (
                 self._ctx.daily.contract

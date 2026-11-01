@@ -173,9 +173,7 @@ class SlotsGame(AbstractGame):
 
         if slot := self._all_slots_is():
             # TODO: rewrite it in a new way
-            win_coins = int(
-                slot.coins_reward * money_player * self._player.balance_multiplier
-            )
+            win_coins = int(slot.coins_reward * money_player * self._player.balance_multiplier)
             win_xp = int(slot.xp_reward * self._player.xp_multiplier)
             msg = slot.msg
 
@@ -203,6 +201,4 @@ class SlotsGame(AbstractGame):
                 self._player.balance -= money_player
 
             else:
-                print(
-                    '🔴 Увы, комбинация пустая. Вы потеряли свою ставку. Попробуйте еще раз!\n'
-                )
+                print('🔴 Увы, комбинация пустая. Вы потеряли свою ставку. Попробуйте еще раз!\n')

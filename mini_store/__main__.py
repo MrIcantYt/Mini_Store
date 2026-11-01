@@ -28,9 +28,7 @@ def init_game(player_id: int) -> GameContext:
         player = db.get_player_by_id(player_id)
 
     except FileNotFoundError:
-        print(
-            f'\n{Colors.red}Файл сохранения не был найден. Ваш прогресс сброшен!{Colors.reset}'
-        )
+        print(f'\n{Colors.red}Файл сохранения не был найден. Ваш прогресс сброшен!{Colors.reset}')
 
         player = None
 
@@ -84,9 +82,7 @@ def main() -> None:
                 ]
             )
         if is_debug:
-            options.extend(
-                [Spacer(), Option('Debug menu', debug_menu, color=Colors.green)]
-            )
+            options.extend([Spacer(), Option('Debug menu', debug_menu, color=Colors.green)])
 
         section: SectionFunc | None = ask_option('Выберите пункт меню: ', options)
 

@@ -10,9 +10,7 @@ SECRET: Final[bytes] = ('o@k!' + '9dNz' + 'H#SC' + 'vb4d' + '!3y*').encode()
 
 
 class SignedJson:
-    def __init__(
-        self, file_path: str, *, secret: bytes = SECRET, check_sign: bool = True
-    ) -> None:
+    def __init__(self, file_path: str, *, secret: bytes = SECRET, check_sign: bool = True) -> None:
         self.file_path = file_path
         self.secret = secret
         self._need_check_sign = check_sign

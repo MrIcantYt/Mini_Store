@@ -83,9 +83,7 @@ class Shop:
 
         self._roll_discount()
 
-        print(
-            f'Ваш баланс: {Colors.yellow}{fmt(self.player.balance)} монет{Colors.reset}.\n'
-        )
+        print(f'Ваш баланс: {Colors.yellow}{fmt(self.player.balance)} монет{Colors.reset}.\n')
 
         item = self._choose_item()
 
@@ -163,9 +161,7 @@ class Shop:
             if 1 <= choice <= len(self.catalog):
                 return self.catalog[choice - 1]
 
-            print(
-                f'{Colors.red}Ошибка! Выберите число от 1 до {len(self.catalog)}.{Colors.reset}'
-            )
+            print(f'{Colors.red}Ошибка! Выберите число от 1 до {len(self.catalog)}.{Colors.reset}')
 
     def _choose_action(self) -> ShopAction | None:
         action = ask_number(
@@ -362,9 +358,7 @@ class Shop:
 
         time.sleep(1)
 
-        print(
-            f'и внутри оказывается: {Colors.yellow}{fmt(win_money)} монет{Colors.reset}! 🔓'
-        )
+        print(f'и внутри оказывается: {Colors.yellow}{fmt(win_money)} монет{Colors.reset}! 🔓')
         print(self.CASE_DROPS[win_money])
 
     def _sell_multiplier(self, attr: str, name: str) -> None:

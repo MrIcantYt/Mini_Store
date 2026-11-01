@@ -94,9 +94,7 @@ class TestDiscount:
         capsys: pytest.CaptureFixture[str],
     ) -> None:
         monkeypatch.setattr(shop_module.random, 'random', lambda: 0.1)
-        monkeypatch.setattr(
-            shop_module.random, 'choice', lambda _items: shop.catalog_by_id[9]
-        )
+        monkeypatch.setattr(shop_module.random, 'choice', lambda _items: shop.catalog_by_id[9])
 
         shop._roll_discount()
 
@@ -140,9 +138,7 @@ class TestBuy:
         assert shop.player.balance_multiplier == 2
         assert shop.player.balance == 800
 
-    def test_buy_multiplier_cancelled(
-        self, shop: Shop, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_buy_multiplier_cancelled(self, shop: Shop, monkeypatch: pytest.MonkeyPatch) -> None:
         shop.player.balance = 1000
         monkeypatch.setattr(shop_module, 'ask_confirmation', lambda _prompt: False)
 
@@ -367,9 +363,7 @@ class TestOpen:
         assert shop.player.lucky_amulet is False
         assert shop.player.balance == 150
 
-    def test_cancel_item_selection(
-        self, shop: Shop, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_cancel_item_selection(self, shop: Shop, monkeypatch: pytest.MonkeyPatch) -> None:
         monkeypatch.setattr(shop_module.random, 'random', lambda: 0.5)
         monkeypatch.setattr(shop, '_choose_item', lambda: None)
 
