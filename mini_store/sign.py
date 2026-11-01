@@ -18,7 +18,7 @@ class SignedJson:
         self._need_check_sign = check_sign
 
     def _get_save_sign(self, json_str: str) -> str:
-        return new(self.secret, json_str.encode('utf-8'), sha256).hexdigest()
+        return new(self.secret, json_str.encode(), sha256).hexdigest()
 
     def _sign_check(self, sign: str, save: str) -> bool:
         expected_sign = self._get_save_sign(save)
@@ -35,14 +35,14 @@ class SignedJson:
         json_save = dumps(save, separators=(',', ':'), ensure_ascii=False)
         signed_save = self._get_save_sign(json_save) + '\n' + json_save
 
-        with open(self.file_path, 'w', encoding='utf-8') as f:
+        with open(self.file_path, 'w') as f:
             f.write(signed_save)
 
     def load(self, force_check: bool = True) -> dict[str, Any]:
         if not path.exists(self.file_path):
             raise FileNotFoundError()
 
-        with open(self.file_path, 'r', encoding='utf-8') as f:
+        with open(self.file_path, 'r') as f:
             signed_save = f.read().strip()
 
         if not signed_save:
