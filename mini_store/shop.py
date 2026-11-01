@@ -78,6 +78,7 @@ class Shop:
 
     def open(self) -> None:
         cls()
+
         print(f'\n{Colors.blue}🛒 Добро пожаловать в Каталог Незнакомца!{Colors.reset}\n')
 
         self._roll_discount()
@@ -141,6 +142,7 @@ class Shop:
 
     def _choose_item(self) -> ShopItem | None:
         print('=' * 30)
+
         for item in self.catalog:
             print(f'{item.id}. {item.name} — Цена: {self._price_label(item)}')
 
@@ -151,10 +153,10 @@ class Shop:
 
             try:
                 choice = int(value)
+
             except ValueError:
                 print(
-                    f'\n{Colors.red}Ошибка! Введите корректное число, '
-                    f"а не: '{value}'.{Colors.reset}"
+                    f"\n{Colors.red}Ошибка! Введите корректное число, а не: '{value}'.{Colors.reset}"
                 )
                 continue
 
@@ -162,8 +164,7 @@ class Shop:
                 return self.catalog[choice - 1]
 
             print(
-                f'{Colors.red}Ошибка! Выберите число от 1 '
-                f'до {len(self.catalog)}.{Colors.reset}'
+                f'{Colors.red}Ошибка! Выберите число от 1 до {len(self.catalog)}.{Colors.reset}'
             )
 
     def _choose_action(self) -> ShopAction | None:
@@ -201,6 +202,7 @@ class Shop:
             return
 
         handler = self._buy_handlers.get(item.id)
+
         if handler is None:
             print(f'\n{Colors.red}Товара с таким ID не существует!{Colors.reset}')
             return
@@ -209,6 +211,7 @@ class Shop:
 
     def _return(self, item: ShopItem) -> None:
         handler = self._sell_handlers.get(item.id)
+
         if handler is None:
             print(
                 f'\n{Colors.red}Товара с таким ID не существует в системе возврата!{Colors.reset}\n'
@@ -285,6 +288,7 @@ class Shop:
             return
 
         self.player.balance -= price
+
         setattr(self.player, attr, True)
 
         print(
@@ -348,6 +352,7 @@ class Shop:
         self.player.secret_case += 1
 
         win_money = random.choice(list(self.CASE_DROPS.keys()))
+
         self.player.balance += win_money
 
         print(
@@ -368,6 +373,7 @@ class Shop:
             return
 
         setattr(self.player, attr, 1)
+
         self.player.balance += 1500
 
         print(
@@ -380,6 +386,7 @@ class Shop:
             return
 
         setattr(self.player, attr, False)
+
         self.player.balance += refund
 
         print(
