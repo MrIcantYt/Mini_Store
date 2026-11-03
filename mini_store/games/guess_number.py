@@ -39,9 +39,18 @@ class GuessNumberGame(AbstractGame):
 
         if self._player.lucky_ticket:
             life += 1
+
             print(
-                f'\nТак как у вас имеется {Colors.yellow}счастливый билет{Colors.reset}, вам {Colors.yellow}+1{Colors.reset} жизнь.\n'
+                f'\nТак как у вас имеется {Colors.yellow}счастливый тикет{Colors.reset}, вам {Colors.yellow}+1{Colors.reset} жизнь.\n'
+                f'Всего жизней: {Colors.yellow}{life}{Colors.reset}'
             )
+
+        if self._player.lucky_amulet:
+            print(
+                f'\nЗагаданное число: {Colors.yellow}{"Чётное" if guess_number % 2 == 0 else "Нечётное"}{Colors.reset}'
+            )
+
+        print()
 
         while life > 0:
             user_number = ask_number(
@@ -49,6 +58,7 @@ class GuessNumberGame(AbstractGame):
                 max=level_choose.to_range,
             )
 
+            # TODO
             if user_number is None:
                 return
 
@@ -81,5 +91,5 @@ class GuessNumberGame(AbstractGame):
 
             else:
                 print(
-                    f'\nЗагаданное число {"меньше" if user_number > guess_number else "больше"}! Осталось жизней: {life}\n'
+                    f'\nЗагаданное число {Colors.yellow}{"меньше" if user_number > guess_number else "больше"}{Colors.reset}! Осталось жизней: {Colors.yellow}{life}{Colors.reset}\n'
                 )
