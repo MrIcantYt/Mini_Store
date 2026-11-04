@@ -3,12 +3,20 @@ from time import sleep
 from typing import Any
 
 from mini_store.colors import Colors
+from mini_store.context import GameContext
 from mini_store.utils import ask_confirmation, cls, fmt
 
 from .abstract import AbstractGame
 
 
 class CrapsGame(AbstractGame):
+    def __init__(self, ctx: GameContext):
+        super().__init__(ctx)
+
+        self._ctx = ctx
+        self._player = ctx.player
+        self._daily = ctx.daily
+
     def _roll_dice(self) -> tuple[int, int]:
         print('\n🎲 Незнакомец трясет стакан с костями...')
 
@@ -20,6 +28,16 @@ class CrapsGame(AbstractGame):
         print(
             f'🎲 Результат броска: {Colors.yellow}[ {die1} ] [ {die2} ]{Colors.reset} -> {Colors.blue}{die1 + die2} очков{Colors.reset}'
         )
+
+        if (
+            die1 + die2 == 12
+            and self._daily.contract
+            and 'сумму 12 в Костях' in self._daily.contract
+            and not self._daily.completed
+        ):
+            self._daily.progress += 1
+            print(f'\n{Colors.green}⭐ КВЕСТ ВЫПОЛНЕН: Вы выбросили заветные 6 и 6!{Colors.reset}')
+
         return die1, die2
 
     def play(self) -> Any:
