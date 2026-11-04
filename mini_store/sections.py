@@ -414,6 +414,7 @@ def merchant_contracts(ctx: GameContext):
         MerchantContract('Сыграть {target} раундов в Блекджек', 3, 7, 150),
         MerchantContract('Набрать ровно 21 очко {target} раз(а)', 1, 2, 300),
         MerchantContract('Разделить карты (Сплит) хотя бы {target} раз', 1, 1, 250),
+        MerchantContract('Выбить сумму 12 в Костях (6 и 6) {target} раз(а)', 1, 1, 500),
     ]
 
     if daily.last_update != today:
@@ -431,7 +432,7 @@ def merchant_contracts(ctx: GameContext):
             f'{Colors.blue}🛒 Торговец обновил ассортимент контрактов на сегодня!{Colors.reset}\n'
         )
 
-    print(f'🕒 Время до обновления контракта:{Colors.red}{timer_str}{Colors.reset}')
+    print(f'🕒 Время до обновления контракта: {Colors.red}{timer_str}{Colors.reset}')
     print(f'📜 Задание: {Colors.yellow}{daily.contract}{Colors.reset}')
 
     if daily.completed:
