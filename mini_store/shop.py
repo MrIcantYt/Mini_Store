@@ -124,6 +124,11 @@ class Shop:
         ]
 
     def _roll_discount(self) -> None:
+        if hasattr(self, '_last_ctx') and self._last_ctx == self.ctx:
+            return
+
+        self._last_ctx = self.ctx
+
         self.ctx.daily.discount_item_id = None
 
         if random.random() >= self.DISCOUNT_CHANCE:
