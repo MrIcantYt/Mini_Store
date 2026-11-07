@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
 from os import path
 
-from mini_store.config import config
-from mini_store.context import Daily
 from mini_store.player import Player
+
+from mini_store.config import CONFIG
 from mini_store.sign import SignedJson
 
 
@@ -34,7 +34,7 @@ class AbstractDataBase(ABC):
 class JsonDataBase(AbstractDataBase):
     def __init__(self, db_path: str = 'game.json') -> None:
         self.path = db_path
-        self.json = SignedJson(db_path, check_sign=not config.is_debug)
+        self.json = SignedJson(db_path, check_sign=not CONFIG.is_debug)
 
     def init_db(self) -> None:
         if not path.exists(self.path):

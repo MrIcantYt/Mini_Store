@@ -1,4 +1,4 @@
-__all__ = ('config',)
+__all__ = ('CONFIG',)
 
 from pathlib import Path
 from sys import argv
@@ -18,4 +18,4 @@ class Config:
     is_debug: ClassVar[bool] = '-d' in argv
 
 
-config: Final[Config] = Config()
+CONFIG: Final[Config] = Config()
