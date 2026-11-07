@@ -8,9 +8,7 @@ authors = [
     { name = "MrIcant", email = "icant@example.com" }
 ]
 requires-python = "==3.15.*"
-dependencies = [
-    "colorama>=0.4.6",
-]
+dependencies = []
 
 [tool.ruff]
 indent-width = 4

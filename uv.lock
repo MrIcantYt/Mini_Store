@@ -45,9 +45,6 @@ wheels = [
 name = "mini-store"
 version = "0.8.0"
 source = { virtual = "." }
-dependencies = [
-    { name = "colorama" },
-]
 
 [package.dev-dependencies]
 dev = [
@@ -58,7 +55,6 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "colorama", specifier = ">=0.4.6" }]
 
 [package.metadata.requires-dev]
 dev = [

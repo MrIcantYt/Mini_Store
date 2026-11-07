@@ -1,10 +1,6 @@
 import sys
 
-from colorama import init as colorama_init
-
-from mini_store import __version__
-from mini_store.colors import Colors
-from mini_store.config import is_debug
+from mini_store.colors import Colors, enable_ansi
 from mini_store.context import *
 from mini_store.db import JsonDataBase
 from mini_store.exceptions import SignCheckError
@@ -13,7 +9,7 @@ from mini_store.player import Player
 from mini_store.sections import *
 from mini_store.utils import *
 
-colorama_init()
+enable_ansi()
 
 
 def init_game(player_id: int) -> GameContext:
