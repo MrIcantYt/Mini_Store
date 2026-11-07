@@ -307,11 +307,10 @@ class TestCraps:
         monkeypatch: pytest.MonkeyPatch,
     ) -> None:
         game = CrapsGame(ctx)
-        values = iter([3, 4])
-        monkeypatch.setattr(craps_module.random, 'randint', lambda _a, _b: next(values))
+        monkeypatch.setattr(craps_module.random, 'choices', lambda _population, k: [3, 4])
         monkeypatch.setattr(craps_module, 'sleep', lambda _s: None)
 
-        assert game._roll_dice() == (3, 4)
+        assert game._roll_dice_get_total() == 7
 
     def test_natural_win(
         self,
@@ -321,7 +320,7 @@ class TestCraps:
         ctx.player.balance = 1000
         game = CrapsGame(ctx)
         feed_input(monkeypatch, '100', '')
-        monkeypatch.setattr(game, '_roll_dice', lambda: (3, 4))
+        monkeypatch.setattr(game, '_roll_dice_get_total', lambda: 7)
 
         game.play()
 
@@ -336,7 +335,7 @@ class TestCraps:
         ctx.player.balance = 1000
         game = CrapsGame(ctx)
         feed_input(monkeypatch, '100', '')
-        monkeypatch.setattr(game, '_roll_dice', lambda: (1, 1))
+        monkeypatch.setattr(game, '_roll_dice_get_total', lambda: 2)
 
         game.play()
 
@@ -350,7 +349,7 @@ class TestCraps:
         ctx.player.balance = 1000
         game = CrapsGame(ctx)
         feed_input(monkeypatch, '100', '')
-        monkeypatch.setattr(game, '_roll_dice', lambda: (2, 3))
+        monkeypatch.setattr(game, '_roll_dice_get_total', lambda: 5)
         monkeypatch.setattr(craps_module, 'ask_confirmation', lambda _prompt: False)
 
         game.play()
@@ -365,8 +364,8 @@ class TestCraps:
         ctx.player.balance = 1000
         game = CrapsGame(ctx)
         feed_input(monkeypatch, '100', '')
-        rolls = iter([(2, 3), (2, 3)])
-        monkeypatch.setattr(game, '_roll_dice', lambda: next(rolls))
+        rolls = iter([5, 5])
+        monkeypatch.setattr(game, '_roll_dice_get_total', lambda: next(rolls))
         monkeypatch.setattr(craps_module, 'ask_confirmation', lambda _prompt: True)
 
         game.play()
