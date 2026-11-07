@@ -22,8 +22,8 @@
 
 ## v0.8
 
-- [ ] Обновить README: Python 3.15, версия 0.8, новые механики.
-- [ ] Добавить секцию BETA-0.8 в `CHANGELOG.md`.
+- [x] Обновить README: Python 3.15, версия 0.8, новые механики.
+- [x] Добавить секцию BETA-0.8 в `CHANGELOG.md`.
 - [ ] Создать `.github/release-notes/BETA-0.8.md`.
   - Без него job `release` упадёт на `body_path`.
 - [ ] Решить, помечать ли `BETA-*` как prerelease.
