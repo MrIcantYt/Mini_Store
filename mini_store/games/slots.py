@@ -69,10 +69,6 @@ class Slot(Enum):
     def __str__(self):
         return self.symbol
 
-    @classmethod
-    def from_symbol(cls, symbol: str) -> Slot | None:
-        return next((s for s in cls if s.symbol == symbol), None)
-
 
 class SlotsGame(AbstractGame):
     def __init__(self, ctx: GameContext) -> None:

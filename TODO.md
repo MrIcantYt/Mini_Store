@@ -147,12 +147,11 @@
 
 #### Мёртвый код и мелочи
 
-- [ ] Удалить `SqliteDataBase`.
   - Схема не совпадает с `Player`, `save_player` и `from_row` падают.
 - [ ] Решить судьбу `deck.py`.
   - Модуль и тесты есть, но игра его не использует.
-- [ ] Убрать или использовать `RawTerminal`, `Slot.from_symbol`, `games/__template.py`.
-- [ ] Добавить явный импорт `dataclass` в `sections.py`.
+- [x] Убрать неиспользуемые `RawTerminal`, `Slot.from_symbol` и `SqliteDataBase`.
+- [x] Добавить явный импорт `dataclass` в `sections.py`.
   - Сейчас он прилетает транзитивно через `from mini_store.utils import *`.
 - [x] Отрегулировать звёздочные импорты `__main__.py`, `sections.py`.
 - [ ] Исправить опечатки.
