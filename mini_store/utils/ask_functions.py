@@ -5,7 +5,7 @@ from mini_store.colors import Colors
 
 
 def ask_confirmation(prompt: str) -> bool:
-    return input(prompt + '\n[Да/Нет]: ').lower() in ['д', 'да', 'y', 'yes']
+    return input(prompt + '\n[Да/Нет]: ').lower() in ['д', 'да']
 
 
 @dataclass(slots=True)
