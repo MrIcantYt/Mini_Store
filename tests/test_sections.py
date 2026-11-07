@@ -2,10 +2,10 @@ from datetime import UTC, date, datetime
 from typing import Self
 
 import pytest
-from conftest import FakeDB
 
 from mini_store import sections
 from mini_store.context import GameContext
+from tests.conftest import FakeDB
 
 
 @pytest.fixture(autouse=True)
