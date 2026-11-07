@@ -1,6 +1,7 @@
 import sys
 
 from mini_store.colors import Colors, enable_ansi
+from mini_store.config import config
 from mini_store.context import *
 from mini_store.db import JsonDataBase
 from mini_store.exceptions import SignCheckError
@@ -42,14 +43,14 @@ def init_game(player_id: int) -> GameContext:
 
 def main() -> None:
     if '--version' in sys.argv[1:]:
-        print(f'Mini-Store {__version__}')
+        print(f'Mini-Store {config.version}')
         return
 
     # TODO: choose id
     player_id = 1
     ctx = init_game(player_id)
 
-    if is_debug:
+    if config.is_debug:
         print(
             f"{Colors.green}You're in debug mode. The save's sign check is disabled.{Colors.reset}\n"
         )
@@ -77,7 +78,7 @@ def main() -> None:
                     Option('Промокод', promocode, color=Colors.yellow),
                 ]
             )
-        if is_debug:
+        if config.is_debug:
             options.extend([Spacer(), Option('Debug menu', debug_menu, color=Colors.green)])
 
         section: SectionFunc | None = ask_option('Выберите пункт меню: ', options)

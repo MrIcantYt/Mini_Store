@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from os import path
 from warnings import deprecated
 
-from mini_store.config import is_debug
+from mini_store.config import config
 from mini_store.player import Player
 from mini_store.sign import SignedJson
 
@@ -97,7 +97,7 @@ class SqliteDataBase(AbstractDataBase):
 class JsonDataBase(AbstractDataBase):
     def __init__(self, db_path: str = 'game.json') -> None:
         self.path = db_path
-        self.json = SignedJson(db_path, check_sign=not is_debug)
+        self.json = SignedJson(db_path, check_sign=not config.is_debug)
 
     def init_db(self) -> None:
         if not path.exists(self.path):
