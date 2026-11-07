@@ -110,17 +110,21 @@ class Shop:
         )
         xp_price = 100 * 2**player.xp_multiplier if player.xp_multiplier < 5 else None
         mining_price = 300 * (player.mining_lvl + 1) if player.mining_lvl < 10 else None
-
-        return [
+        catalog = [
             ShopItem(1, f'Множитель монет {player.balance_multiplier}x', balance_price),
             ShopItem(2, f'Множитель опыта {player.xp_multiplier}x', xp_price),
             ShopItem(3, 'Счастливый Амулет', 300),
             ShopItem(4, 'Майнинг-ферма', mining_price),
             ShopItem(5, 'Зелье удачи', 500),
-            ShopItem(6, 'Cчастливый тикет', 400),
+            ShopItem(6, 'Счастливый тикет', 400),
             ShopItem(8, 'Пассивный бизнес', 1200),
             ShopItem(9, 'Секретный кейс', 2500),
         ]
+
+        if self._player.mining_lvl != 0:
+            catalog.append(ShopItem(7, 'Кофе', 700))
+
+        return catalog
 
     def _roll_discount(self) -> None:
         self._ctx.daily.discount_item_id = None
@@ -309,7 +313,10 @@ class Shop:
         )
 
     def _buy_coffee(self, price: int) -> None:
-        if self.player.mining_multiplier == 2:
+        if self._player.mining_lvl == 0:
+            self._not_bought('майнинг-ферма')
+
+        if self._player.mining_multiplier == 2:
             self._already_bought()
             return
 
