@@ -240,7 +240,7 @@ def reset(ctx: GameContext) -> None:
 
     print(f'\nНезнакомец: {Colors.blue_dark}Хорошо! Ваше решение принято.{Colors.reset}\n')
 
-    ctx.player = ctx.db.reset_player(ctx.player)
+    ctx.player, ctx.daily = ctx.db.reset_player(ctx.daily, ctx.player)
 
     time.sleep(3)
 
