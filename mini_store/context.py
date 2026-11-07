@@ -16,6 +16,10 @@ class Daily:
     completed: bool = False
     discount_item_id: int | None = None
 
+    def register_daily(self, keyword: str) -> None:
+        if self.contract and keyword in self.contract and not self.completed:
+            self.progress += 1
+
 
 @dataclass(slots=True)
 class GameContext:

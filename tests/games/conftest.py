@@ -3,6 +3,7 @@ from collections.abc import Callable
 import pytest
 
 import mini_store.games.blackjack as blackjack_module
+from mini_store.deck import Card, Suit
 
 
 @pytest.fixture
@@ -26,11 +27,20 @@ def set_blackjack_cards(monkeypatch: pytest.MonkeyPatch) -> Callable[..., None]:
         *extra_hands: list[int],
         draws: tuple[int, ...] = (),
     ) -> None:
-        hands = iter([player_cards, bot_cards, *extra_hands])
-        monkeypatch.setattr(blackjack_module.random, 'choices', lambda _population, k: next(hands))
+        sequence = [
+            *player_cards,
+            *bot_cards,
+            *(card for hand in extra_hands for card in hand),
+            *draws,
+        ]
+        cards = iter(Card(Suit.HEARTS, rank) for rank in sequence)
 
-        cards = iter(draws)
-        monkeypatch.setattr(blackjack_module.random, 'choice', lambda _population: next(cards))
+        monkeypatch.setattr(
+            blackjack_module.Deck,
+            'take_cards',
+            lambda _self, count=1: [next(cards) for _ in range(count)],
+        )
+        monkeypatch.setattr(blackjack_module.Deck, 'shuffle', lambda _self: None)
         monkeypatch.setattr(blackjack_module, 'sleep', lambda _seconds: None)
 
     return setup
