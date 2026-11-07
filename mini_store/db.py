@@ -20,7 +20,7 @@ class AbstractDataBase(ABC):
 
     @abstractmethod
     def reset_player(self, player: Player) -> Player:
-        """Reset player to default state and return the resetted player object."""
+        pass
 
     @abstractmethod
     def get_player_by_id(self, player_id: int) -> Player | None:
@@ -58,9 +58,8 @@ class JsonDataBase(AbstractDataBase):
 
         self.json.dump(data)
 
-    def reset_player(self, daily: Daily, player: Player) -> tuple[Player, Daily]:
-        """Reset player to default state and return the resetted player and daily objects."""
-        return Player(id=player.id), Daily(id=daily.id)
+    def reset_player(self, player: Player) -> Player:
+        return Player(id=player.id)
 
     def get_player_by_id(self, player_id: int) -> Player | None:
         data = self.json.load()

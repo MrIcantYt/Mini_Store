@@ -22,9 +22,9 @@ from datetime import UTC, datetime, timedelta
 from typing import Final
 
 from mini_store.colors import Colors
-from mini_store.context import GameContext
 from mini_store.games import *
 from mini_store.keyboard import is_pressed, wait
+from mini_store.models import Daily, GameContext
 from mini_store.shop import Shop
 from mini_store.utils import *
 
@@ -240,7 +240,10 @@ def reset(ctx: GameContext) -> None:
 
     print(f'\nНезнакомец: {Colors.blue_dark}Хорошо! Ваше решение принято.{Colors.reset}\n')
 
-    ctx.player, ctx.daily = ctx.db.reset_player(ctx.daily, ctx.player)
+    ctx.player = ctx.db.reset_player(ctx.player)
+
+    # TODO: when Daily will be field of Player, remove this
+    ctx.daily = Daily()
 
     time.sleep(3)
 
