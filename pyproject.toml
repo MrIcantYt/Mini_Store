@@ -7,7 +7,7 @@ authors = [
     { name = "Lynx20wz", email = "maks20wz@gmail.com" },
     { name = "MrIcant", email = "icant@example.com" }
 ]
-requires-python = "==3.15"
+requires-python = "==3.15.*"
 dependencies = [
     "colorama>=0.4.6",
 ]
