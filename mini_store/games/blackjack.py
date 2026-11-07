@@ -1,7 +1,6 @@
 import random
 from dataclasses import dataclass
 from time import sleep
-from typing import Any
 
 from mini_store.colors import Colors
 from mini_store.utils import ask_confirmation, cls, fmt
@@ -9,7 +8,7 @@ from mini_store.utils import ask_confirmation, cls, fmt
 from .abstract import AbstractGame
 
 
-@dataclass
+@dataclass(slots=True)
 class Hand:
     score: int
     bet: int
@@ -17,7 +16,7 @@ class Hand:
 
 
 class BlackjackGame(AbstractGame):
-    def play(self) -> Any:
+    def play(self):
         cls()
         print(f'\n {Colors.yellow}== Игра: Блекджек (21 очко) =={Colors.reset}\n')
 
@@ -79,10 +78,10 @@ class BlackjackGame(AbstractGame):
 
         self._player.balance -= money_player
 
-        player_cards = random.choices(cards, k=2)
+        player_cards: list[int] = random.choices(cards, k=2)
         player_hands: list[Hand] = [Hand(sum(player_cards), money_player, False)]
 
-        bot_cards = random.choices(cards, k=2)
+        bot_cards: list[int] = random.choices(cards, k=2)
         bot_score = sum(bot_cards)
 
         print('\nДилер раздал карты...')

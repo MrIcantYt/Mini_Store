@@ -8,7 +8,7 @@ from .abstract import AbstractGame
 
 
 class RouttleGame(AbstractGame):
-    def play(self) -> None:
+    def play(self):
         cls()
 
         print(f'\n {Colors.yellow}== Игра: Рулетка Казино =={Colors.reset}\n')

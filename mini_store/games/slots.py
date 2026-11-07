@@ -1,9 +1,6 @@
-from __future__ import annotations
-
 import random
 from enum import Enum
 from time import sleep
-from typing import Any
 
 from mini_store.colors import Colors
 from mini_store.context import GameContext
@@ -104,7 +101,7 @@ class SlotsGame(AbstractGame):
         set_ = set(self._slots)
         return next(iter(set_)) if len(set_) == 1 else None
 
-    def play(self) -> Any:
+    def play(self):
         cls()
 
         print(f'\n {Colors.yellow}== Игра: Игровой Автомат =={Colors.reset}\n')

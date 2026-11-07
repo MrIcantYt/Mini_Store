@@ -58,7 +58,6 @@ class GuessNumberGame(AbstractGame):
                 max=level_choose.to_range,
             )
 
-            # TODO
             if user_number is None:
                 return
 
