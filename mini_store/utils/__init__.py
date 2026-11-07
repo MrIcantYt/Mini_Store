@@ -9,7 +9,4 @@ def fmt(value: int) -> str:
 
 
 def cls() -> None:
-    if os_name == 'nt':
-        run('cls', shell=True, check=False)
-    else:
-        run('clear', check=False)
+    run('cls', shell=True, check=False) if os_name == 'nt' else run('clear', check=False)
