@@ -39,10 +39,10 @@ class Shop:
     }
 
     def __init__(self, ctx: GameContext) -> None:
-        self.ctx = ctx
-        self.player: Player = ctx.player
-        self.catalog = self._build_catalog()
-        self.catalog_by_id = {item.id: item for item in self.catalog}
+        self._ctx = ctx
+        self._player: Player = ctx.player
+        self._catalog: list[ShopItem] = self._build_catalog()
+        self._catalog_by_id = {item.id: item for item in self._catalog}
 
         self._buy_handlers: dict[int, BuyHandler] = {
             1: self._buy_balance_multiplier,
@@ -83,7 +83,7 @@ class Shop:
 
         self._roll_discount()
 
-        print(f'Ваш баланс: {Colors.yellow}{fmt(self.player.balance)} монет{Colors.reset}.\n')
+        print(f'Ваш баланс: {Colors.yellow}{fmt(self._player.balance)} монет{Colors.reset}.\n')
 
         item = self._choose_item()
 
@@ -103,7 +103,7 @@ class Shop:
             self._return(item)
 
     def _build_catalog(self) -> list[ShopItem]:
-        player = self.player
+        player = self._player
 
         balance_price = (
             100 * 2**player.balance_multiplier if player.balance_multiplier < 5 else None
@@ -118,24 +118,18 @@ class Shop:
             ShopItem(4, 'Майнинг-ферма', mining_price),
             ShopItem(5, 'Зелье удачи', 500),
             ShopItem(6, 'Cчастливый тикет', 400),
-            ShopItem(7, 'Кофе', 700),
             ShopItem(8, 'Пассивный бизнес', 1200),
             ShopItem(9, 'Секретный кейс', 2500),
         ]
 
     def _roll_discount(self) -> None:
-        if hasattr(self, '_last_ctx') and self._last_ctx == self.ctx:
-            return
-
-        self._last_ctx = self.ctx
-
-        self.ctx.daily.discount_item_id = None
+        self._ctx.daily.discount_item_id = None
 
         if random.random() >= self.DISCOUNT_CHANCE:
             return
 
-        item = random.choice(self.catalog)
-        self.ctx.daily.discount_item_id = item.id
+        item = random.choice([item for item in self._catalog if item.price is not None])
+        self._ctx.daily.discount_item_id = item.id
 
         print(
             f'{Colors.purple}✨ Загадочный Незнакомец хитро улыбается вам...{Colors.reset}\n'
@@ -146,7 +140,7 @@ class Shop:
     def _choose_item(self) -> ShopItem | None:
         print('=' * 30)
 
-        for item in self.catalog:
+        for item in self._catalog:
             print(f'{item.id}. {item.name} — Цена: {self._price_label(item)}')
 
         print('=' * 30)
@@ -163,10 +157,10 @@ class Shop:
                 )
                 continue
 
-            if 1 <= choice <= len(self.catalog):
-                return self.catalog[choice - 1]
+            if 1 <= choice <= len(self._catalog):
+                return self._catalog[choice - 1]
 
-            print(f'{Colors.red}Ошибка! Выберите число от 1 до {len(self.catalog)}.{Colors.reset}')
+            print(f'{Colors.red}Ошибка! Выберите число от 1 до {len(self._catalog)}.{Colors.reset}')
 
     def _choose_action(self) -> ShopAction | None:
         action = ask_number(
@@ -185,7 +179,7 @@ class Shop:
         if item.price is None:
             return f'{Colors.red}MAX{Colors.reset} монет'
 
-        if self.ctx.daily.discount_item_id == item.id:
+        if self._ctx.daily.discount_item_id == item.id:
             discounted = self._discounted_price(item.price)
             return (
                 f'{Colors.red}{fmt(item.price)}{Colors.reset} -> '
@@ -225,7 +219,7 @@ class Shop:
         if item.price is None:
             return 0
 
-        if self.ctx.daily.discount_item_id == item.id:
+        if self._ctx.daily.discount_item_id == item.id:
             return self._discounted_price(item.price)
 
         return item.price
@@ -234,11 +228,11 @@ class Shop:
         return int(price * self.DISCOUNT_RATE)
 
     def _check_funds(self, price: int) -> bool:
-        if self.player.balance >= price:
+        if self._player.balance >= price:
             return True
 
         print(
-            f'\n{Colors.red}Недостаточно монет! Нужно {fmt(price)} монет, а у вас {fmt(self.player.balance)} монет.{Colors.reset}\n'
+            f'\n{Colors.red}Недостаточно монет! Нужно {fmt(price)} монет, а у вас {fmt(self._player.balance)} монет.{Colors.reset}\n'
         )
         return False
 
@@ -257,11 +251,11 @@ class Shop:
         ):
             return
 
-        self.player.balance -= price
-        self.player.balance_multiplier += 1
+        self._player.balance -= price
+        self._player.balance_multiplier += 1
 
         print(
-            f'\n{Colors.green}Успешно! Списано {fmt(price)} монет. Ваш множитель монет {self.player.balance_multiplier}x{Colors.reset}\n'
+            f'\n{Colors.green}Успешно! Списано {fmt(price)} монет. Ваш множитель монет {self._player.balance_multiplier}x{Colors.reset}\n'
         )
 
     def _buy_xp_multiplier(self, price: int) -> None:
@@ -273,24 +267,24 @@ class Shop:
         ):
             return
 
-        self.player.balance -= price
-        self.player.xp_multiplier += 1
+        self._player.balance -= price
+        self._player.xp_multiplier += 1
 
         print(
-            f'\n{Colors.green}Успешно! Списано {fmt(price)} монет. Ваш множитель опыта {self.player.xp_multiplier}x{Colors.reset}\n'
+            f'\n{Colors.green}Успешно! Списано {fmt(price)} монет. Ваш множитель опыта {self._player.xp_multiplier}x{Colors.reset}\n'
         )
 
     def _buy_flag(self, attr: str, description: str, price: int) -> None:
-        if getattr(self.player, attr):
+        if getattr(self._player, attr):
             self._already_bought()
             return
 
         if not self._check_funds(price):
             return
 
-        self.player.balance -= price
+        self._player.balance -= price
 
-        setattr(self.player, attr, True)
+        setattr(self._player, attr, True)
 
         print(
             f'\n{Colors.green}Успешно! Списано {fmt(price)} монет, теперь у вас есть {description}{Colors.reset}\n'
@@ -300,17 +294,17 @@ class Shop:
         if not self._check_funds(price):
             return
 
-        self.player.balance -= price
-        self.player.mining_lvl += 1
+        self._player.balance -= price
+        self._player.mining_lvl += 1
 
         next_price = (
             'MAX прокачка.'
-            if self.player.mining_lvl == 10
-            else f'{fmt(300 * (self.player.mining_lvl + 1))} монет.'
+            if self._player.mining_lvl == 10
+            else f'{fmt(300 * (self._player.mining_lvl + 1))} монет.'
         )
 
         print(
-            f'\n{Colors.green}Успешно! Списано {fmt(price)} монет, теперь у вас есть Майнинг ферма (лвл: {self.player.mining_lvl})!'
+            f'\n{Colors.green}Успешно! Списано {fmt(price)} монет, теперь у вас есть Майнинг ферма (лвл: {self._player.mining_lvl})!'
             f'\nСледующая прокачка будет стоить: {next_price}{Colors.reset}\n'
         )
 
@@ -331,15 +325,15 @@ class Shop:
             f'\nНезнакомец: {Colors.blue_dark}Отличный выбор. Твоя Майнинг-ферма скажет тебе спасибо. Работа пойдет в два раза быстрее!{Colors.reset}'
         )
 
-        self.player.balance -= price
-        self.player.mining_multiplier = 2
+        self._player.balance -= price
+        self._player.mining_multiplier = 2
 
         print(
             f'\n{Colors.green}Успешно! Списано {fmt(price)} монет, теперь у вас есть Кофе (Майнинг ускорен)!{Colors.reset}\n'
         )
 
     def _buy_business(self, price: int) -> None:
-        if self.player.business or self.player.balance >= price:
+        if self._player.business or self._player.balance >= price:
             print(f'\n{Colors.yellow}Этот товар был временно удалён!{Colors.reset}\n')
             return
 
@@ -349,12 +343,12 @@ class Shop:
         if not self._check_funds(price):
             return
 
-        self.player.balance -= price
-        self.player.secret_case += 1
+        self._player.balance -= price
+        self._player.secret_case += 1
 
         win_money = random.choice(list(self.CASE_DROPS.keys()))
 
-        self.player.balance += win_money
+        self._player.balance += win_money
 
         print(
             f'\n{Colors.green}Успешно! Куплен Секретный кейс за {fmt(price)} монет.{Colors.reset}'
@@ -367,59 +361,57 @@ class Shop:
         print(self.CASE_DROPS[win_money])
 
     def _sell_multiplier(self, attr: str, name: str) -> None:
-        if getattr(self.player, attr) != 5:
+        if getattr(self._player, attr) != 5:
             self._not_bought(name)
             return
 
-        setattr(self.player, attr, 1)
+        setattr(self._player, attr, 1)
 
-        self.player.balance += 1500
+        self._player.balance += 1500
 
         print(
             f'\n{Colors.green}Успешно! Вы вернули "{name}"! К вашему балансу было прибавлено 1.500 монет!{Colors.reset}\n'
         )
 
     def _sell_flag(self, attr: str, refund: int, name: str) -> None:
-        if not getattr(self.player, attr):
+        if not getattr(self._player, attr):
             self._not_bought(name)
             return
 
-        setattr(self.player, attr, False)
+        setattr(self._player, attr, False)
 
-        self.player.balance += refund
+        self._player.balance += refund
 
         print(
             f'\n{Colors.green}Успешно! Вы вернули "{name}"! К вашему балансу было прибавлено {fmt(refund)} монет!{Colors.reset}\n'
         )
 
     def _sell_mining(self) -> None:
-        player = self.player
-
-        if player.mining_lvl == 10 and player.balance >= 5000:
+        if self._player.mining_lvl == 10 and self._player.balance >= 5000:
             print(f'\n{Colors.red}Майнинг ферму нельзя вернуть!{Colors.reset}\n')
 
-        elif 0 < player.mining_lvl < 10:
+        elif 0 < self._player.mining_lvl < 10:
             print(
-                f'\nНезнакомец: {Colors.blue}Хех, у тебя ферма всего {Colors.yellow}{player.mining_lvl}-го уровня{Colors.blue}. Мелкие долги по свету меня не интересуют. Разгони её до максимума (10 LVL), вот тогда и поговорим о демонтаже!{Colors.reset}'
+                f'\nНезнакомец: {Colors.blue}Хех, у тебя ферма всего {Colors.yellow}{self._player.mining_lvl}-го уровня{Colors.blue}. Мелкие долги по свету меня не интересуют. Разгони её до максимума (10 LVL), вот тогда и поговорим о демонтаже!{Colors.reset}'
             )
 
         else:
             self._not_bought('Майнинг-ферма')
 
     def _sell_coffee(self) -> None:
-        if self.player.mining_multiplier != 2:
+        if self._player.mining_multiplier != 2:
             self._not_bought('Кофе')
             return
 
-        self.player.mining_multiplier = 1
-        self.player.balance += 350
+        self._player.mining_multiplier = 1
+        self._player.balance += 350
 
         print(
             f'\n{Colors.green}Успешно! Вы вернули "Кофе"! К вашему балансу было прибавлено 350 монет!{Colors.reset}\n'
         )
 
     def _sell_business(self) -> None:
-        if not self.player.business:
+        if not self._player.business:
             self._not_bought('Пассивный Бизнес')
             return
 
@@ -427,8 +419,8 @@ class Shop:
             f'\nНезнакомец: {Colors.blue}Пассивный бизнес продан за полцены. Вам возвращено 600 монет.{Colors.reset}\n'
         )
 
-        self.player.balance += 600
-        self.player.business = False
+        self._player.balance += 600
+        self._player.business = False
 
         time.sleep(0.3)
 
