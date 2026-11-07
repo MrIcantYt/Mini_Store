@@ -390,3 +390,80 @@ def test_shop_daily_is_used_for_discount(shop: Shop) -> None:
     shop.ctx.daily.discount_item_id = 3
 
     assert shop._final_price(shop.catalog_by_id[3]) == 240
+
+
+class TestDiscountPersistence:
+    def test_new_shop_does_not_reroll_discount(
+        self,
+        ctx: GameContext,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        first = Shop(ctx)
+        monkeypatch.setattr(shop_module.random, 'random', lambda: 0.1)
+        monkeypatch.setattr(shop_module.random, 'choice', lambda _items: first.catalog_by_id[3])
+
+        first._roll_discount()
+
+        assert ctx.daily.discount_item_id == 3
+
+        second = Shop(ctx)
+        monkeypatch.setattr(shop_module.random, 'choice', lambda _items: second.catalog_by_id[5])
+
+        second._roll_discount()
+
+        assert ctx.daily.discount_item_id == 3
+
+    def test_discount_skips_unavailable_items(
+        self,
+        shop: Shop,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        shop.player.balance_multiplier = 5
+        shop.player.xp_multiplier = 5
+        shop.player.mining_lvl = 10
+        shop.catalog = shop._build_catalog()
+
+        offered: list[ShopItem] = []
+
+        def choose(items: list[ShopItem]) -> ShopItem:
+            offered.extend(items)
+            return items[0]
+
+        monkeypatch.setattr(shop_module.random, 'random', lambda: 0.1)
+        monkeypatch.setattr(shop_module.random, 'choice', choose)
+
+        shop._roll_discount()
+
+        assert offered
+        assert all(item.price is not None for item in offered)
+
+
+class TestBalanceIndependentMessages:
+    def test_business_message_does_not_depend_on_balance(
+        self,
+        shop: Shop,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        def message(balance: int) -> str:
+            shop.player.business = False
+            shop.player.balance = balance
+            shop._buy(shop.catalog_by_id[8])
+
+            return capsys.readouterr().out
+
+        assert 'удалён' in message(100)
+        assert 'удалён' in message(5000)
+
+    def test_max_mining_farm_cannot_be_returned_with_low_balance(
+        self,
+        shop: Shop,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        shop.player.mining_lvl = 10
+        shop.player.balance = 1000
+
+        shop._return(shop.catalog_by_id[4])
+
+        output = capsys.readouterr().out
+        assert 'не куплено' not in output
+        assert 'нельзя вернуть' in output

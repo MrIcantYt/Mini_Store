@@ -178,6 +178,16 @@ class TestLevelUp:
         assert player.balance == 500 * GOLD_PER_XP
         assert player.xp == 0
 
+    def test_xp_after_max_level_is_converted(self, player: Player) -> None:
+        player.lvl = MAX_LEVEL
+        player.xp = 50
+
+        player.add_xp(100, apply_multipliers=False)
+
+        assert player.lvl == MAX_LEVEL
+        assert player.xp == 0
+        assert player.balance == (50 + 100) * GOLD_PER_XP
+
 
 class TestSerialization:
     def test_to_dict_uses_balance_key(self, player: Player) -> None:

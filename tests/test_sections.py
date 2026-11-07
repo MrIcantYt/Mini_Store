@@ -141,6 +141,21 @@ class TestMining:
 
         assert ctx.player.balance == 1
 
+    def test_coffee_sets_half_second_delay(
+        self,
+        ctx: GameContext,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        ctx.player.mining_lvl = 1
+        ctx.player.mining_multiplier = 2
+        delays: list[float] = []
+        monkeypatch.setattr(sections.time, 'sleep', delays.append)
+        monkeypatch.setattr(sections, 'is_pressed', lambda _key: True)
+
+        sections.mining(ctx)
+
+        assert delays == [0.5]
+
 
 class TestPromocode:
     def test_valid_promocode(self, ctx: GameContext, monkeypatch: pytest.MonkeyPatch) -> None:

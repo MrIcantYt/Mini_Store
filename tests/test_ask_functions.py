@@ -18,7 +18,15 @@ def feed_input(monkeypatch: pytest.MonkeyPatch, *values: str) -> None:
 class TestAskConfirmation:
     @pytest.mark.parametrize(
         ('answer', 'expected'),
-        [('да', True), ('ДА', True), ('нет', False), ('no', False), ('', False)],
+        [
+            ('да', True),
+            ('ДА', True),
+            ('нет', False),
+            ('no', False),
+            ('', False),
+            ('ладно', False),
+            ('думаю, нет', False),
+        ],
     )
     def test_answers(
         self,
@@ -151,6 +159,24 @@ class TestAskOption:
 
         with pytest.raises(ValueError, match='Duplicate option number'):
             ask_option('Выбор: ', options)
+
+    def test_gap_in_positions_reprompts(
+        self,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        feed_input(monkeypatch, '3', '5')
+        options = [Option('Пятый', 'five', pos=5)]
+
+        assert ask_option('Выбор: ', options) == 'five'
+
+    def test_hidden_option_is_reserved_for_auto_numbering(
+        self,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        feed_input(monkeypatch, '2')
+        options = [HiddenOption(1, 'hidden'), Option('Видимый', 'visible')]
+
+        assert ask_option('Выбор: ', options) == 'visible'
 
     def test_blank_line_can_be_disabled(
         self,

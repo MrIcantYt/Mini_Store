@@ -1,5 +1,6 @@
 import pytest
 
+import mini_store.games.blackjack as blackjack_module
 import mini_store.games.craps as craps_module
 import mini_store.games.guess_number as guess_module
 import mini_store.games.rock_scissors_paper as rsp_module
@@ -20,6 +21,21 @@ def feed_input(monkeypatch: pytest.MonkeyPatch, *values: str) -> None:
     monkeypatch.setattr('builtins.input', lambda _prompt='': next(iterator))
 
 
+def set_blackjack_cards(
+    monkeypatch: pytest.MonkeyPatch,
+    player_cards: list[int],
+    bot_cards: list[int],
+    *extra_hands: list[int],
+    draws: tuple[int, ...] = (),
+) -> None:
+    hands = iter([player_cards, bot_cards, *extra_hands])
+    monkeypatch.setattr(blackjack_module.random, 'choices', lambda _population, k: next(hands))
+
+    cards = iter(draws)
+    monkeypatch.setattr(blackjack_module.random, 'choice', lambda _population: next(cards))
+    monkeypatch.setattr(blackjack_module, 'sleep', lambda _seconds: None)
+
+
 @pytest.fixture(autouse=True)
 def silence_clear(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(guess_module, 'cls', lambda: None)
@@ -29,10 +45,6 @@ class TestSlots:
     def test_slot_symbols(self) -> None:
         assert str(Slot.SEVEN) == '7'
         assert str(Slot.SACK_MONEY) == '💰'
-
-    def test_from_symbol(self) -> None:
-        assert Slot.from_symbol('7') is Slot.SEVEN
-        assert Slot.from_symbol('unknown') is None
 
     def test_three_equal_slots(self, ctx: GameContext) -> None:
         game = SlotsGame(ctx)
@@ -121,6 +133,36 @@ class TestSlots:
         game.play()
 
         assert ctx.player.quest_progress == 1
+
+    def test_quest_does_not_progress_on_invalid_bet(
+        self,
+        ctx: GameContext,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        ctx.player.quest_id = 3
+        ctx.player.balance = 100
+        game = SlotsGame(ctx)
+        feed_input(monkeypatch, 'abc')
+
+        game.play()
+
+        assert ctx.player.quest_progress == 0
+
+    def test_vip_with_777_and_balance_1000(
+        self,
+        ctx: GameContext,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        ctx.player.balance = 1000
+        game = SlotsGame(ctx)
+        game._slots = [Slot.CHERRY, Slot.CHERRY, Slot.CHERRY]
+        feed_input(monkeypatch, '777')
+        monkeypatch.setattr(slots_module, 'sleep', lambda _seconds: None)
+
+        game.play()
+
+        assert game._is_vip is True
+        assert ctx.player.balance == 3331
 
 
 class TestGuessNumber:
@@ -445,3 +487,117 @@ class TestBlackjack:
 
         assert game._ctx is ctx
         assert game._player is ctx.player
+
+    def test_win_pays_profit(
+        self,
+        ctx: GameContext,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        ctx.player.balance = 1000
+        game = BlackjackGame(ctx)
+        set_blackjack_cards(monkeypatch, [10, 9], [10, 8])
+        feed_input(monkeypatch, '100', 'н')
+
+        game.play()
+
+        assert ctx.player.balance == 1100
+        assert ctx.player.xp == 25
+
+    def test_loss_takes_the_bet(
+        self,
+        ctx: GameContext,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        ctx.player.balance = 1000
+        game = BlackjackGame(ctx)
+        set_blackjack_cards(monkeypatch, [10, 7], [10, 9])
+        feed_input(monkeypatch, '100', 'н')
+
+        game.play()
+
+        assert ctx.player.balance == 900
+
+    def test_push_returns_the_bet(
+        self,
+        ctx: GameContext,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        ctx.player.balance = 1000
+        game = BlackjackGame(ctx)
+        set_blackjack_cards(monkeypatch, [10, 9], [10, 9])
+        feed_input(monkeypatch, '100', 'н')
+
+        game.play()
+
+        assert ctx.player.balance == 1000
+
+    def test_bust_loses_the_bet(
+        self,
+        ctx: GameContext,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        ctx.player.balance = 1000
+        game = BlackjackGame(ctx)
+        set_blackjack_cards(monkeypatch, [10, 6], [10, 8], draws=(10,))
+        feed_input(monkeypatch, '100', 'д')
+
+        game.play()
+
+        assert ctx.player.balance == 900
+
+    def test_split_plays_both_hands(
+        self,
+        ctx: GameContext,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        ctx.player.balance = 1000
+        game = BlackjackGame(ctx)
+        set_blackjack_cards(monkeypatch, [10, 10], [10, 8], [2, 3])
+        feed_input(monkeypatch, '100', 'д', 'н', 'н')
+
+        game.play()
+
+        assert ctx.player.balance == 800
+
+    def test_insurance_pays_on_dealer_blackjack(
+        self,
+        ctx: GameContext,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        ctx.player.balance = 1000
+        game = BlackjackGame(ctx)
+        set_blackjack_cards(monkeypatch, [10, 9], [11, 10])
+        feed_input(monkeypatch, '100', 'д', 'н')
+
+        game.play()
+
+        assert ctx.player.balance == 1000
+
+    def test_pair_of_aces_is_not_blackjack(
+        self,
+        ctx: GameContext,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        ctx.player.balance = 1000
+        game = BlackjackGame(ctx)
+        set_blackjack_cards(monkeypatch, [11, 11], [10, 8])
+        feed_input(monkeypatch, '100', 'н', 'н')
+
+        game.play()
+
+        assert ctx.player.balance == 900
+
+    def test_bank_turns_do_not_grow_on_invalid_bet(
+        self,
+        ctx: GameContext,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        ctx.player.bank_deposit = 1000
+        ctx.player.balance = 1000
+        game = BlackjackGame(ctx)
+        feed_input(monkeypatch, 'abc')
+
+        game.play()
+
+        assert ctx.player.bank_turns == 0
+        assert ctx.player.bank_deposit == 1000

@@ -27,6 +27,7 @@ quote-style = "single"
 dev = [
     "pyinstaller>=6.22.3",
     "pytest>=9.2.0",
+    "pytest-cov>=7.1.0",
     "ruff>=0.16.10",
     "ty>=0.0.95",
 ]
@@ -34,3 +35,10 @@ dev = [
 [tool.pytest.ini_options]
 testpaths = ['tests']
 pythonpath = ['.']
+addopts = ['--cov=mini_store', '--cov-report=term-missing']
+
+[tool.coverage.run]
+source = ['mini_store']
+
+[tool.coverage.report]
+fail_under = 85

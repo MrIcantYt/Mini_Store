@@ -1,7 +1,9 @@
+from datetime import date
 from pathlib import Path
 
 import pytest
 
+from mini_store.context import Daily
 from mini_store.db import JsonDataBase
 from mini_store.exceptions import SignCheckError
 from mini_store.player import Player
@@ -98,3 +100,18 @@ class TestJsonDataBase:
 
         with pytest.raises(SignCheckError):
             db.get_player_by_id(1)
+
+    def test_daily_round_trip(self, db: JsonDataBase) -> None:
+        daily = Daily(
+            contract='Сыграть 3 раунда в Блекджек',
+            target=3,
+            progress=1,
+            reward=150,
+            last_update=date(2026, 11, 7),
+            completed=False,
+            discount_item_id=3,
+        )
+
+        db.save_daily(daily)  # ty: ignore[unresolved-attribute]
+
+        assert db.get_daily() == daily  # ty: ignore[unresolved-attribute]
