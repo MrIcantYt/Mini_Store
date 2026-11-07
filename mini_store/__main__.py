@@ -2,7 +2,7 @@ import sys
 
 from mini_store.colors import Colors, enable_ansi
 from mini_store.config import config
-from mini_store.context import *
+from mini_store.context import Daily, GameContext
 from mini_store.db import JsonDataBase
 from mini_store.exceptions import SignCheckError
 from mini_store.games import *
@@ -18,7 +18,7 @@ def init_game(player_id: int) -> GameContext:
     db = JsonDataBase()
     db.init_db()
 
-    player = None
+    player: Player | None = None
     daily = Daily()
 
     try:

@@ -154,7 +154,7 @@
 - [ ] Убрать или использовать `RawTerminal`, `Slot.from_symbol`, `games/__template.py`.
 - [ ] Добавить явный импорт `dataclass` в `sections.py`.
   - Сейчас он прилетает транзитивно через `from mini_store.utils import *`.
-- [ ] Убрать звёздочные импорты в `__main__.py`, `sections.py`, `routtle.py`.
+- [x] Отрегулировать звёздочные импорты `__main__.py`, `sections.py`.
 - [ ] Исправить опечатки.
   - `routtle.py` → `roulette.py`.
   - `Cчастливый тикет` → `Счастливый тикет`.
