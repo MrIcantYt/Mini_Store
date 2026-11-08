@@ -3,12 +3,12 @@ import time
 from collections.abc import Callable
 from dataclasses import dataclass
 from enum import IntEnum
-from functools import partial
+from functools import cached_property, partial
 from typing import ClassVar
 
 from mini_store.colors import Colors
 from mini_store.models import GameContext, Player
-from mini_store.utils import ask_confirmation, ask_number, cls, fmt
+from mini_store.utils import Option, ask_confirmation, ask_number, ask_option, cls, fmt
 
 type BuyHandler = Callable[[int], None]
 type SellHandler = Callable[[], None]
@@ -19,6 +19,8 @@ class ShopItem:
     id: int
     name: str
     price: int | None
+    buy_handler: BuyHandler
+    sell_handler: SellHandler
 
 
 class ShopAction(IntEnum):
@@ -41,39 +43,10 @@ class Shop:
         self._ctx = ctx
         self._player: Player = ctx.player
         self._catalog: list[ShopItem] = self._build_catalog()
-        self._catalog_by_id = {item.id: item for item in self._catalog}
 
-        self._buy_handlers: dict[int, BuyHandler] = {
-            1: self._buy_balance_multiplier,
-            2: self._buy_xp_multiplier,
-            3: partial(self._buy_flag, 'lucky_amulet', 'Счастливый Амулет (+1 жизнь)!'),
-            4: self._buy_mining,
-            5: partial(
-                self._buy_flag,
-                'potion_luck',
-                'Счастливое Зелье (Больше шансов в Казино)!',
-            ),
-            6: partial(
-                self._buy_flag,
-                'lucky_ticket',
-                'Счастливый Тикет (Не вычитается жизнь при первой попытке)!',
-            ),
-            7: self._buy_coffee,
-            8: self._buy_business,
-            9: self._buy_secret_case,
-        }
-
-        self._sell_handlers: dict[int, SellHandler] = {
-            1: partial(self._sell_multiplier, 'balance_multiplier', 'x5 бонус к монетам'),
-            2: partial(self._sell_multiplier, 'xp_multiplier', 'x5 бонус к опыту'),
-            3: partial(self._sell_flag, 'lucky_amulet', 150, 'Счастливый Амулет'),
-            4: self._sell_mining,
-            5: partial(self._sell_flag, 'potion_luck', 250, 'Зелье Удачи'),
-            6: partial(self._sell_flag, 'lucky_ticket', 200, 'Счастливый Тикет'),
-            7: self._sell_coffee,
-            8: self._sell_business,
-            9: self._sell_secret_case,
-        }
+    @cached_property
+    def _catalog_by_id(self) -> dict[int, ShopItem]:
+        return {item.id: item for item in self._catalog}
 
     def open(self) -> None:
         cls()
@@ -110,18 +83,55 @@ class Shop:
         xp_price = 100 * 2**player.xp_multiplier if player.xp_multiplier < 5 else None
         mining_price = 300 * (player.mining_lvl + 1) if player.mining_lvl < 10 else None
         catalog = [
-            ShopItem(1, f'Множитель монет {player.balance_multiplier}x', balance_price),
-            ShopItem(2, f'Множитель опыта {player.xp_multiplier}x', xp_price),
-            ShopItem(3, 'Счастливый Амулет', 300),
-            ShopItem(4, 'Майнинг-ферма', mining_price),
-            ShopItem(5, 'Зелье удачи', 500),
-            ShopItem(6, 'Счастливый тикет', 400),
-            ShopItem(7, 'Кофе', 700),
-            ShopItem(8, 'Секретный кейс', 2500),
+            ShopItem(
+                0,
+                f'Множитель монет {player.balance_multiplier}x',
+                balance_price,
+                self._buy_balance_multiplier,
+                partial(self._sell_multiplier, 'balance_multiplier', 'x5 бонус к монетам'),
+            ),
+            ShopItem(
+                1,
+                f'Множитель опыта {player.xp_multiplier}x',
+                xp_price,
+                self._buy_xp_multiplier,
+                partial(self._sell_multiplier, 'xp_multiplier', 'x5 бонус к опыту'),
+            ),
+            ShopItem(
+                2,
+                'Счастливый Амулет',
+                300,
+                partial(self._buy_flag, 'lucky_amulet', 'Счастливый Амулет (+1 жизнь)!'),
+                partial(self._sell_flag, 'lucky_amulet', 150, 'Счастливый Амулет'),
+            ),
+            ShopItem(3, 'Майнинг-ферма', mining_price, self._buy_mining, self._sell_mining),
+            ShopItem(
+                4,
+                'Зелье удачи',
+                500,
+                partial(
+                    self._buy_flag,
+                    'potion_luck',
+                    'Счастливое Зелье (Больше шансов в Казино)!',
+                ),
+                partial(self._sell_flag, 'potion_luck', 250, 'Зелье Удачи'),
+            ),
+            ShopItem(
+                5,
+                'Счастливый тикет',
+                400,
+                partial(
+                    self._buy_flag,
+                    'lucky_ticket',
+                    'Счастливый Тикет (Не вычитается жизнь при первой попытке)!',
+                ),
+                partial(self._sell_flag, 'lucky_ticket', 200, 'Счастливый Тикет'),
+            ),
+            ShopItem(7, 'Секретный кейс', 2500, self._buy_secret_case, self._sell_secret_case),
         ]
 
         if self._player.mining_lvl != 0:
-            catalog.append(ShopItem(7, 'Кофе', 700))
+            catalog.insert(6, ShopItem(6, 'Кофе', 700, self._buy_coffee, self._sell_coffee))
 
         return catalog
 
@@ -141,29 +151,8 @@ class Shop:
         )
 
     def _choose_item(self) -> ShopItem | None:
-        print('=' * 30)
-
-        for item in self._catalog:
-            print(f'{item.id}. {item.name} — Цена: {self._price_label(item)}')
-
-        print('=' * 30)
-
-        while True:
-            value = input('\nВыберите товар для действия: ')
-
-            try:
-                choice = int(value)
-
-            except ValueError:
-                print(
-                    f"\n{Colors.red}Ошибка! Введите корректное число, а не: '{value}'.{Colors.reset}"
-                )
-                continue
-
-            if 1 <= choice <= len(self._catalog):
-                return self._catalog[choice - 1]
-
-            print(f'{Colors.red}Ошибка! Выберите число от 1 до {len(self._catalog)}.{Colors.reset}')
+        options = [Option(item.name, item) for item in self._catalog]
+        return ask_option('Выберите товар для действия: ', options, allow_cancel=True)
 
     def _choose_action(self) -> ShopAction | None:
         action = ask_number(
@@ -199,24 +188,7 @@ class Shop:
             )
             return
 
-        handler = self._buy_handlers.get(item.id)
-
-        if handler is None:
-            print(f'\n{Colors.red}Товара с таким ID не существует!{Colors.reset}')
-            return
-
-        handler(self._final_price(item))
-
-    def _return(self, item: ShopItem) -> None:
-        handler = self._sell_handlers.get(item.id)
-
-        if handler is None:
-            print(
-                f'\n{Colors.red}Товара с таким ID не существует в системе возврата!{Colors.reset}\n'
-            )
-            return
-
-        handler()
+        item.buy_handler(self._final_price(item))
 
     def _final_price(self, item: ShopItem) -> int:
         if item.price is None:
@@ -229,6 +201,9 @@ class Shop:
 
     def _discounted_price(self, price: int) -> int:
         return int(price * self.DISCOUNT_RATE)
+
+    def _return(self, item: ShopItem) -> None:
+        item.sell_handler()
 
     def _check_funds(self, price: int) -> bool:
         if self._player.balance >= price:
