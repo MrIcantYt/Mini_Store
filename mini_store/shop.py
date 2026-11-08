@@ -116,12 +116,12 @@ class Shop:
             ShopItem(4, 'Майнинг-ферма', mining_price),
             ShopItem(5, 'Зелье удачи', 500),
             ShopItem(6, 'Счастливый тикет', 400),
-            ShopItem(8, 'Пассивный бизнес', 1200),
-            ShopItem(9, 'Секретный кейс', 2500),
+            ShopItem(7, 'Кофе', 700),
+            ShopItem(8, 'Секретный кейс', 2500),
         ]
 
         if self._player.mining_lvl != 0:
-            catalog.insert(6, ShopItem(7, 'Кофе', 700))
+            catalog.append(ShopItem(7, 'Кофе', 700))
 
         return catalog
 
@@ -339,16 +339,6 @@ class Shop:
             f'\n{Colors.green}Успешно! Списано {fmt(price)} монет, теперь у вас есть Кофе (Майнинг ускорен)!{Colors.reset}\n'
         )
 
-    def _buy_business(self, price: int) -> None:
-        if self._player.business or self._player.balance >= price:
-            print(f'\n{Colors.yellow}Этот товар был временно удалён!{Colors.reset}\n')
-            return
-        else:
-            print(f'\n{Colors.red}У вас недостаточно средств для покупки Бизнеса!{Colors.reset}\n')
-            return
-
-        self._check_funds(price)
-
     def _buy_secret_case(self, price: int) -> None:
         if not self._check_funds(price):
             return
@@ -418,24 +408,6 @@ class Shop:
 
         print(
             f'\n{Colors.green}Успешно! Вы вернули "Кофе"! К вашему балансу было прибавлено 350 монет!{Colors.reset}\n'
-        )
-
-    def _sell_business(self) -> None:
-        if not self._player.business:
-            self._not_bought('Пассивный Бизнес')
-            return
-
-        print(
-            f'\nНезнакомец: {Colors.blue}Пассивный бизнес продан за полцены. Вам возвращено 600 монет.{Colors.reset}\n'
-        )
-
-        self._player.balance += 600
-        self._player.business = False
-
-        time.sleep(0.3)
-
-        print(
-            f'{Colors.green}Успешно! Пассивный бизнес закрыт, вам начислено +600 монет!{Colors.reset}\n'
         )
 
     def _sell_secret_case(self) -> None:
