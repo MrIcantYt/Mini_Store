@@ -36,7 +36,7 @@ class SignedJson:
         with open(self.file_path, 'w') as f:
             f.write(signed_save)
 
-    def load(self, force_check: bool = True) -> dict[str, Any]:
+    def load(self) -> dict[str, Any]:
         if not path.exists(self.file_path):
             raise FileNotFoundError()
 
@@ -48,9 +48,7 @@ class SignedJson:
 
         sign, save = self._split_sign_and_save(signed_save)
 
-        need_check = self._need_check_sign and force_check
-
-        if need_check and not self._sign_check(sign, save):
+        if self._need_check_sign and not self._sign_check(sign, save):
             raise SignCheckError()
 
         return loads(save)

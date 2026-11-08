@@ -41,7 +41,7 @@ class JsonDataBase(AbstractDataBase):
             self.json.dump({'players': []})
 
     def save_player(self, player: Player) -> None:
-        data = self.json.load(False)
+        data = self.json.load()
         players = data.get('players')
 
         if not players:

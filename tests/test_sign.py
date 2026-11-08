@@ -66,14 +66,6 @@ class TestSignedJson:
 
         assert unchecked.load() == {'a': 2}
 
-    def test_force_check_false_skips_signature(self, tmp_path) -> None:
-        path = tmp_path / 'save.json'
-        signed = SignedJson(str(path), secret=SECRET)
-        signed.dump({'a': 1})
-        path.write_text('bad-sign\n{"a":2}', encoding='utf-8')
-
-        assert signed.load(force_check=False) == {'a': 2}
-
     def test_different_secret_produces_different_sign(self, tmp_path) -> None:
         path = tmp_path / 'save.json'
         SignedJson(str(path), secret=b'one').dump({'a': 1})
