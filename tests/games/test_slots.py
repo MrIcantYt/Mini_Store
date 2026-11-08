@@ -3,8 +3,8 @@ from collections.abc import Callable
 import pytest
 
 import mini_store.games.slots as slots_module
-from mini_store.context import GameContext
 from mini_store.games.slots import Slot, SlotsGame
+from mini_store.models import GameContext
 
 
 class TestSlots:

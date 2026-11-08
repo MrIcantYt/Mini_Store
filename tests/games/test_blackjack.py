@@ -2,9 +2,9 @@ from collections.abc import Callable
 
 import pytest
 
-from mini_store.context import GameContext
 from mini_store.deck import Card, Suit
 from mini_store.games.blackjack import BlackjackGame, Hand
+from mini_store.models import GameContext
 
 
 class TestBlackjack:

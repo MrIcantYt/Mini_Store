@@ -1,7 +1,7 @@
 import pytest
 
 import mini_store.shop as shop_module
-from mini_store.context import GameContext
+from mini_store.models import GameContext
 from mini_store.shop import Shop, ShopAction, ShopItem
 
 

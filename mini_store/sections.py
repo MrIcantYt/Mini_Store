@@ -242,8 +242,8 @@ def reset(ctx: GameContext) -> None:
 
     ctx.player = ctx.db.reset_player(ctx.player)
 
-    # TODO: when Daily will be field of Player, remove this
-    ctx.daily = Daily()
+    # TODO: when DailyContext will be field of Player, remove this
+    ctx.daily = DailyContext()
 
     time.sleep(3)
 

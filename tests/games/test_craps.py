@@ -3,8 +3,8 @@ from collections.abc import Callable
 import pytest
 
 import mini_store.games.craps as craps_module
-from mini_store.context import GameContext
 from mini_store.games.craps import CrapsGame
+from mini_store.models import GameContext
 
 
 class TestCraps:
@@ -14,7 +14,7 @@ class TestCraps:
         monkeypatch: pytest.MonkeyPatch,
     ) -> None:
         game = CrapsGame(ctx)
-        monkeypatch.setattr(craps_module.random, 'choices', lambda _population, k: [3, 4])
+        monkeypatch.setattr(craps_module.random, 'choices', lambda _population, _k: [3, 4])
         monkeypatch.setattr(craps_module, 'sleep', lambda _s: None)
 
         assert game._roll_dice_get_total() == 7
@@ -88,7 +88,6 @@ class TestCraps:
         self,
         feed_input: Callable[..., None],
         ctx: GameContext,
-        monkeypatch: pytest.MonkeyPatch,
         bet: str,
     ) -> None:
         ctx.player.balance = 1000

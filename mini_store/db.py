@@ -2,9 +2,8 @@ from abc import ABC, abstractmethod
 from os import PathLike
 from pathlib import Path
 
-from mini_store.player import Player
-
 from mini_store.config import CONFIG
+from mini_store.models import Player
 from mini_store.sign import SignedJson
 
 

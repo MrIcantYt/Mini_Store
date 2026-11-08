@@ -2,9 +2,8 @@ from __future__ import annotations
 
 import pytest
 
-from mini_store.context import Daily, GameContext
 from mini_store.db import AbstractDataBase
-from mini_store.player import Player
+from mini_store.models import DailyContext, GameContext, Player
 
 
 class FakeDB(AbstractDataBase):
@@ -42,4 +41,4 @@ def player() -> Player:
 
 @pytest.fixture
 def ctx(player: Player, db: FakeDB) -> GameContext:
-    return GameContext(player=player, db=db, daily=Daily())
+    return GameContext(player=player, db=db, daily=DailyContext())

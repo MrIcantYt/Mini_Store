@@ -7,7 +7,7 @@ import mini_store.__main__ as main_module
 import mini_store.shop as shop_module
 from mini_store.__main__ import init_game, main
 from mini_store.config import CONFIG
-from mini_store.player import Player
+from mini_store.models import Player
 from mini_store.sign import SignedJson
 
 

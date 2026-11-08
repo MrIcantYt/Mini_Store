@@ -1,9 +1,8 @@
 import pytest
 
 import mini_store.games.guess_number as guess_module
-from mini_store.context import GameContext
 from mini_store.games.guess_number import GuessNumberGame, Levels
-from mini_store.player import Player
+from mini_store.models import GameContext, Player
 
 
 @pytest.fixture(autouse=True)

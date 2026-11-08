@@ -2,8 +2,8 @@ from dataclasses import fields
 
 import pytest
 
-import mini_store.player as player_module
-from mini_store.player import (
+import mini_store.models.player as player_module
+from mini_store.models.player import (
     BOOL_FIELDS,
     GOLD_PER_XP,
     MAX_BALANCE,

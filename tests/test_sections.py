@@ -4,7 +4,7 @@ from typing import Self
 import pytest
 
 from mini_store import sections
-from mini_store.context import GameContext
+from mini_store.models import GameContext
 from tests.conftest import FakeDB
 
 

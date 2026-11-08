@@ -5,7 +5,7 @@ from mini_store.config import CONFIG
 from mini_store.db import JsonDataBase
 from mini_store.exceptions import SignCheckError
 from mini_store.games import *
-from mini_store.player import Player
+from mini_store.models import DailyContext, GameContext, Player
 from mini_store.sections import *
 from mini_store.utils import *
 
@@ -18,7 +18,7 @@ def init_game(player_id: int) -> GameContext:
     db.init_db()
 
     player: Player | None = None
-    daily = Daily()
+    daily = DailyContext()
 
     try:
         player = db.get_player_by_id(player_id)

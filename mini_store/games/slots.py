@@ -3,7 +3,7 @@ from enum import Enum
 from time import sleep
 
 from mini_store.colors import Colors
-from mini_store.context import GameContext
+from mini_store.models import GameContext
 from mini_store.utils import cls, fmt
 
 from .abstract import AbstractGame

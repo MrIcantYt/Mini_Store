@@ -3,10 +3,9 @@ from pathlib import Path
 
 import pytest
 
-from mini_store.context import Daily
 from mini_store.db import JsonDataBase
 from mini_store.exceptions import SignCheckError
-from mini_store.player import Player
+from mini_store.models import DailyContext, Player
 
 
 @pytest.fixture
@@ -102,7 +101,7 @@ class TestJsonDataBase:
             db.get_player_by_id(1)
 
     def test_daily_round_trip(self, db: JsonDataBase) -> None:
-        daily = Daily(
+        daily = DailyContext(
             contract='Сыграть 3 раунда в Блекджек',
             target=3,
             progress=1,

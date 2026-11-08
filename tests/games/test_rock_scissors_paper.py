@@ -3,8 +3,8 @@ from collections.abc import Callable
 import pytest
 
 import mini_store.games.rock_scissors_paper as rsp_module
-from mini_store.context import GameContext
 from mini_store.games.rock_scissors_paper import RockScissorsPaperGame
+from mini_store.models import GameContext
 
 
 class TestRockScissorsPaper:

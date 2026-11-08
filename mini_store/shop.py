@@ -7,8 +7,7 @@ from functools import partial
 from typing import ClassVar
 
 from mini_store.colors import Colors
-from mini_store.context import GameContext
-from mini_store.player import Player
+from mini_store.models import GameContext, Player
 from mini_store.utils import ask_confirmation, ask_number, cls, fmt
 
 type BuyHandler = Callable[[int], None]
