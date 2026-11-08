@@ -14,7 +14,7 @@ class TestCraps:
         monkeypatch: pytest.MonkeyPatch,
     ) -> None:
         game = CrapsGame(ctx)
-        monkeypatch.setattr(craps_module.random, 'choices', lambda _population, _k: [3, 4])
+        monkeypatch.setattr(craps_module.random, 'choices', lambda _population, **_kwargs: [3, 4])
         monkeypatch.setattr(craps_module, 'sleep', lambda _s: None)
 
         assert game._roll_dice_get_total() == 7
