@@ -116,6 +116,7 @@ class Shop:
             ShopItem(4, 'Майнинг-ферма', mining_price),
             ShopItem(5, 'Зелье удачи', 500),
             ShopItem(6, 'Счастливый тикет', 400),
+            ShopItem(7, 'Кофе', 700),
             ShopItem(8, 'Пассивный бизнес', 1200),
             ShopItem(9, 'Секретный кейс', 2500),
         ]
@@ -312,9 +313,6 @@ class Shop:
         )
 
     def _buy_coffee(self, price: int) -> None:
-        if self._player.mining_lvl == 0:
-            self._not_bought('майнинг-ферма')
-
         if self._player.mining_multiplier == 2:
             self._already_bought()
             return
