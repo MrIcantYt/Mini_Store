@@ -102,9 +102,6 @@ class SlotsGame(AbstractGame):
 
         print(f'\n {Colors.yellow}== Игра: Игровой Автомат =={Colors.reset}\n')
 
-        if self._player.quest_id == 3:
-            self._player.quest_progress += 1
-
         user_bet = (
             input(
                 f"Введите вашу ставку или 'all'/'все' (Ваш баланс: {Colors.yellow}{fmt(self._player.balance)}{Colors.reset} монет): "
@@ -144,17 +141,19 @@ class SlotsGame(AbstractGame):
             )
             return
 
-        self._player.balance -= money_player
-
         if money_player == 777 and self._player.balance >= 777:
             self._is_vip = True
+
             print(
                 f'\n{Colors.yellow}⚡ ВНИМАНИЕ! Активирован VIP-режим ХАЙРОЛЛЕРА «777»!⚡{Colors.reset}\n'
                 f'{Colors.red}Ставки максимальны. Риск удвоен. Выигрыш колоссален!{Colors.reset}\n'
                 '\n| 🎰 БAРAБAНЫ VIP-AВТОМAТA СТРЕМИТЕЛЬНО ВРAЩАЮТСЯ... 🎰 |'
             )
+
         else:
             print('\n| 🎰 БAРAБAНЫ КРУТЯТСЯ... 🎰 |')
+
+        self._player.balance -= money_player
 
         sleep(0.4)
         print(f'[{self._slots[0]}]')
@@ -169,6 +168,9 @@ class SlotsGame(AbstractGame):
             win_coins = int(slot.coins_reward * money_player * self._player.balance_multiplier)
             win_xp = int(slot.xp_reward * self._player.xp_multiplier)
             msg = slot.msg
+
+            if self._player.quest_id == 3:
+                self._player.quest_progress += 1
 
             if self._is_vip:
                 win_coins *= 2
