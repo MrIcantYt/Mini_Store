@@ -393,7 +393,7 @@ class Shop:
         )
 
     def _sell_mining(self) -> None:
-        if self._player.mining_lvl == 10 and self._player.balance >= 5000:
+        if self._player.mining_lvl == 10:
             print(f'\n{Colors.red}Майнинг ферму нельзя вернуть!{Colors.reset}\n')
 
         elif 0 < self._player.mining_lvl < 10:

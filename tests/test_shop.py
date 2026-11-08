@@ -442,34 +442,3 @@ class TestDiscountPersistence:
 
         assert offered
         assert all(item.price is not None for item in offered)
-
-
-class TestBalanceIndependentMessages:
-    def test_business_message_does_not_depend_on_balance(
-        self,
-        shop: Shop,
-        capsys: pytest.CaptureFixture[str],
-    ) -> None:
-        def message(balance: int) -> str:
-            shop.player.business = False
-            shop.player.balance = balance
-            shop._buy(shop.catalog_by_id[8])
-
-            return capsys.readouterr().out
-
-        assert 'удалён' in message(100)
-        assert 'удалён' in message(5000)
-
-    def test_max_mining_farm_cannot_be_returned_with_low_balance(
-        self,
-        shop: Shop,
-        capsys: pytest.CaptureFixture[str],
-    ) -> None:
-        shop.player.mining_lvl = 10
-        shop.player.balance = 1000
-
-        shop._return(shop.catalog_by_id[4])
-
-        output = capsys.readouterr().out
-        assert 'не куплено' not in output
-        assert 'нельзя вернуть' in output

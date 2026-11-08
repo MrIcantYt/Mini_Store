@@ -32,7 +32,7 @@ class AbstractDataBase(ABC):
 
 
 class JsonDataBase(AbstractDataBase):
-    def __init__(self, db_path: str | PathLike[str] = 'game.json') -> None:
+    def __init__(self, db_path: str | PathLike[str] = Path('game.json')) -> None:
         self.path = Path(db_path)
         self.json = SignedJson(self.path, check_sign=not CONFIG.is_debug)
 

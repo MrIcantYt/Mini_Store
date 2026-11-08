@@ -16,7 +16,7 @@ def test_version_flag(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFix
 
     main()
 
-    assert capsys.readouterr().out.strip() == f'Mini-Store {config.version}'
+    assert capsys.readouterr().out.strip() == f'Mini-Store {CONFIG.version}'
 
 
 def write_raw_save(path: Path, content: str) -> None:
@@ -86,7 +86,7 @@ def test_init_game_loads_old_save_with_defaults(
         'quest_progress': 0,
         'rebirths': 0,
     }
-    SignedJson(str(tmp_path / 'game.json')).dump({'players': [legacy]})
+    SignedJson(tmp_path / 'game.json').dump({'players': [legacy]})
 
     ctx = init_game(1)
 

@@ -1,14 +1,16 @@
-from __future__ import annotations
+import subprocess
+from pathlib import Path
 
 import pytest
 
+import mini_store.utils
 from mini_store.db import AbstractDataBase
 from mini_store.models import DailyContext, GameContext, Player
 
 
 class FakeDB(AbstractDataBase):
     def __init__(self) -> None:
-        self.path = ':memory:'
+        self.path = Path(':memory:')
         self.saved: list[Player] = []
         self.resets = 0
 
@@ -42,3 +44,17 @@ def player() -> Player:
 @pytest.fixture
 def ctx(player: Player, db: FakeDB) -> GameContext:
     return GameContext(player=player, db=db, daily=DailyContext())
+
+
+@pytest.fixture(autouse=True)
+def disable_clear_screen(monkeypatch):
+    def fake_run(*args, **kwargs):
+        cmd = args[0] if args else kwargs.get('args', '')
+        if isinstance(cmd, str) and cmd.lower() in ('cls', 'clear'):
+            return subprocess.CompletedProcess(args, returncode=0)
+
+        return original_run(*args, **kwargs)
+
+    original_run = subprocess.run
+
+    monkeypatch.setattr(mini_store.utils, 'run', fake_run)

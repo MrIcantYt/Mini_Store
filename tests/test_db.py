@@ -112,6 +112,7 @@ class TestJsonDataBase:
             discount_item_id=3,
         )
 
+        # TODO
         db.save_daily(daily)  # ty: ignore[unresolved-attribute]
 
         assert db.get_daily() == daily  # ty: ignore[unresolved-attribute]
