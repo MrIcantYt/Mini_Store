@@ -107,12 +107,10 @@ class TestSlots:
 
         assert ctx.player.quest_progress == 1
 
-    @pytest.mark.xfail(reason='TODO in next update')
     def test_quest_does_not_progress_on_invalid_bet(
         self,
         feed_input: Callable[..., None],
         ctx: GameContext,
-        monkeypatch: pytest.MonkeyPatch,
     ) -> None:
         ctx.player.quest_id = 3
         ctx.player.balance = 100
@@ -123,7 +121,6 @@ class TestSlots:
 
         assert ctx.player.quest_progress == 0
 
-    @pytest.mark.xfail(reason='TODO in next update')
     def test_vip_with_777_and_balance_1000(
         self,
         feed_input: Callable[..., None],

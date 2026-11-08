@@ -141,7 +141,6 @@ class TestMining:
 
         assert ctx.player.balance == 1
 
-    @pytest.mark.xfail(reason='TODO in next update')
     def test_coffee_sets_half_second_delay(
         self,
         ctx: GameContext,
