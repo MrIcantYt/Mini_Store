@@ -35,13 +35,13 @@ class TestSignedJson:
 
     def test_empty_file_returns_empty_dict(self, tmp_path) -> None:
         path = tmp_path / 'save.json'
-        path.write_text('', encoding='utf-8')
+        path.write_text('')
 
         assert SignedJson(str(path), secret=SECRET).load() == {}
 
     def test_file_without_separator(self, tmp_path) -> None:
         path = tmp_path / 'save.json'
-        path.write_text('broken', encoding='utf-8')
+        path.write_text('broken')
 
         with pytest.raises(ValueError, match='Файл повреждён'):
             SignedJson(str(path), secret=SECRET).load()
@@ -51,7 +51,7 @@ class TestSignedJson:
         signed = SignedJson(str(path), secret=SECRET)
         signed.dump({'a': 1})
 
-        path.write_text('bad-sign\n{"a":2}', encoding='utf-8')
+        path.write_text('bad-sign\n{"a":2}')
 
         with pytest.raises(SignCheckError):
             signed.load()
@@ -60,7 +60,7 @@ class TestSignedJson:
         path = tmp_path / 'save.json'
         signed = SignedJson(str(path), secret=SECRET)
         signed.dump({'a': 1})
-        path.write_text('bad-sign\n{"a":2}', encoding='utf-8')
+        path.write_text('bad-sign\n{"a":2}')
 
         unchecked = SignedJson(str(path), secret=SECRET, check_sign=False)
 
@@ -69,9 +69,9 @@ class TestSignedJson:
     def test_different_secret_produces_different_sign(self, tmp_path) -> None:
         path = tmp_path / 'save.json'
         SignedJson(str(path), secret=b'one').dump({'a': 1})
-        first = path.read_text(encoding='utf-8')
+        first = path.read_text()
 
         SignedJson(str(path), secret=b'two').dump({'a': 1})
-        second = path.read_text(encoding='utf-8')
+        second = path.read_text()
 
         assert first != second

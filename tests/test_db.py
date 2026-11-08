@@ -96,7 +96,7 @@ class TestJsonDataBase:
     def test_detects_tampered_save(self, db: JsonDataBase) -> None:
         db.save_player(Player(id=1))
         path = Path(db.path)
-        path.write_text('bad-sign\n{"players":[]}', encoding='utf-8')
+        path.write_text('bad-sign\n{"players":[]}')
 
         with pytest.raises(SignCheckError):
             db.get_player_by_id(1)

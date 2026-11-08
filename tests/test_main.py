@@ -21,7 +21,7 @@ def test_version_flag(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFix
 
 def write_raw_save(path: Path, content: str) -> None:
     save = SignedJson(str(path))
-    path.write_text(save._get_save_sign(content) + '\n' + content, encoding='utf-8')
+    path.write_text(save._get_save_sign(content) + '\n' + content)
 
 
 def test_init_game_resets_file_without_separator(
@@ -31,7 +31,7 @@ def test_init_game_resets_file_without_separator(
 ) -> None:
     monkeypatch.chdir(tmp_path)
     monkeypatch.setattr(main_module, 'cls', lambda: None)
-    (tmp_path / 'game.json').write_text('no-signature', encoding='utf-8')
+    (tmp_path / 'game.json').write_text('no-signature')
 
     ctx = init_game(1)
 
