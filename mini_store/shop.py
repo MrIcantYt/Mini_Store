@@ -340,6 +340,9 @@ class Shop:
         if self._player.business or self._player.balance >= price:
             print(f'\n{Colors.yellow}Этот товар был временно удалён!{Colors.reset}\n')
             return
+        else:
+            print(f'\n{Colors.red}У вас недостаточно средств для покупки Бизнеса!{Colors.reset}\n')
+            return
 
         self._check_funds(price)
 
