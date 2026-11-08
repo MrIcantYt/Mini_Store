@@ -11,11 +11,15 @@ class AbstractDataBase(ABC):
     path: Path
 
     @abstractmethod
-    def init_db(self) -> bool:
+    def init_db(self) -> None:
         pass
 
     @abstractmethod
     def save_player(self, player: Player) -> None:
+        pass
+
+    @abstractmethod
+    def reset(self) -> None:
         pass
 
     @abstractmethod
@@ -36,19 +40,12 @@ class JsonDataBase(AbstractDataBase):
         self.path = Path(db_path)
         self.json = SignedJson(self.path, check_sign=not CONFIG.is_debug)
 
-    def init_db(self) -> bool:
-        """Initialize the database.
-
-        Return:
-            bool: `False` if the database was created, `True` otherwise.
-        """
+    def init_db(self) -> None:
         if not self.path.exists():
             self.json.dump({'players': []})
-            return False
-        return True
 
     def save_player(self, player: Player) -> None:
-        data = self.json.load()
+        data = self.json.load(verify_sign=False)
         players = data.get('players')
 
         if not players:
@@ -64,6 +61,9 @@ class JsonDataBase(AbstractDataBase):
             players.append(record)
 
         self.json.dump(data)
+
+    def reset(self) -> None:
+        self.json.dump({'players': []})
 
     def reset_player(self, player: Player) -> Player:
         return Player(id=player.id)

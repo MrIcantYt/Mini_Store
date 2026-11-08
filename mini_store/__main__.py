@@ -1,4 +1,5 @@
 import sys
+from json import JSONDecodeError
 
 from mini_store.colors import Colors, enable_ansi
 from mini_store.config import CONFIG
@@ -15,23 +16,24 @@ enable_ansi()
 def init_game(player_id: int) -> GameContext:
     cls()
     db = JsonDataBase()
-    is_new = db.init_db()
+    db.init_db()
 
-    player: None | Player = None
+    try:
+        player = db.get_player_by_id(player_id)
+    except (FileNotFoundError, SignCheckError, ValueError, JSONDecodeError) as e:
+        if isinstance(e, FileNotFoundError):
+            print(
+                f'\n{Colors.red}Файл сохранения не был найден. Было создано новое.{Colors.reset}\n'
+            )
+        elif isinstance(e, (JSONDecodeError, ValueError)):
+            print(
+                f'{Colors.red}Файл сохранения был повреждён. Ваш прогресс сброшен.{Colors.reset}\n'
+            )
+        else:
+            print(f'\n{Colors.red}{e.message}. Ваш прогресс сброшен!{Colors.reset}\n')
 
-    if not is_new:
-        try:
-            player = db.get_player_by_id(player_id)
-
-        except FileNotFoundError:
-            print(f'\n{Colors.red}Файл сохранения не был найден.{Colors.reset}')
-
-            player = None
-
-        except SignCheckError as e:
-            print(f'\n{Colors.red}{e.message}. Ваш прогресс сброшен!{Colors.reset}')
-
-            player = None
+        db.reset()
+        player = None
 
     if player is None:
         player = Player(id=player_id)

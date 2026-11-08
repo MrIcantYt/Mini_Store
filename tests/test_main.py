@@ -24,91 +24,12 @@ def write_raw_save(path: Path, content: str) -> None:
     path.write_text(save._get_save_sign(content) + '\n' + content)
 
 
-@pytest.mark.xfail(reason='TODO in next update')
-def test_init_game_resets_file_without_separator(
-    tmp_path: Path,
-    monkeypatch: pytest.MonkeyPatch,
-    capsys: pytest.CaptureFixture[str],
-) -> None:
-    monkeypatch.chdir(tmp_path)
-    monkeypatch.setattr(main_module, 'cls', lambda: None)
-    (tmp_path / 'game.json').write_text('no-signature')
-
-    ctx = init_game(1)
-
-    assert ctx.player.id == 1
-    assert ctx.player.balance == 0
-    assert 'прогресс сброшен' in capsys.readouterr().out.lower()
-
-
-@pytest.mark.xfail(reason='TODO in next update')
-def test_init_game_resets_invalid_json(
-    tmp_path: Path,
-    monkeypatch: pytest.MonkeyPatch,
-    capsys: pytest.CaptureFixture[str],
-) -> None:
-    monkeypatch.chdir(tmp_path)
-    monkeypatch.setattr(main_module, 'cls', lambda: None)
-    write_raw_save(tmp_path / 'game.json', '{invalid')
-
-    ctx = init_game(1)
-
-    assert ctx.player.id == 1
-    assert ctx.player.balance == 0
-    assert 'прогресс сброшен' in capsys.readouterr().out.lower()
-
-
-@pytest.mark.xfail(reason='TODO in next update')
-def test_init_game_loads_old_save_with_defaults(
-    tmp_path: Path,
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    monkeypatch.chdir(tmp_path)
-    monkeypatch.setattr(main_module, 'cls', lambda: None)
-    legacy = {
-        'id': 1,
-        'balance': 500,
-        'balance_multiplier': 1,
-        'xp': 0,
-        'xp_multiplier': 1,
-        'lvl': 3,
-        'promo_used': False,
-        'lucky_amulet': True,
-        'secret_used': False,
-        'bought': 0,
-        'mining_lvl': 0,
-        'potion_luck': False,
-        'lucky_ticket': False,
-        'buy_num_boost': 0,
-        'business': False,
-        'secret_case': 0,
-        'quest_id': 1,
-        'quest_progress': 0,
-        'rebirths': 0,
-    }
-    SignedJson(tmp_path / 'game.json').dump({'players': [legacy]})
-
-    ctx = init_game(1)
-
-    assert ctx.player.balance == 500
-    assert ctx.player.lvl == 3
-    assert ctx.player.lucky_amulet is True
-    assert ctx.player.mining_multiplier == 1
-    assert ctx.player.bank_deposit == 0
-    assert ctx.player.bank_turns == 0
-
-
-def test_main_menu_shop_buy_and_exit(
-    db,
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
+def test_main_menu_shop_buy_and_exit(db, monkeypatch: pytest.MonkeyPatch) -> None:
     player = Player(id=1)
     player.balance = 1000
     db.save_player(player)
 
     monkeypatch.setattr(main_module, 'JsonDataBase', lambda: db)
-    monkeypatch.setattr(main_module, 'cls', lambda: None)
-    monkeypatch.setattr(shop_module, 'cls', lambda: None)
     monkeypatch.setattr(shop_module.random, 'random', lambda: 0.5)
     inputs = iter(['1', '3', '1', '8'])
     monkeypatch.setattr('builtins.input', lambda _prompt='': next(inputs))
@@ -118,3 +39,65 @@ def test_main_menu_shop_buy_and_exit(
 
     assert db.saved[-1].lucky_amulet is True
     assert db.saved[-1].balance == 700
+
+
+class TestInitGame:
+    def test_init_game_resets_file_without_separator(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        monkeypatch.chdir(tmp_path)
+        (tmp_path / 'game.json').write_text('no-signature')
+
+        ctx = init_game(1)
+
+        assert ctx.player.id == 1
+        assert ctx.player.balance == 0
+        assert 'прогресс сброшен' in capsys.readouterr().out.lower()
+
+    def test_init_game_resets_invalid_json(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        monkeypatch.chdir(tmp_path)
+        write_raw_save(tmp_path / 'game.json', '{invalid')
+
+        ctx = init_game(1)
+
+        assert ctx.player.id == 1
+        assert ctx.player.balance == 0
+        assert 'прогресс сброшен' in capsys.readouterr().out.lower()
+
+    def test_init_game_loads_old_save_with_defaults(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        monkeypatch.chdir(tmp_path)
+        legacy = {
+            'id': 1,
+            'balance': 500,
+            'balance_multiplier': 1,
+            'xp': 0,
+            'xp_multiplier': 1,
+            'lvl': 3,
+            'promo_used': False,
+            'lucky_amulet': True,
+            'secret_used': False,
+            'bought': 0,
+            'mining_lvl': 0,
+            'potion_luck': False,
+            'lucky_ticket': False,
+            'buy_num_boost': 0,
+            'business': False,
+            'secret_case': 0,
+            'quest_id': 1,
+            'quest_progress': 0,
+            'rebirths': 0,
+        }
+        SignedJson(tmp_path / 'game.json').dump({'players': [legacy]})
+
+        ctx = init_game(1)
+
+        assert ctx.player.balance == 500
+        assert ctx.player.lvl == 3
+        assert ctx.player.lucky_amulet is True
+        assert ctx.player.mining_multiplier == 1
+        assert ctx.player.bank_deposit == 0
+        assert ctx.player.bank_turns == 0

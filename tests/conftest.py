@@ -14,11 +14,14 @@ class FakeDB(AbstractDataBase):
         self.saved: list[Player] = []
         self.resets = 0
 
-    def init_db(self) -> bool:
-        return False
+    def init_db(self) -> None:
+        pass
 
     def save_player(self, player: Player) -> None:
         self.saved.append(player)
+
+    def reset(self):
+        pass
 
     def reset_player(self, player: Player) -> Player:
         self.resets += 1

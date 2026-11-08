@@ -2,6 +2,7 @@
 .venv
 game.db
 game.json
+game.json.tmp
 .ruff_cache
 .zed
 .pytest_cache

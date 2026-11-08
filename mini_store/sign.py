@@ -49,7 +49,7 @@ class SignedJson:
             if tmp_file.exists():
                 tmp_file.unlink()
 
-    def load(self) -> dict[str, Any]:
+    def load(self, *, verify_sign: bool = True) -> dict[str, Any]:
         if not path.exists(self.file_path):
             raise FileNotFoundError()
 
@@ -61,7 +61,7 @@ class SignedJson:
 
         sign, save = self._split_sign_and_save(signed_save)
 
-        if self._need_check_sign and not self._sign_check(sign, save):
+        if (verify_sign and self._need_check_sign) and not self._sign_check(sign, save):
             raise SignCheckError()
 
         return loads(save)

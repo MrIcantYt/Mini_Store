@@ -208,11 +208,10 @@ def mining(ctx: GameContext) -> None:
 
 
 def promocode(ctx: GameContext) -> None:
+    cls()
     user_promo = input('\nВведите промокод: ').strip()
 
     if user_promo == PROMO:
-        cls()
-
         ctx.player.promo_used = True
 
         print(
