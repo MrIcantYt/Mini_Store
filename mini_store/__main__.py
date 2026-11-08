@@ -15,29 +15,29 @@ enable_ansi()
 def init_game(player_id: int) -> GameContext:
     cls()
     db = JsonDataBase()
-    db.init_db()
+    is_new = db.init_db()
 
-    player: Player | None = None
-    daily = DailyContext()
+    player: None | Player = None
 
-    try:
-        player = db.get_player_by_id(player_id)
+    if not is_new:
+        try:
+            player = db.get_player_by_id(player_id)
 
-    except FileNotFoundError:
-        print(f'\n{Colors.red}Файл сохранения не был найден. Ваш прогресс сброшен!{Colors.reset}')
+        except FileNotFoundError:
+            print(f'\n{Colors.red}Файл сохранения не был найден.{Colors.reset}')
 
-        player = None
+            player = None
 
-    except SignCheckError as e:
-        print(f'\n{Colors.red}{e.message}. Ваш прогресс сброшен!{Colors.reset}')
+        except SignCheckError as e:
+            print(f'\n{Colors.red}{e.message}. Ваш прогресс сброшен!{Colors.reset}')
 
-        player = None
+            player = None
 
     if player is None:
         player = Player(id=player_id)
         db.save_player(player)
 
-    return GameContext(player, db, daily)
+    return GameContext(player, db, DailyContext())
 
 
 def main() -> None:
