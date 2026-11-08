@@ -24,7 +24,7 @@ from typing import Final
 from mini_store.colors import Colors
 from mini_store.games import *
 from mini_store.keyboard import is_pressed, wait
-from mini_store.models import Daily, GameContext
+from mini_store.models import DailyContext, GameContext
 from mini_store.shop import Shop
 from mini_store.utils import *
 
@@ -42,7 +42,7 @@ def game(ctx: GameContext) -> None:
             Option('Камень, ножницы, бумага', RockScissorsPaperGame),
             Option('Игровой автомат (Слоты)', SlotsGame),
             Option('Блекдежек (21 очко)', BlackjackGame),
-            Option('Колесо Рулетки', RouttleGame),
+            Option('Колесо Рулетки', RouletteGame),
             Option('Кости (Craps)', CrapsGame),
         ],
         allow_cancel=True,

@@ -5,8 +5,9 @@ game.json
 .ruff_cache
 .zed
 .pytest_cache
-.coverage
 htmlcov/
 build/
 dist/
 *.spec
+coverage.*
+.coverage

@@ -7,7 +7,7 @@ from mini_store.utils import *
 from .abstract import AbstractGame
 
 
-class RouttleGame(AbstractGame):
+class RouletteGame(AbstractGame):
     def play(self):
         cls()
 

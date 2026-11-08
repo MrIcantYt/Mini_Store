@@ -2,9 +2,9 @@ from collections.abc import Callable
 
 import pytest
 
-import mini_store.games.routtle as routtle_module
-from mini_store.context import GameContext
-from mini_store.games.routtle import RouttleGame
+import mini_store.games.roulette as roulette_module
+from mini_store.games.roulette import RouletteGame
+from mini_store.models import GameContext
 
 
 class TestRouttle:
@@ -15,11 +15,11 @@ class TestRouttle:
         monkeypatch: pytest.MonkeyPatch,
     ) -> None:
         ctx.player.balance = 500
-        game = RouttleGame(ctx)
+        game = RouletteGame(ctx)
         feed_input('100')
-        monkeypatch.setattr(routtle_module, 'ask_option', lambda *a, **k: 'зеро')
-        monkeypatch.setattr(routtle_module.random, 'randint', lambda _a, _b: 0)
-        monkeypatch.setattr(routtle_module.time, 'sleep', lambda _s: None)
+        monkeypatch.setattr(roulette_module, 'ask_option', lambda *_, **__: 'зеро')
+        monkeypatch.setattr(roulette_module.random, 'randint', lambda _a, _b: 0)
+        monkeypatch.setattr(roulette_module.time, 'sleep', lambda _s: None)
 
         game.play()
 
@@ -33,11 +33,11 @@ class TestRouttle:
         monkeypatch: pytest.MonkeyPatch,
     ) -> None:
         ctx.player.balance = 500
-        game = RouttleGame(ctx)
+        game = RouletteGame(ctx)
         feed_input('100')
-        monkeypatch.setattr(routtle_module, 'ask_option', lambda *a, **k: 'красное')
-        monkeypatch.setattr(routtle_module.random, 'randint', lambda _a, _b: 2)
-        monkeypatch.setattr(routtle_module.time, 'sleep', lambda _s: None)
+        monkeypatch.setattr(roulette_module, 'ask_option', lambda *_, **__: 'красное')
+        monkeypatch.setattr(roulette_module.random, 'randint', lambda _a, _b: 2)
+        monkeypatch.setattr(roulette_module.time, 'sleep', lambda _s: None)
 
         game.play()
 
@@ -51,11 +51,11 @@ class TestRouttle:
         monkeypatch: pytest.MonkeyPatch,
     ) -> None:
         ctx.player.balance = 500
-        game = RouttleGame(ctx)
+        game = RouletteGame(ctx)
         feed_input('100')
-        monkeypatch.setattr(routtle_module, 'ask_option', lambda *a, **k: 'красное')
-        monkeypatch.setattr(routtle_module.random, 'randint', lambda _a, _b: 1)
-        monkeypatch.setattr(routtle_module.time, 'sleep', lambda _s: None)
+        monkeypatch.setattr(roulette_module, 'ask_option', lambda *_, **__: 'красное')
+        monkeypatch.setattr(roulette_module.random, 'randint', lambda _a, _b: 1)
+        monkeypatch.setattr(roulette_module.time, 'sleep', lambda _s: None)
 
         game.play()
 
@@ -65,11 +65,11 @@ class TestRouttle:
         self, feed_input: Callable[..., None], ctx: GameContext, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         ctx.player.balance = 500
-        game = RouttleGame(ctx)
+        game = RouletteGame(ctx)
         feed_input('все')
-        monkeypatch.setattr(routtle_module, 'ask_option', lambda *a, **k: 'зеро')
-        monkeypatch.setattr(routtle_module.random, 'randint', lambda _a, _b: 0)
-        monkeypatch.setattr(routtle_module.time, 'sleep', lambda _s: None)
+        monkeypatch.setattr(roulette_module, 'ask_option', lambda *_, **__: 'зеро')
+        monkeypatch.setattr(roulette_module.random, 'randint', lambda _a, _b: 0)
+        monkeypatch.setattr(roulette_module.time, 'sleep', lambda _s: None)
 
         game.play()
 
@@ -80,11 +80,10 @@ class TestRouttle:
         self,
         feed_input: Callable[..., None],
         ctx: GameContext,
-        monkeypatch: pytest.MonkeyPatch,
         bet: str,
     ) -> None:
         ctx.player.balance = 500
-        game = RouttleGame(ctx)
+        game = RouletteGame(ctx)
         feed_input(bet)
 
         game.play()

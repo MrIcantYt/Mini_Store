@@ -4,7 +4,7 @@ __all__ = (
     'CrapsGame',
     'GuessNumberGame',
     'RockScissorsPaperGame',
-    'RouttleGame',
+    'RouletteGame',
     'SlotsGame',
 )
 
@@ -13,5 +13,5 @@ from .blackjack import BlackjackGame
 from .craps import CrapsGame
 from .guess_number import GuessNumberGame
 from .rock_scissors_paper import RockScissorsPaperGame
-from .routtle import RouttleGame
+from .roulette import RouletteGame
 from .slots import SlotsGame
