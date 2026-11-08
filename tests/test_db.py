@@ -11,7 +11,7 @@ from mini_store.player import Player
 
 @pytest.fixture
 def db(tmp_path: Path) -> JsonDataBase:
-    db = JsonDataBase(str(tmp_path / 'game.json'))
+    db = JsonDataBase(tmp_path / 'game.json')
     db.init_db()
     return db
 
@@ -19,7 +19,7 @@ def db(tmp_path: Path) -> JsonDataBase:
 class TestJsonDataBase:
     def test_init_creates_file(self, tmp_path: Path) -> None:
         path = tmp_path / 'game.json'
-        db = JsonDataBase(str(path))
+        db = JsonDataBase(path)
 
         db.init_db()
 

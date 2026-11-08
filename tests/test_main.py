@@ -20,7 +20,7 @@ def test_version_flag(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFix
 
 
 def write_raw_save(path: Path, content: str) -> None:
-    save = SignedJson(str(path))
+    save = SignedJson(path)
     path.write_text(save._get_save_sign(content) + '\n' + content)
 
 

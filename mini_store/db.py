@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-from os import path
+from os import PathLike
+from pathlib import Path
 
 from mini_store.player import Player
 
@@ -8,7 +9,7 @@ from mini_store.sign import SignedJson
 
 
 class AbstractDataBase(ABC):
-    path: str
+    path: Path
 
     @abstractmethod
     def init_db(self) -> None:
@@ -32,12 +33,12 @@ class AbstractDataBase(ABC):
 
 
 class JsonDataBase(AbstractDataBase):
-    def __init__(self, db_path: str = 'game.json') -> None:
-        self.path = db_path
-        self.json = SignedJson(db_path, check_sign=not CONFIG.is_debug)
+    def __init__(self, db_path: str | PathLike[str] = 'game.json') -> None:
+        self.path = Path(db_path)
+        self.json = SignedJson(self.path, check_sign=not CONFIG.is_debug)
 
     def init_db(self) -> None:
-        if not path.exists(self.path):
+        if not self.path.exists():
             self.json.dump({'players': []})
 
     def save_player(self, player: Player) -> None:
