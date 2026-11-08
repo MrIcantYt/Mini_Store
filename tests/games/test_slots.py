@@ -56,7 +56,6 @@ class TestSlots:
         self,
         feed_input: Callable[..., None],
         ctx: GameContext,
-        monkeypatch: pytest.MonkeyPatch,
     ) -> None:
         ctx.player.balance = 1000
         game = SlotsGame(ctx)
@@ -66,9 +65,7 @@ class TestSlots:
 
         assert ctx.player.balance == 1000
 
-    def test_bet_above_balance(
-        self, feed_input: Callable[..., None], ctx: GameContext, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_bet_above_balance(self, feed_input: Callable[..., None], ctx: GameContext) -> None:
         ctx.player.balance = 100
         game = SlotsGame(ctx)
         feed_input('500')
@@ -102,6 +99,7 @@ class TestSlots:
         game = SlotsGame(ctx)
         feed_input('10')
         monkeypatch.setattr(slots_module, 'sleep', lambda _seconds: None)
+        monkeypatch.setattr(SlotsGame, '_all_slots_is', lambda _: Slot.CHERRY)
 
         game.play()
 
