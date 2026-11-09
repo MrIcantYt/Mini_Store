@@ -49,7 +49,7 @@ jobs:
         run: uv sync --all-extras --dev
 
       - name: Build binary
-        run: uv run pyinstaller --noconfirm --clean --onefile --name mini-store run.py
+        run: uv run pyinstaller --noconfirm --clean --onefile --add-data "pyproject.toml:." --name mini-store run.py
 
       - name: Smoke test (Linux)
         if: runner.os == 'Linux'

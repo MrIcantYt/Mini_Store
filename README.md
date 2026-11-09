@@ -118,7 +118,7 @@ uv run python -m mini_store --version
 Собрать автономный файл через PyInstaller:
 
 ```bash
-uv run pyinstaller --noconfirm --clean --onefile --name mini-store run.py
+uv run pyinstaller --noconfirm --clean --onefile --add-data "pyproject.toml:." --name mini-store run.py
 ```
 
 Результат:
