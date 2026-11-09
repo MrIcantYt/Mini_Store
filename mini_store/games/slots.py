@@ -163,6 +163,9 @@ class SlotsGame(AbstractGame):
         print(f'[{self._slots[0]}] [{self._slots[1]}] [{self._slots[2]}]\n')
         sleep(0.4)
 
+        if self._player.quest_id == 3:
+            self._player.quest_progress += 1
+
         if slot := self._all_slots_is():  # win
             win_coins = slot.coins_reward * money_player
             win_xp = slot.xp_reward
@@ -172,9 +175,6 @@ class SlotsGame(AbstractGame):
                 win_coins *= 2
                 win_xp *= 2
                 msg = slot.vip_msg
-
-            if self._player.quest_id == 3:
-                self._player.quest_progress += 1
 
             print(msg, self._player.add_coins_and_xp(coins=win_coins, xp=win_xp), end='\n\n')
             return
