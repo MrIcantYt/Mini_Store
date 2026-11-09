@@ -1,4 +1,5 @@
 import subprocess
+from collections.abc import Callable
 from pathlib import Path
 
 import pytest
@@ -6,6 +7,17 @@ import pytest
 import mini_store.utils
 from mini_store.db import AbstractDataBase
 from mini_store.models import DailyContext, GameContext, Player
+
+
+@pytest.fixture
+def feed_input(monkeypatch: pytest.MonkeyPatch) -> Callable[..., None]:
+    """Return a helper that feeds the given values to `input` one by one."""
+
+    def feed(*values: str) -> None:
+        iterator = iter(values)
+        monkeypatch.setattr('builtins.input', lambda _prompt='': next(iterator))
+
+    return feed
 
 
 class FakeDB(AbstractDataBase):

@@ -7,17 +7,6 @@ from mini_store.deck import Card, Suit
 
 
 @pytest.fixture
-def feed_input(monkeypatch: pytest.MonkeyPatch) -> Callable[..., None]:
-    """Return a helper that feeds the given values to `input` one by one."""
-
-    def feed(*values: str) -> None:
-        iterator = iter(values)
-        monkeypatch.setattr('builtins.input', lambda _prompt='': next(iterator))
-
-    return feed
-
-
-@pytest.fixture
 def set_blackjack_cards(monkeypatch: pytest.MonkeyPatch) -> Callable[..., None]:
     """Return a helper that fixes the cards dealt in a blackjack round."""
 

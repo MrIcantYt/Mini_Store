@@ -32,7 +32,7 @@ class HiddenOption[T]:
         value (T): Value returned when this option is selected.
     """
 
-    number: int
+    pos: int
     value: T
 
 
@@ -169,7 +169,7 @@ def ask_option[T](
             continue
 
         if isinstance(opt, HiddenOption):
-            number = opt.number
+            number = opt.pos
             hidden_numbers.append(number)
         else:
             if opt.pos is not None:
