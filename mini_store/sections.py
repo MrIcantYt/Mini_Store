@@ -237,16 +237,13 @@ def reset(ctx: GameContext) -> None:
     ):
         return
 
+    cls()
     print(f'\nНезнакомец: {Colors.blue_dark}Хорошо! Ваше решение принято.{Colors.reset}\n')
 
     ctx.player = ctx.db.reset_player(ctx.player)
 
     # TODO: when DailyContext will be field of Player, remove this
     ctx.daily = DailyContext()
-
-    time.sleep(3)
-
-    cls()
 
 
 def easter_egg(ctx: GameContext) -> None:
