@@ -305,19 +305,13 @@ class BlackjackGame(AbstractGame):
             # return bet without multipliers, profit goes through multipliers
             self._player.balance += hand.bet
 
-            if bot_score > 21:
-                print(
-                    f'🎉 {Colors.green}Бот перебрал ({bot_score} очков)! Вы победили!{Colors.reset}',
-                    f'{self._player.add_coins_and_xp(coins=hand.bet, xp=WIN_XP)}\n',
-                    sep='\n',
-                )
-
-            else:
-                print(
-                    f'🎉 {Colors.green}Вы победили дилера ({hand.score} vs {bot_score})!{Colors.reset}',
-                    f'{self._player.add_coins_and_xp(coins=hand.bet, xp=WIN_XP)}\n',
-                    sep='\n',
-                )
+            print(
+                f'🎉 {Colors.green}Бот перебрал ({bot_score} очков)! Вы победили!{Colors.reset}'
+                if bot_score > 21
+                else f'🎉 {Colors.green}Вы победили дилера ({hand.score} vs {bot_score})!{Colors.reset}',
+                f'{self._player.add_coins_and_xp(coins=hand.bet, xp=WIN_XP)}\n',
+                sep='\n',
+            )
 
         elif hand.score == bot_score:
             self._player.balance += hand.bet
