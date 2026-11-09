@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from enum import StrEnum
+from functools import total_ordering
 from random import shuffle
 
 
@@ -10,6 +11,7 @@ class Suit(StrEnum):
     SPADES = '♠'
 
 
+@total_ordering
 @dataclass(frozen=True, slots=True)
 class Card:
     """A playing card.
@@ -39,6 +41,24 @@ class Card:
         names = {1: 'A', 11: 'J', 12: 'Q', 13: 'K'}
         rank = names.get(self.rank, str(self.rank))
         return f'{rank}{self.suit.value}'
+
+    def __eq__(self, other: object, /) -> bool:
+        if isinstance(other, int):
+            return self.value == other
+        if isinstance(other, Card):
+            return (self.suit, self.rank) == (other.suit, other.rank)
+        return NotImplemented
+
+    def __lt__(self, other: object, /) -> bool:
+        if isinstance(other, int):
+            return self.value < other
+        if isinstance(other, Card):
+            return (self.value, self.rank, self.suit.value) < (
+                other.value,
+                other.rank,
+                other.suit.value,
+            )
+        return NotImplemented
 
 
 class Deck:

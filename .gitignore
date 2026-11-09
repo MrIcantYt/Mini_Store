@@ -2,9 +2,13 @@
 .venv
 game.db
 game.json
+game.json.tmp
 .ruff_cache
 .zed
 .pytest_cache
+htmlcov/
 build/
 dist/
 *.spec
+coverage.*
+.coverage

@@ -1,6 +1,5 @@
 import random
 from time import sleep
-from typing import Any
 
 from mini_store.colors import Colors
 from mini_store.utils import ask_confirmation, cls, fmt
@@ -9,20 +8,30 @@ from .abstract import AbstractGame
 
 
 class CrapsGame(AbstractGame):
-    def _roll_dice(self) -> tuple[int, int]:
+    def _roll_dice_get_total(self) -> int:
         print('\n🎲 Незнакомец трясет стакан с костями...')
 
         sleep(0.8)
 
-        die1 = random.randint(1, 6)
-        die2 = random.randint(1, 6)
+        dice = random.choices(range(1, 7), k=2)
+        total = sum(dice)
 
         print(
-            f'🎲 Результат броска: {Colors.yellow}[ {die1} ] [ {die2} ]{Colors.reset} -> {Colors.blue}{die1 + die2} очков{Colors.reset}'
+            f'🎲 Результат броска: {Colors.yellow}[ {dice[0]} ] [ {dice[1]} ]{Colors.reset} -> {Colors.blue}{total} очков{Colors.reset}'
         )
-        return die1, die2
 
-    def play(self) -> Any:
+        if (
+            total == 12
+            and self._ctx.daily.contract
+            and 'сумму 12 в Костях' in self._ctx.daily.contract
+            and not self._ctx.daily.completed
+        ):
+            self._ctx.daily.progress += 1
+            print(f'\n{Colors.green}⭐ КВЕСТ ВЫПОЛНЕН: Вы выбросили заветные 6 и 6!{Colors.reset}')
+
+        return total
+
+    def play(self):
         cls()
 
         print(f'\n {Colors.yellow}== Игра: Кости (Craps) =={Colors.reset}\n')
@@ -65,8 +74,7 @@ class CrapsGame(AbstractGame):
 
         input('\nНажмите Enter, чтобы бросить кости...')
 
-        d1, d2 = self._roll_dice()
-        total = d1 + d2
+        total = self._roll_dice_get_total()
 
         if total in (7, 11):
             reward_money = int(money_player * 1.5)
@@ -108,10 +116,9 @@ class CrapsGame(AbstractGame):
                 )
                 return
 
-            d1, d2 = self._roll_dice()
-            current_total = d1 + d2
+            total = self._roll_dice_get_total()
 
-            if current_total == point:
+            if total == point:
                 reward_money = int(money_player * 1.5)
                 reward_xp = 25
 
@@ -122,13 +129,11 @@ class CrapsGame(AbstractGame):
                 print()
                 return
 
-            elif current_total == 7:
+            elif total == 7:
                 print(
                     f'\n🔴 {Colors.red}Выпала Семёрка (Seven-Out)! Вы проиграли раунд и свою ставку.{Colors.reset}\n'
                 )
                 return
 
             else:
-                print(
-                    f'\nНичья ({current_total}). Точка по-прежнему {point}. Продолжаем...'
-                )
+                print(f'\nНичья ({total}). Точка по-прежнему {point}. Продолжаем...')

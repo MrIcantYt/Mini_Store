@@ -1,3 +1,15 @@
+__all__ = (
+    'HiddenOption',
+    'Option',
+    'OptionLike',
+    'Spacer',
+    'ask_confirmation',
+    'ask_number',
+    'ask_option',
+    'cls',
+    'fmt',
+)
+
 from os import name as os_name
 from subprocess import run
 
@@ -9,7 +21,4 @@ def fmt(value: int) -> str:
 
 
 def cls() -> None:
-    if os_name == 'nt':
-        run('cls', shell=True, check=False)
-    else:
-        run('clear', check=False)
+    run('cls', shell=True, check=False) if os_name == 'nt' else run('clear', check=False)

@@ -1,12 +1,9 @@
-from __future__ import annotations
-
 import random
 from enum import Enum
 from time import sleep
-from typing import Any
 
 from mini_store.colors import Colors
-from mini_store.context import GameContext
+from mini_store.models import GameContext
 from mini_store.utils import cls, fmt
 
 from .abstract import AbstractGame
@@ -72,10 +69,6 @@ class Slot(Enum):
     def __str__(self):
         return self.symbol
 
-    @classmethod
-    def from_symbol(cls, symbol: str) -> Slot | None:
-        return next((s for s in cls if s.symbol == symbol), None)
-
 
 class SlotsGame(AbstractGame):
     def __init__(self, ctx: GameContext) -> None:
@@ -104,13 +97,10 @@ class SlotsGame(AbstractGame):
         set_ = set(self._slots)
         return next(iter(set_)) if len(set_) == 1 else None
 
-    def play(self) -> Any:
+    def play(self):
         cls()
 
         print(f'\n {Colors.yellow}== Игра: Игровой Автомат =={Colors.reset}\n')
-
-        if self._player.quest_id == 3:
-            self._player.quest_progress += 1
 
         user_bet = (
             input(
@@ -151,17 +141,19 @@ class SlotsGame(AbstractGame):
             )
             return
 
-        self._player.balance -= money_player
-
         if money_player == 777 and self._player.balance >= 777:
             self._is_vip = True
+
             print(
                 f'\n{Colors.yellow}⚡ ВНИМАНИЕ! Активирован VIP-режим ХАЙРОЛЛЕРА «777»!⚡{Colors.reset}\n'
                 f'{Colors.red}Ставки максимальны. Риск удвоен. Выигрыш колоссален!{Colors.reset}\n'
                 '\n| 🎰 БAРAБAНЫ VIP-AВТОМAТA СТРЕМИТЕЛЬНО ВРAЩАЮТСЯ... 🎰 |'
             )
+
         else:
             print('\n| 🎰 БAРAБAНЫ КРУТЯТСЯ... 🎰 |')
+
+        self._player.balance -= money_player
 
         sleep(0.4)
         print(f'[{self._slots[0]}]')
@@ -171,12 +163,12 @@ class SlotsGame(AbstractGame):
         print(f'[{self._slots[0]}] [{self._slots[1]}] [{self._slots[2]}]\n')
         sleep(0.4)
 
-        if slot := self._all_slots_is():
-            # TODO: rewrite it in a new way
-            win_coins = int(
-                slot.coins_reward * money_player * self._player.balance_multiplier
-            )
-            win_xp = int(slot.xp_reward * self._player.xp_multiplier)
+        if self._player.quest_id == 3:
+            self._player.quest_progress += 1
+
+        if slot := self._all_slots_is():  # win
+            win_coins = slot.coins_reward * money_player
+            win_xp = slot.xp_reward
             msg = slot.msg
 
             if self._is_vip:
@@ -184,25 +176,15 @@ class SlotsGame(AbstractGame):
                 win_xp *= 2
                 msg = slot.vip_msg
 
-            print(
-                msg,
-                f'\n💰 Вы выиграли {Colors.yellow}{fmt(win_coins)}{Colors.reset} монет и получили {Colors.yellow}{fmt(win_xp)}{Colors.reset} XP!\n',
-            )
-
-            self._player.balance += win_coins
-            self._player.xp += win_xp
-
+            print(msg, self._player.add_coins_and_xp(coins=win_coins, xp=win_xp), end='\n\n')
             return
 
-        else:
-            if self._is_vip:
-                print(
-                    f'{Colors.red}💥 КРАХ ХАЙРОЛЛЕРА! Слот заблокирован. С вашего баланса списан ДВОЙНОЙ штраф за риск!{Colors.reset}'
-                )
+        if self._is_vip:
+            print(
+                f'{Colors.red}💥 КРАХ ХАЙРОЛЛЕРА! Слот заблокирован. С вашего баланса списан ДВОЙНОЙ штраф за риск!{Colors.reset}'
+            )
 
-                self._player.balance -= money_player
+            self._player.balance -= money_player
+            return
 
-            else:
-                print(
-                    '🔴 Увы, комбинация пустая. Вы потеряли свою ставку. Попробуйте еще раз!\n'
-                )
+        print('🔴 Увы, комбинация пустая. Вы потеряли свою ставку. Попробуйте еще раз!\n')

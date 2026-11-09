@@ -1,15 +1,16 @@
+from datetime import date
 from pathlib import Path
 
 import pytest
 
 from mini_store.db import JsonDataBase
 from mini_store.exceptions import SignCheckError
-from mini_store.player import Player
+from mini_store.models import DailyContext, Player
 
 
 @pytest.fixture
 def db(tmp_path: Path) -> JsonDataBase:
-    db = JsonDataBase(str(tmp_path / 'game.json'))
+    db = JsonDataBase(tmp_path / 'game.json')
     db.init_db()
     return db
 
@@ -17,7 +18,7 @@ def db(tmp_path: Path) -> JsonDataBase:
 class TestJsonDataBase:
     def test_init_creates_file(self, tmp_path: Path) -> None:
         path = tmp_path / 'game.json'
-        db = JsonDataBase(str(path))
+        db = JsonDataBase(path)
 
         db.init_db()
 
@@ -94,7 +95,24 @@ class TestJsonDataBase:
     def test_detects_tampered_save(self, db: JsonDataBase) -> None:
         db.save_player(Player(id=1))
         path = Path(db.path)
-        path.write_text('bad-sign\n{"players":[]}', encoding='utf-8')
+        path.write_text('bad-sign\n{"players":[]}')
 
         with pytest.raises(SignCheckError):
             db.get_player_by_id(1)
+
+    @pytest.mark.xfail(reason='TODO in next update')
+    def test_daily_round_trip(self, db: JsonDataBase) -> None:
+        daily = DailyContext(
+            contract='Сыграть 3 раунда в Блекджек',
+            target=3,
+            progress=1,
+            reward=150,
+            last_update=date(2026, 11, 7),
+            completed=False,
+            discount_item_id=3,
+        )
+
+        # TODO
+        db.save_daily(daily)  # ty: ignore[unresolved-attribute]
+
+        assert db.get_daily() == daily  # ty: ignore[unresolved-attribute]

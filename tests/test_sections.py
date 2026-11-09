@@ -2,10 +2,10 @@ from datetime import UTC, date, datetime
 from typing import Self
 
 import pytest
-from conftest import FakeDB
 
 from mini_store import sections
-from mini_store.context import GameContext
+from mini_store.models import GameContext
+from tests.conftest import FakeDB
 
 
 @pytest.fixture(autouse=True)
@@ -141,11 +141,24 @@ class TestMining:
 
         assert ctx.player.balance == 1
 
+    def test_coffee_sets_half_second_delay(
+        self,
+        ctx: GameContext,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        ctx.player.mining_lvl = 1
+        ctx.player.mining_multiplier = 2
+        delays: list[float] = []
+        monkeypatch.setattr(sections.time, 'sleep', delays.append)
+        monkeypatch.setattr(sections, 'is_pressed', lambda _key: True)
+
+        sections.mining(ctx)
+
+        assert delays == [0.5]
+
 
 class TestPromocode:
-    def test_valid_promocode(
-        self, ctx: GameContext, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_valid_promocode(self, ctx: GameContext, monkeypatch: pytest.MonkeyPatch) -> None:
         feed_input(monkeypatch, sections.PROMO)
 
         sections.promocode(ctx)
@@ -154,9 +167,7 @@ class TestPromocode:
         assert ctx.player.balance == 50
         assert ctx.player.xp == 30
 
-    def test_invalid_promocode(
-        self, ctx: GameContext, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_invalid_promocode(self, ctx: GameContext, monkeypatch: pytest.MonkeyPatch) -> None:
         feed_input(monkeypatch, 'wrong')
 
         sections.promocode(ctx)
@@ -164,9 +175,7 @@ class TestPromocode:
         assert ctx.player.promo_used is False
         assert ctx.player.balance == 0
 
-    def test_promocode_is_stripped(
-        self, ctx: GameContext, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_promocode_is_stripped(self, ctx: GameContext, monkeypatch: pytest.MonkeyPatch) -> None:
         feed_input(monkeypatch, f'  {sections.PROMO}  ')
 
         sections.promocode(ctx)

@@ -1,15 +1,28 @@
-from __future__ import annotations
+import subprocess
+from collections.abc import Callable
+from pathlib import Path
 
 import pytest
 
-from mini_store.context import Daily, GameContext
+import mini_store.utils
 from mini_store.db import AbstractDataBase
-from mini_store.player import Player
+from mini_store.models import DailyContext, GameContext, Player
+
+
+@pytest.fixture
+def feed_input(monkeypatch: pytest.MonkeyPatch) -> Callable[..., None]:
+    """Return a helper that feeds the given values to `input` one by one."""
+
+    def feed(*values: str) -> None:
+        iterator = iter(values)
+        monkeypatch.setattr('builtins.input', lambda _prompt='': next(iterator))
+
+    return feed
 
 
 class FakeDB(AbstractDataBase):
     def __init__(self) -> None:
-        self.path = ':memory:'
+        self.path = Path(':memory:')
         self.saved: list[Player] = []
         self.resets = 0
 
@@ -18,6 +31,9 @@ class FakeDB(AbstractDataBase):
 
     def save_player(self, player: Player) -> None:
         self.saved.append(player)
+
+    def reset(self):
+        pass
 
     def reset_player(self, player: Player) -> Player:
         self.resets += 1
@@ -42,4 +58,18 @@ def player() -> Player:
 
 @pytest.fixture
 def ctx(player: Player, db: FakeDB) -> GameContext:
-    return GameContext(player=player, db=db, daily=Daily())
+    return GameContext(player=player, db=db, daily=DailyContext())
+
+
+@pytest.fixture(autouse=True)
+def disable_clear_screen(monkeypatch):
+    def fake_run(*args, **kwargs):
+        cmd = args[0] if args else kwargs.get('args', '')
+        if isinstance(cmd, str) and cmd.lower() in ('cls', 'clear'):
+            return subprocess.CompletedProcess(args, returncode=0)
+
+        return original_run(*args, **kwargs)
+
+    original_run = subprocess.run
+
+    monkeypatch.setattr(mini_store.utils, 'run', fake_run)

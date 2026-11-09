@@ -17,13 +17,14 @@ import random
 import sys
 import time
 from collections.abc import Callable
+from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from typing import Final
 
 from mini_store.colors import Colors
-from mini_store.context import GameContext
 from mini_store.games import *
 from mini_store.keyboard import is_pressed, wait
+from mini_store.models import DailyContext, GameContext
 from mini_store.shop import Shop
 from mini_store.utils import *
 
@@ -41,7 +42,7 @@ def game(ctx: GameContext) -> None:
             Option('Камень, ножницы, бумага', RockScissorsPaperGame),
             Option('Игровой автомат (Слоты)', SlotsGame),
             Option('Блекдежек (21 очко)', BlackjackGame),
-            Option('Колесо Рулетки', RouttleGame),
+            Option('Колесо Рулетки', RouletteGame),
             Option('Кости (Craps)', CrapsGame),
         ],
         allow_cancel=True,
@@ -79,23 +80,18 @@ def profile(ctx: GameContext) -> None:
     )
 
     print('Купленные предметы:')
+
     items = []
 
     if ctx.player.lucky_amulet:
         items.append(f' - Счастливый Амулет {Colors.green}[+1 жизнь]{Colors.reset}')
     if ctx.player.potion_luck:
-        items.append(
-            f' - Зелье Удачи {Colors.green}[Шанс в казино повышен]{Colors.reset}'
-        )
+        items.append(f' - Зелье Удачи {Colors.green}[Шанс в казино повышен]{Colors.reset}')
     if ctx.player.lucky_ticket:
-        items.append(
-            f' - Счастливый Тикет {Colors.green}[Защита от 1 проигрыша]{Colors.reset}'
-        )
+        items.append(f' - Счастливый Тикет {Colors.green}[Защита от 1 проигрыша]{Colors.reset}')
 
     if ctx.player.mining_lvl > 0:
-        msg = (
-            f' - Майнинг-ферма: {Colors.yellow}{ctx.player.mining_lvl} лвл{Colors.reset}.'
-        )
+        msg = f' - Майнинг-ферма: {Colors.yellow}{ctx.player.mining_lvl} лвл{Colors.reset}.'
 
         if ctx.player.mining_multiplier != 1.0:
             msg += f' {Colors.blue}[Кофе ускорил в {ctx.player.mining_multiplier:.0f} раза]{Colors.reset}'
@@ -103,9 +99,7 @@ def profile(ctx: GameContext) -> None:
         items.append(msg)
 
     if ctx.player.business:
-        items.append(
-            f' - Пассивный бизнес {Colors.green}[+25 монет за ход]{Colors.reset}'
-        )
+        items.append(f' - Пассивный бизнес {Colors.green}[+25 монет за ход]{Colors.reset}')
 
     if not items:
         print(f'{Colors.red}Рюкзак пуст. Купите что-нибудь в магазине.{Colors.reset}')
@@ -172,9 +166,7 @@ def profile(ctx: GameContext) -> None:
             ctx.player.add_coins_and_xp(coins=500, xp=300)
 
         else:
-            print(
-                f'\n{Colors.red}Задание выполняется в казино (Пункт 2 -> Игра 3).{Colors.reset}'
-            )
+            print(f'\n{Colors.red}Задание выполняется в казино (Пункт 2 -> Игра 3).{Colors.reset}')
 
     else:
         print(
@@ -184,6 +176,7 @@ def profile(ctx: GameContext) -> None:
     print('-' * 20, '\n\nНажмите "q" для выхода в меню')
 
     wait('q')
+
     cls()
 
 
@@ -191,9 +184,7 @@ def mining(ctx: GameContext) -> None:
     cls()
 
     if ctx.player.mining_lvl > 0:
-        print(
-            f'\n⛏️ {Colors.green}Майнинг-ферма запущена! [Нажмите Q для выхода]{Colors.reset}\n'
-        )
+        print(f'\n⛏️ {Colors.green}Майнинг-ферма запущена! [Нажмите Q для выхода]{Colors.reset}\n')
 
         while True:
             ctx.player.balance += 1 * ctx.player.mining_lvl
@@ -203,7 +194,8 @@ def mining(ctx: GameContext) -> None:
                 end='\r',
             )
 
-            sleep_time = 1 // ctx.player.mining_multiplier
+            sleep_time = 1 / ctx.player.mining_multiplier
+
             time.sleep(sleep_time)
 
             if is_pressed('q'):
@@ -216,11 +208,10 @@ def mining(ctx: GameContext) -> None:
 
 
 def promocode(ctx: GameContext) -> None:
+    cls()
     user_promo = input('\nВведите промокод: ').strip()
 
     if user_promo == PROMO:
-        cls()
-
         ctx.player.promo_used = True
 
         print(
@@ -234,7 +225,9 @@ def promocode(ctx: GameContext) -> None:
 
 def game_exit(ctx: GameContext) -> None:
     ctx.db.save_player(ctx.player)
+
     print('\nПрогресс сохранен! Прощайте, удачи вам! \n')
+
     sys.exit()
 
 
@@ -244,19 +237,18 @@ def reset(ctx: GameContext) -> None:
     ):
         return
 
-    print(
-        f'\nНезнакомец: {Colors.blue_dark}Хорошо! Ваше решение принято.{Colors.reset}\n'
-    )
+    cls()
+    print(f'\nНезнакомец: {Colors.blue_dark}Хорошо! Ваше решение принято.{Colors.reset}\n')
 
     ctx.player = ctx.db.reset_player(ctx.player)
 
-    time.sleep(3)
-
-    cls()
+    # TODO: when DailyContext will be field of Player, remove this
+    ctx.daily = DailyContext()
 
 
 def easter_egg(ctx: GameContext) -> None:
     cls()
+
     if not ctx.player.secret_used:
         print(
             f'\n{Colors.green}Успешно! Вы нашли пасхалку!{Colors.reset}\n'
@@ -271,7 +263,9 @@ def easter_egg(ctx: GameContext) -> None:
 
 def debug_menu(ctx: GameContext) -> None:
     cls()
+
     print('=== Debug menu ===\n')
+
     action_choose = ask_option(
         'Выберите действие: ',
         [
@@ -290,24 +284,34 @@ def debug_menu(ctx: GameContext) -> None:
     match action_choose:
         case 1:
             amount = ask_number('Сколько монет добавить: ')
+
             if amount is None:
                 return
+
             print(ctx.player.add_coins(amount, False))
+
         case 2:
             amount = ask_number('Сколько опыта добавить: ')
+
             if amount is None:
                 return
+
             print(ctx.player.add_xp(amount, False))
+
         case 3:
             level: int | None = ask_number('Какой уровень установить: ')
+
             if level is None:
                 return
+
             ctx.player.lvl = level
+
             print(f'Был установлен {level} уровень.')
 
 
 def bank_menu(ctx: GameContext) -> None:
     cls()
+
     print(f'\n{Colors.blue}=== 🏦 Инвестиции Незнакомца ==={Colors.reset}')
     print(
         f'\n{Colors.yellow}Правила{Colors.reset}: Сложный процент ({Colors.yellow}+10%{Colors.reset}) начисляется каждые 3 сыгранных раунда в Блекджек.'
@@ -341,9 +345,7 @@ def bank_menu(ctx: GameContext) -> None:
     match action:
         case 1:
             try:
-                dep_input = (
-                    input("\nВведите сумму для вклада или 'all'/'все': ").strip().lower()
-                )
+                dep_input = input("\nВведите сумму для вклада или 'all'/'все': ").strip().lower()
 
                 if dep_input in ('all', 'все'):
                     dep_amount = ctx.player.balance
@@ -381,12 +383,11 @@ def bank_menu(ctx: GameContext) -> None:
 
 def _time_until_midnight(now: datetime) -> str:
     """Возвращает отформатированное время до ближайшей полуночи."""
-    midnight = (now + timedelta(days=1)).replace(
-        hour=0, minute=0, second=0, microsecond=0
-    )
+    midnight = (now + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
     time_left = midnight - now
     hours, remainder = divmod(int(time_left.total_seconds()), 3600)
     minutes, _ = divmod(remainder, 60)
+
     return f'{hours:2d}ч {minutes:02d}м'
 
 
@@ -413,6 +414,7 @@ def merchant_contracts(ctx: GameContext):
         MerchantContract('Сыграть {target} раундов в Блекджек', 3, 7, 150),
         MerchantContract('Набрать ровно 21 очко {target} раз(а)', 1, 2, 300),
         MerchantContract('Разделить карты (Сплит) хотя бы {target} раз', 1, 1, 250),
+        MerchantContract('Выбить сумму 12 в Костях (6 и 6) {target} раз(а)', 1, 1, 500),
     ]
 
     if daily.last_update != today:
@@ -430,7 +432,7 @@ def merchant_contracts(ctx: GameContext):
             f'{Colors.blue}🛒 Торговец обновил ассортимент контрактов на сегодня!{Colors.reset}\n'
         )
 
-    print(f'🕒 Время до обновления контракта:{Colors.red}{timer_str}{Colors.reset}')
+    print(f'🕒 Время до обновления контракта: {Colors.red}{timer_str}{Colors.reset}')
     print(f'📜 Задание: {Colors.yellow}{daily.contract}{Colors.reset}')
 
     if daily.completed:
@@ -441,14 +443,10 @@ def merchant_contracts(ctx: GameContext):
 
     else:
         print(f'📊 Прогресс: {Colors.blue}{daily.progress}/{daily.target}{Colors.reset}')
-        print(
-            f'💰 Награда за выполнение: {Colors.yellow}{fmt(daily.reward)}{Colors.reset} монет'
-        )
+        print(f'💰 Награда за выполнение: {Colors.yellow}{fmt(daily.reward)}{Colors.reset} монет')
 
         if daily.progress >= daily.target:
-            print(
-                f'\n{Colors.green}⭐ Контракт выполнен! Торговец готов заплатить. {Colors.reset}'
-            )
+            print(f'\n{Colors.green}⭐ Контракт выполнен! Торговец готов заплатить. {Colors.reset}')
 
             if ask_confirmation('\nЗабрать награду?'):
                 player.balance += daily.reward
@@ -462,5 +460,7 @@ def merchant_contracts(ctx: GameContext):
             print('\nВозвращайтесь за наградой, когда выполните условия контракта.')
 
     input('\nНажмите Enter, чтобы вернуться в меню...')
+
     print()
+
     cls()

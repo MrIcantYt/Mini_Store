@@ -35,6 +35,51 @@ class TestCard:
         with pytest.raises(AttributeError):
             card.rank = 2  # ty: ignore[invalid-assignment]
 
+    @pytest.mark.parametrize(
+        ('rank', 'value'),
+        [(1, 11), (5, 5), (10, 10), (11, 10), (12, 10), (13, 10)],
+    )
+    def test_equal_to_number(self, rank: int, value: int) -> None:
+        card = Card(Suit.HEARTS, rank)
+
+        assert card == value
+        assert value == card
+
+    def test_not_equal_to_other_number(self) -> None:
+        card = Card(Suit.HEARTS, 9)
+
+        assert card != 10
+        assert card != 8
+        assert card != 21
+
+    def test_not_equal_to_non_number(self) -> None:
+        card = Card(Suit.HEARTS, 10)
+
+        assert card != '10♥'
+        assert card != object()
+
+    def test_ordering_with_numbers(self) -> None:
+        card = Card(Suit.HEARTS, 9)
+
+        assert card > 5
+        assert card >= 9
+        assert card < 21
+        assert card <= 9
+        assert 5 < card < 21
+        assert card != 5
+
+    def test_ace_compares_by_eleven(self) -> None:
+        ace = Card(Suit.SPADES, 1)
+
+        assert ace == 11
+        assert ace > 10
+        assert ace < 21
+
+    def test_ordering_between_cards(self) -> None:
+        assert Card(Suit.HEARTS, 5) < Card(Suit.CLUBS, 9)
+        assert Card(Suit.HEARTS, 1) > Card(Suit.SPADES, 13)
+        assert Card(Suit.HEARTS, 9) < Card(Suit.HEARTS, 10)
+
 
 class TestDeck:
     def test_default_deck_has_52_cards(self) -> None:

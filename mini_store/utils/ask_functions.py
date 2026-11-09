@@ -5,7 +5,7 @@ from mini_store.colors import Colors
 
 
 def ask_confirmation(prompt: str) -> bool:
-    return 'д' in input(prompt + '\n[Да/Нет]: ').lower()
+    return input(prompt + '\n[Да/Нет]: ').lower() in ['д', 'да']
 
 
 @dataclass(slots=True)
@@ -32,7 +32,7 @@ class HiddenOption[T]:
         value (T): Value returned when this option is selected.
     """
 
-    number: int
+    pos: int
     value: T
 
 
@@ -92,9 +92,7 @@ def ask_number(
         try:
             value = int(raw)
         except ValueError:
-            print(
-                f'\n{Colors.red}Ошибка! Введите корректное число, а не: {raw!r}.{Colors.reset}\n'
-            )
+            print(f'\n{Colors.red}Ошибка! Введите корректное число, а не: {raw!r}.{Colors.reset}\n')
             continue
 
         if hidden_values is not None and value in hidden_values:
@@ -171,7 +169,7 @@ def ask_option[T](
             continue
 
         if isinstance(opt, HiddenOption):
-            number = opt.number
+            number = opt.pos
             hidden_numbers.append(number)
         else:
             if opt.pos is not None:
@@ -204,15 +202,19 @@ def ask_option[T](
 
     max_visible = max((num for num, _, _ in options_only), default=0)
 
-    value = ask_number(
-        prompt,
-        max=max_visible,
-        allow_cancel=allow_cancel,
-        cancel_on=cancel_on,
-        hidden_values=hidden_numbers,
-    )
+    while True:
+        value = ask_number(
+            prompt,
+            max=max_visible,
+            allow_cancel=allow_cancel,
+            cancel_on=cancel_on,
+            hidden_values=hidden_numbers,
+        )
 
-    if value is None:
-        return None
+        if value is None:
+            return None
 
-    return by_number[value]
+        if value in by_number:
+            return by_number[value]
+
+        print(f'{Colors.red}Нет такого пункта: {value}.{Colors.reset}')

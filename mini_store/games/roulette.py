@@ -7,8 +7,8 @@ from mini_store.utils import *
 from .abstract import AbstractGame
 
 
-class RouttleGame(AbstractGame):
-    def play(self) -> None:
+class RouletteGame(AbstractGame):
+    def play(self):
         cls()
 
         print(f'\n {Colors.yellow}== Игра: Рулетка Казино =={Colors.reset}\n')
@@ -102,9 +102,7 @@ class RouttleGame(AbstractGame):
                 mult = 35
                 reward_xp = 250
 
-                print(
-                    f'\n{Colors.green}🔥 НЕВЕРОЯТНО! ВЫ СОРВАЛИ КУШ НА ЗЕРО!!! 🔥{Colors.reset}'
-                )
+                print(f'\n{Colors.green}🔥 НЕВЕРОЯТНО! ВЫ СОРВАЛИ КУШ НА ЗЕРО!!! 🔥{Colors.reset}')
 
             else:
                 mult = 2

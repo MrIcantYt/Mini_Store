@@ -1,4 +1,4 @@
-from dataclasses import asdict, dataclass, fields
+from dataclasses import asdict, dataclass
 from random import randint
 from typing import Any, NamedTuple, cast
 
@@ -52,19 +52,9 @@ class Player:
     bank_turns: int = 0
 
     def __post_init__(self) -> None:
-        self.balance = self._balance
-
-    def to_row(self) -> dict[str, object]:
-        data = self.to_dict()
-        data.pop('id')
-        return data
-
-    @classmethod
-    def from_row(cls, row) -> Player:
-        data = {f.name: row[f.name] for f in fields(cls)}
-        for name in BOOL_FIELDS:
-            data[name] = bool(data[name])
-        return cls(**data)
+        initial_balance = self._balance
+        self._balance = 0
+        self.balance = initial_balance
 
     def to_dict(self) -> dict[str, object]:
         data = asdict(self)
@@ -84,12 +74,13 @@ class Player:
     def balance(self, value: int) -> None:
         if value < 0:
             missing = -value
+
             print(
                 f'{Colors.red}Ошибка! Недостаточно монет: '
                 f'на балансе {fmt(self._balance)}, '
                 f'не хватает {fmt(missing)}.{Colors.reset}'
             )
-            self._balance = 0
+
             return
 
         self._balance = min(value, MAX_BALANCE)
@@ -105,6 +96,7 @@ class Player:
     def add_coins(self, amount: int, apply_multipliers: bool = True) -> str:
         multiplier = self.balance_multiplier * self.level_multiplier
         final_amount = int(amount * multiplier if apply_multipliers else amount)
+
         self.balance += final_amount
 
         return f'💰 Вы получили {Colors.yellow}{fmt(final_amount)}{Colors.reset} монет (У вас {Colors.yellow}{fmt(self.balance)}{Colors.reset} монет на счету)'
@@ -112,6 +104,7 @@ class Player:
     def add_xp(self, amount: int, apply_multipliers: bool = True) -> str:
         multiplier = self.xp_multiplier * self.level_multiplier
         final_amount = int(amount * multiplier if apply_multipliers else amount)
+
         self.xp += final_amount
 
         level_msg = self.check_level_up()
@@ -123,15 +116,6 @@ class Player:
         return self.add_xp(xp) + '\n' + self.add_coins(coins)
 
     def check_level_up(self) -> str | None:
-        """Checks for and applies any pending level-ups.
-
-        Consumes XP from the player until the level-up threshold is no
-        longer met or the maximum level is reached. If the maximum level
-        is reached, remaining XP is converted to gold via `_convert_xp_to_gold`.
-
-        Returns:
-            str | None: A message describing the level-up, or None if the level did not change.
-        """
         if self.lvl >= MAX_LEVEL:
             return None
 
@@ -155,20 +139,15 @@ class Player:
         return f'{Colors.green}🎉 ПОЗДРАВЛЯЕМ! Вы достигли {self.lvl} уровня! 🎉{Colors.reset}'
 
     def _convert_xp_to_gold(self) -> Converted:
-        """Converts accumulated XP into gold at the maximum level.
-
-        Resets `self.xp` to 0 and adds the converted amount to `self.balance`.
-
-        Returns:
-            Converted: A pair (xp_converted, gold). Both are 0 if there was no XP to convert.
-        """
         if self.xp <= 0:
             return Converted(0, 0)
 
         xp_converted = self.xp
         gold = xp_converted * GOLD_PER_XP
+
         self.balance += gold
         self.xp = 0
+
         return Converted(xp_converted, gold)
 
     def check_luck(self) -> bool:

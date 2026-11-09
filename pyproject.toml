@@ -1,20 +1,18 @@
 [project]
 name = "mini-store"
-version = "0.7.0"
+version = "0.8.0"
 description = "Terminal game"
 readme = "README.md"
 authors = [
     { name = "Lynx20wz", email = "maks20wz@gmail.com" },
     { name = "MrIcant", email = "icant@example.com" }
 ]
-requires-python = "==3.14.8"
-dependencies = [
-    "colorama>=0.4.6",
-]
+requires-python = "==3.15.*"
+dependencies = []
 
 [tool.ruff]
 indent-width = 4
-line-length = 90
+line-length = 100
 
 [tool.ruff.lint]
 ignore = ['EXE002']
@@ -29,6 +27,7 @@ quote-style = "single"
 dev = [
     "pyinstaller>=6.22.3",
     "pytest>=9.2.0",
+    "pytest-cov>=7.1.0",
     "ruff>=0.16.10",
     "ty>=0.0.95",
 ]
@@ -36,3 +35,10 @@ dev = [
 [tool.pytest.ini_options]
 testpaths = ['tests']
 pythonpath = ['.']
+addopts = ['--cov=mini_store', '--cov-report=term-missing']
+
+[tool.coverage.run]
+source = ['mini_store']
+
+[tool.coverage.report]
+fail_under = 85

@@ -1,9 +1,7 @@
-from dataclasses import fields
-
 import pytest
 
-import mini_store.player as player_module
-from mini_store.player import (
+import mini_store.models.player as player_module
+from mini_store.models.player import (
     BOOL_FIELDS,
     GOLD_PER_XP,
     MAX_BALANCE,
@@ -22,7 +20,7 @@ class TestBalance:
 
         assert player.balance == MAX_BALANCE
 
-    def test_negative_balance_is_clamped_to_zero(
+    def test_negative_balance_is_rejected(
         self, player: Player, capsys: pytest.CaptureFixture[str]
     ) -> None:
         player.balance = -100
@@ -30,14 +28,14 @@ class TestBalance:
         assert player.balance == 0
         assert 'Ошибка! Недостаточно монет' in capsys.readouterr().out
 
-    def test_subtraction_below_zero_is_clamped(
+    def test_subtraction_below_zero_keeps_current_balance(
         self, player: Player, capsys: pytest.CaptureFixture[str]
     ) -> None:
         player.balance = 100
 
         player.balance -= 500
 
-        assert player.balance == 0
+        assert player.balance == 100
         output = capsys.readouterr().out
         assert 'Ошибка! Недостаточно монет' in output
         assert 'не хватает 400' in output
@@ -51,7 +49,7 @@ class TestBalance:
         assert player.balance == 0
         assert 'Ошибка! Недостаточно монет' in capsys.readouterr().out
 
-    def test_balance_is_capped_and_never_negative(
+    def test_balance_is_capped_and_negative_is_rejected(
         self, player: Player, capsys: pytest.CaptureFixture[str]
     ) -> None:
         player.balance = MAX_BALANCE + 500
@@ -59,7 +57,7 @@ class TestBalance:
 
         player.balance = -MAX_BALANCE
 
-        assert player.balance == 0
+        assert player.balance == MAX_BALANCE
         assert 'Ошибка! Недостаточно монет' in capsys.readouterr().out
 
 
@@ -178,6 +176,17 @@ class TestLevelUp:
         assert player.balance == 500 * GOLD_PER_XP
         assert player.xp == 0
 
+    @pytest.mark.xfail(reason='TODO in next update')
+    def test_xp_after_max_level_is_converted(self, player: Player) -> None:
+        player.lvl = MAX_LEVEL
+        player.xp = 50
+
+        player.add_xp(100, apply_multipliers=False)
+
+        assert player.lvl == MAX_LEVEL
+        assert player.xp == 0
+        assert player.balance == (50 + 100) * GOLD_PER_XP
+
 
 class TestSerialization:
     def test_to_dict_uses_balance_key(self, player: Player) -> None:
@@ -210,13 +219,6 @@ class TestSerialization:
 
         assert restored.balance == 0
         assert 'Ошибка! Недостаточно монет' in capsys.readouterr().out
-
-    def test_to_row_omits_id(self, player: Player) -> None:
-        row = player.to_row()
-
-        assert 'id' not in row
-        assert 'balance' in row
-        assert len(row) == len(fields(Player)) - 1
 
     def test_bool_fields_are_preserved(self) -> None:
         data = Player(id=1).to_dict()

@@ -1,5 +1,4 @@
 import random
-from typing import Any
 
 from mini_store.colors import Colors
 from mini_store.utils import cls
@@ -8,7 +7,7 @@ from .abstract import AbstractGame
 
 
 class RockScissorsPaperGame(AbstractGame):
-    def play(self) -> Any:
+    def play(self):
         cls()
 
         print(f'\n {Colors.yellow}== Игра: Камень, ножницы, бумага == {Colors.reset}\n')
@@ -74,8 +73,6 @@ class RockScissorsPaperGame(AbstractGame):
                 if life == 0:
                     cls()
 
-                    print(
-                        f'{Colors.red}Вы полностью проиграли в этой игре! {Colors.reset}\n'
-                    )
+                    print(f'{Colors.red}Вы полностью проиграли в этой игре! {Colors.reset}\n')
 
         return
