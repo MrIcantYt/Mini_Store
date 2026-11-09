@@ -202,15 +202,19 @@ def ask_option[T](
 
     max_visible = max((num for num, _, _ in options_only), default=0)
 
-    value = ask_number(
-        prompt,
-        max=max_visible,
-        allow_cancel=allow_cancel,
-        cancel_on=cancel_on,
-        hidden_values=hidden_numbers,
-    )
+    while True:
+        value = ask_number(
+            prompt,
+            max=max_visible,
+            allow_cancel=allow_cancel,
+            cancel_on=cancel_on,
+            hidden_values=hidden_numbers,
+        )
 
-    if value is None:
-        return None
+        if value is None:
+            return None
 
-    return by_number[value]
+        if value in by_number:
+            return by_number[value]
+
+        print(f'{Colors.red}Нет такого пункта: {value}.{Colors.reset}')

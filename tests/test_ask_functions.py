@@ -160,7 +160,6 @@ class TestAskOption:
         with pytest.raises(ValueError, match='Duplicate option number'):
             ask_option('Выбор: ', options)
 
-    @pytest.mark.xfail(reason='TODO in next update')
     def test_gap_in_positions_reprompts(
         self,
         monkeypatch: pytest.MonkeyPatch,

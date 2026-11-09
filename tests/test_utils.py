@@ -140,15 +140,16 @@ class TestAskOption:
 
         assert ask_option('', options, allow_cancel=True) is None
 
-    @pytest.mark.xfail(reason='TODO: ask_option must check by_number instead of max_visible')
     def test_gap_in_positions_reprompts(
         self,
         feed_input: Callable[..., None],
+        capsys: pytest.CaptureFixture[str],
     ) -> None:
         feed_input('3', '5')
         options = [Option('Пятый', 'five', pos=5)]
 
         assert ask_option('', options) == 'five'
+        assert 'Нет такого пункта: 3' in capsys.readouterr().out
 
     def test_hidden_option_pos_cant_be_gl_len_options(self) -> None:
         options = [HiddenOption(1, 'hidden'), Option('Видимый', 'visible')]
