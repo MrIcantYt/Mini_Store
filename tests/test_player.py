@@ -1,5 +1,3 @@
-from dataclasses import fields
-
 import pytest
 
 import mini_store.models.player as player_module
@@ -221,13 +219,6 @@ class TestSerialization:
 
         assert restored.balance == 0
         assert 'Ошибка! Недостаточно монет' in capsys.readouterr().out
-
-    def test_to_row_omits_id(self, player: Player) -> None:
-        row = player.to_row()
-
-        assert 'id' not in row
-        assert 'balance' in row
-        assert len(row) == len(fields(Player)) - 1
 
     def test_bool_fields_are_preserved(self) -> None:
         data = Player(id=1).to_dict()

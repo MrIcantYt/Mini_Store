@@ -1,4 +1,4 @@
-from dataclasses import asdict, dataclass, fields
+from dataclasses import asdict, dataclass
 from random import randint
 from typing import Any, NamedTuple, cast
 
@@ -53,18 +53,6 @@ class Player:
 
     def __post_init__(self) -> None:
         self.balance = self._balance
-
-    def to_row(self) -> dict[str, object]:
-        data = self.to_dict()
-        data.pop('id')
-        return data
-
-    @classmethod
-    def from_row(cls, row) -> Player:
-        data = {f.name: row[f.name] for f in fields(cls)}
-        for name in BOOL_FIELDS:
-            data[name] = bool(data[name])
-        return cls(**data)
 
     def to_dict(self) -> dict[str, object]:
         data = asdict(self)
