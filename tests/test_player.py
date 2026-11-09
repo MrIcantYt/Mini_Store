@@ -20,7 +20,7 @@ class TestBalance:
 
         assert player.balance == MAX_BALANCE
 
-    def test_negative_balance_is_clamped_to_zero(
+    def test_negative_balance_is_rejected(
         self, player: Player, capsys: pytest.CaptureFixture[str]
     ) -> None:
         player.balance = -100
@@ -28,14 +28,14 @@ class TestBalance:
         assert player.balance == 0
         assert 'Ошибка! Недостаточно монет' in capsys.readouterr().out
 
-    def test_subtraction_below_zero_is_clamped(
+    def test_subtraction_below_zero_keeps_current_balance(
         self, player: Player, capsys: pytest.CaptureFixture[str]
     ) -> None:
         player.balance = 100
 
         player.balance -= 500
 
-        assert player.balance == 0
+        assert player.balance == 100
         output = capsys.readouterr().out
         assert 'Ошибка! Недостаточно монет' in output
         assert 'не хватает 400' in output
@@ -49,7 +49,7 @@ class TestBalance:
         assert player.balance == 0
         assert 'Ошибка! Недостаточно монет' in capsys.readouterr().out
 
-    def test_balance_is_capped_and_never_negative(
+    def test_balance_is_capped_and_negative_is_rejected(
         self, player: Player, capsys: pytest.CaptureFixture[str]
     ) -> None:
         player.balance = MAX_BALANCE + 500
@@ -57,7 +57,7 @@ class TestBalance:
 
         player.balance = -MAX_BALANCE
 
-        assert player.balance == 0
+        assert player.balance == MAX_BALANCE
         assert 'Ошибка! Недостаточно монет' in capsys.readouterr().out
 
 

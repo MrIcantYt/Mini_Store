@@ -52,7 +52,9 @@ class Player:
     bank_turns: int = 0
 
     def __post_init__(self) -> None:
-        self.balance = self._balance
+        initial_balance = self._balance
+        self._balance = 0
+        self.balance = initial_balance
 
     def to_dict(self) -> dict[str, object]:
         data = asdict(self)
@@ -79,7 +81,6 @@ class Player:
                 f'не хватает {fmt(missing)}.{Colors.reset}'
             )
 
-            self._balance = 0
             return
 
         self._balance = min(value, MAX_BALANCE)
