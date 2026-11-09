@@ -137,6 +137,25 @@ uv run ty check
 
 Тесты лежат в `tests/`, конфигурация — в `pyproject.toml`.
 
+### Релиз
+
+1. Убедиться, что CI на `dev` зелёный, а версия в `pyproject.toml`, `CHANGELOG.md` и `.github/release-notes/` совпадает с будущим тегом.
+2. Смержить `dev` в `main` отдельным merge-коммитом и назвать его `BETA-<версия> Update`:
+
+   ```bash
+   git checkout main
+   git merge --no-ff dev -m "BETA-<версия> Update"
+   ```
+
+3. Поставить annotated-тег и запушить `main` вместе с тегом:
+
+   ```bash
+   git tag -a BETA-<версия> -m "Mini-Store BETA-<версия>"
+   git push origin main BETA-<версия>
+   ```
+
+4. Дальше релиз собирается и публикуется автоматически workflow `.github/workflows/release.yml`.
+
 ### Структура проекта
 
 ```text
