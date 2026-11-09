@@ -163,37 +163,28 @@ class SlotsGame(AbstractGame):
         print(f'[{self._slots[0]}] [{self._slots[1]}] [{self._slots[2]}]\n')
         sleep(0.4)
 
-        if slot := self._all_slots_is():
-            # TODO: rewrite it in a new way
-            win_coins = int(slot.coins_reward * money_player * self._player.balance_multiplier)
-            win_xp = int(slot.xp_reward * self._player.xp_multiplier)
+        if slot := self._all_slots_is():  # win
+            win_coins = slot.coins_reward * money_player
+            win_xp = slot.xp_reward
             msg = slot.msg
-
-            if self._player.quest_id == 3:
-                self._player.quest_progress += 1
 
             if self._is_vip:
                 win_coins *= 2
                 win_xp *= 2
                 msg = slot.vip_msg
 
-            print(
-                msg,
-                f'\n💰 Вы выиграли {Colors.yellow}{fmt(win_coins)}{Colors.reset} монет и получили {Colors.yellow}{fmt(win_xp)}{Colors.reset} XP!\n',
-            )
+            if self._player.quest_id == 3:
+                self._player.quest_progress += 1
 
-            self._player.balance += win_coins
-            self._player.xp += win_xp
-
+            print(msg, self._player.add_coins_and_xp(coins=win_coins, xp=win_xp), end='\n\n')
             return
 
-        else:
-            if self._is_vip:
-                print(
-                    f'{Colors.red}💥 КРАХ ХАЙРОЛЛЕРА! Слот заблокирован. С вашего баланса списан ДВОЙНОЙ штраф за риск!{Colors.reset}'
-                )
+        if self._is_vip:
+            print(
+                f'{Colors.red}💥 КРАХ ХАЙРОЛЛЕРА! Слот заблокирован. С вашего баланса списан ДВОЙНОЙ штраф за риск!{Colors.reset}'
+            )
 
-                self._player.balance -= money_player
+            self._player.balance -= money_player
+            return
 
-            else:
-                print('🔴 Увы, комбинация пустая. Вы потеряли свою ставку. Попробуйте еще раз!\n')
+        print('🔴 Увы, комбинация пустая. Вы потеряли свою ставку. Попробуйте еще раз!\n')
