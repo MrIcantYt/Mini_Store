@@ -1,14 +1,24 @@
+# Python
 **/__pycache__
 .venv
-game.db
-game.json
-game.json.tmp
-.ruff_cache
-.zed
-.pytest_cache
 htmlcov/
 build/
 dist/
 *.spec
+
+# Save
+game.db
+game.json
+game.json.tmp
+
+# Editor
+.zed/
+.vscode/
+
+# Coverage
 coverage.*
 .coverage
+
+# Cache
+.ruff_cache/
+.pytest_cache/
