@@ -13,31 +13,75 @@ from mini_store.utils import *
 enable_ansi()
 
 
-def init_game(player_id: int) -> GameContext:
-    cls()
-    db = JsonDataBase()
-    db.init_db()
-
+def select_or_create_player(db: JsonDataBase) -> Player:
+    """Выбирает существующее сохранение или создаёт новое."""
     try:
-        player = db.get_player_by_id(player_id)
-    except (FileNotFoundError, SignCheckError, ValueError, JSONDecodeError) as e:
+        players = db.get_all_players()
+    except (FileNotFoundError, SignCheckError, ValueError, JSONDecodeError, TypeError) as e:
         if isinstance(e, FileNotFoundError):
             print(
                 f'\n{Colors.red}Файл сохранения не был найден. Было создано новое.{Colors.reset}\n'
             )
-        elif isinstance(e, (JSONDecodeError, ValueError)):
+        elif isinstance(e, (JSONDecodeError, ValueError, TypeError)):
             print(
-                f'{Colors.red}Файл сохранения был повреждён. Ваш прогресс сброшен.{Colors.reset}\n'
+                f'{Colors.red}Файл сохранения был повреждён или устарел. Ваш прогресс сброшен.{Colors.reset}\n'
             )
         else:
             print(f'\n{Colors.red}{e.message}. Ваш прогресс сброшен!{Colors.reset}\n')
 
         db.reset()
-        player = None
 
-    if player is None:
-        player = Player(id=player_id)
+        players = []
+
+    if not players:
+        player = Player(id=1)
         db.save_player(player)
+        return player
+
+    players.sort(key=lambda p: p.id)
+
+    while True:
+        cls()
+        print('=== ВЫБОР СОХРАНЕНИЯ ===\n')
+
+        options: list = []
+        for p in players:
+            options.append(Option(f'Save {p.id}', p))
+
+        next_id = max(p.id for p in players) + 1
+        options.extend(
+            [
+                Spacer(),
+                Option('Создать новую игру', 'NEW', color=Colors.green),
+                Spacer(),
+                Option('Выход', sys.exit),
+            ]
+        )
+
+        choice = ask_option('Выберите слот: ', options)
+
+        if choice is None:
+            continue
+
+        if choice is sys.exit:
+            print(f'\n{Colors.red}Выход из игры...{Colors.reset}\n')
+            sys.exit()
+
+        if choice == 'NEW':
+            new_player = Player(id=next_id)
+            db.save_player(new_player)
+            return new_player
+
+        return choice
+
+
+def init_game() -> GameContext:
+    cls()
+    db = JsonDataBase()
+    db.init_db()
+
+    player = select_or_create_player(db)
+    cls()
 
     return GameContext(player, db, DailyContext())
 
@@ -47,9 +91,7 @@ def main() -> None:
         print(f'Mini-Store {CONFIG.version}')
         return
 
-    # TODO: choose id
-    player_id = 1
-    ctx = init_game(player_id)
+    ctx = init_game()
 
     if CONFIG.is_debug:
         print(
@@ -88,12 +130,6 @@ def main() -> None:
             continue
 
         section(ctx)
-
-        # # Passive business
-        # if ctx.player.business:
-        #     print(f'Незнакомец: {Colors.blue_dark}Ваш стартап принёс доход {Colors.yellow}+25 монет{Colors.blue_dark}.{Colors.reset}\n')
-
-        #     ctx.player.balance += 25
 
         ctx.db.save_player(ctx.player)
 
