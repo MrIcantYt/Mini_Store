@@ -1,5 +1,6 @@
 import sys
 from json import JSONDecodeError
+from typing import Literal
 
 from mini_store.colors import Colors, enable_ansi
 from mini_store.config import CONFIG
@@ -44,34 +45,30 @@ def select_or_create_player(db: JsonDataBase) -> Player:
         cls()
         print('=== ВЫБОР СОХРАНЕНИЯ ===\n')
 
-        options: list = []
-        for p in players:
-            options.append(Option(f'Save {p.id}', p))
+        options: list = [Option(f'Сохранение #{p.id}', p) for p in players]
 
-        next_id = max(p.id for p in players) + 1
         options.extend(
             [
                 Spacer(),
                 Option('Создать новую игру', 'NEW', color=Colors.green),
                 Spacer(),
-                Option('Выход', sys.exit),
+                Option('Выход', 'EXIT'),
             ]
         )
 
-        choice = ask_option('Выберите слот: ', options)
+        choice: Player | None | Literal['EXIT', 'NEW'] = ask_option('Выберите слот: ', options)
 
-        if choice is None:
-            continue
+        match choice:
+            case None | 'EXIT':
+                print(f'\n{Colors.red}Выход из игры...{Colors.reset}\n')
+                sys.exit()
+            case 'NEW':
+                next_id = max((p.id for p in players), default=0) + 1
+                new_player = Player(id=next_id)
+                db.save_player(new_player)
+                return new_player
 
-        if choice is sys.exit:
-            print(f'\n{Colors.red}Выход из игры...{Colors.reset}\n')
-            sys.exit()
-
-        if choice == 'NEW':
-            new_player = Player(id=next_id)
-            db.save_player(new_player)
-            return new_player
-
+        assert isinstance(choice, Player), 'choice must be a Player at this point'
         return choice
 
 
