@@ -23,8 +23,8 @@ class TestGuessNumber:
         monkeypatch: pytest.MonkeyPatch,
     ) -> None:
         game = GuessNumberGame(ctx)
-        monkeypatch.setattr(guess_module, 'ask_option', lambda *a, **k: Levels.easy)
-        monkeypatch.setattr(guess_module, 'ask_number', lambda *a, **k: 7)
+        monkeypatch.setattr(guess_module, 'ask_option', lambda *_, **__: Levels.easy)
+        monkeypatch.setattr(guess_module, 'ask_number', lambda *_, **__: 7)
         monkeypatch.setattr(guess_module, 'randint', lambda _a, _b: 7)
         monkeypatch.setattr(Player, 'check_luck', lambda _self: False)
 
@@ -41,8 +41,8 @@ class TestGuessNumber:
     ) -> None:
         ctx.player.lucky_ticket = True
         game = GuessNumberGame(ctx)
-        monkeypatch.setattr(guess_module, 'ask_option', lambda *a, **k: Levels.easy)
-        monkeypatch.setattr(guess_module, 'ask_number', lambda *a, **k: 7)
+        monkeypatch.setattr(guess_module, 'ask_option', lambda *_, **__: Levels.easy)
+        monkeypatch.setattr(guess_module, 'ask_number', lambda *_, **__: 7)
         monkeypatch.setattr(guess_module, 'randint', lambda _a, _b: 7)
         monkeypatch.setattr(Player, 'check_luck', lambda _self: False)
 
@@ -56,7 +56,7 @@ class TestGuessNumber:
         monkeypatch: pytest.MonkeyPatch,
     ) -> None:
         game = GuessNumberGame(ctx)
-        monkeypatch.setattr(guess_module, 'ask_option', lambda *a, **k: None)
+        monkeypatch.setattr(guess_module, 'ask_option', lambda *_, **__: None)
 
         game.play()
 

@@ -51,7 +51,6 @@ class TestBlackjack:
         feed_input: Callable[..., None],
         set_blackjack_cards: Callable[..., None],
         ctx: GameContext,
-        monkeypatch: pytest.MonkeyPatch,
     ) -> None:
         ctx.player.balance = 1000
         ctx.player.bank_deposit = 1000
@@ -70,7 +69,6 @@ class TestBlackjack:
         feed_input: Callable[..., None],
         set_blackjack_cards: Callable[..., None],
         ctx: GameContext,
-        monkeypatch: pytest.MonkeyPatch,
     ) -> None:
         ctx.player.balance = 1000
         ctx.player.bank_deposit = 1000

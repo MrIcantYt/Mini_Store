@@ -36,7 +36,7 @@ class TestSignedJson:
         signed = SignedJson(path, secret=SECRET)
         signed.dump({'a': 1})
 
-        def fail_replace(*args, **kwargs) -> None:
+        def fail_replace(*_, **__) -> None:
             raise OSError('replace failed')
 
         monkeypatch.setattr('mini_store.sign.replace', fail_replace)
