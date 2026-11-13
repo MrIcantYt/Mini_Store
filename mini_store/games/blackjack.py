@@ -294,6 +294,7 @@ class BlackjackGame(AbstractGame):
 
             # return bet without multipliers, profit goes through multipliers
             self._player.balance += hand.bet
+
             print(
                 f'🎉 {Colors.green}БЛЕКДЖЕК! Выплата 3:2.{Colors.reset}',
                 f'{self._player.add_coins_and_xp(coins=profit, xp=WIN_XP)}\n',

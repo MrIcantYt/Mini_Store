@@ -98,6 +98,6 @@ class TestInitGame:
         assert ctx.player.balance == 500
         assert ctx.player.lvl == 3
         assert ctx.player.lucky_amulet is True
-        assert ctx.player.mining_multiplier == 1
+        assert ctx.player.has_coffee is True
         assert ctx.player.bank_deposit == 0
         assert ctx.player.bank_turns == 0

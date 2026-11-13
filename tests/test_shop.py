@@ -159,12 +159,12 @@ class TestBuy:
 
         shop._buy(shop._catalog_by_id[6])
 
-        assert shop._player.mining_multiplier == 2
+        assert shop._player.has_coffee is True
         assert shop._player.balance == 300
 
     def test_buy_coffee_twice(self, shop: Shop, monkeypatch: pytest.MonkeyPatch) -> None:
         shop._player.balance = 1000
-        shop._player.mining_multiplier = 2
+        shop._player.has_coffee = True
         shop._catalog = shop._build_catalog()
         monkeypatch.setattr(shop_module, 'ask_confirmation', lambda _prompt: True)
 
@@ -280,24 +280,23 @@ class TestReturn:
 
     def test_return_coffee(self, shop: Shop) -> None:
         shop._player.mining_lvl = 1
-        shop._player.mining_multiplier = 2
+        shop._player.has_coffee = True
         shop._catalog = shop._build_catalog()
 
         shop._return(shop._catalog_by_id[6])
 
         assert shop._player.balance == 350
-        assert shop._player.mining_multiplier == 1
+        assert shop._player.has_coffee is False
 
     def test_return_coffee_not_bought(self, shop: Shop, capsys: pytest.CaptureFixture[str]) -> None:
         shop._player.mining_lvl = 1
-        shop._player.mining_multiplier = 1
         shop._catalog = shop._build_catalog()
 
         shop._return(shop._catalog_by_id[6])
 
         assert 'У вас не куплено "Кофе"' in capsys.readouterr().out
         assert shop._player.balance == 0
-        assert shop._player.mining_multiplier == 1
+        assert shop._player.has_coffee is False
 
     def test_return_secret_case_forbidden(
         self, shop: Shop, capsys: pytest.CaptureFixture[str]

@@ -39,7 +39,7 @@ class Player:
     secret_used: bool = False
     bought: int = 0
     mining_lvl: int = 0
-    mining_multiplier: int = 1
+    has_coffee: bool = False
     potion_luck: bool = False
     lucky_ticket: bool = False
     buy_num_boost: int = 0

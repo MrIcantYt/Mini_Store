@@ -40,7 +40,7 @@ class TestProfile:
         ctx.player.potion_luck = True
         ctx.player.lucky_ticket = True
         ctx.player.mining_lvl = 3
-        ctx.player.mining_multiplier = 2
+        ctx.player.has_coffee = True
         ctx.player.business = True
 
         sections.profile(ctx)
@@ -133,7 +133,7 @@ class TestMining:
         monkeypatch: pytest.MonkeyPatch,
     ) -> None:
         ctx.player.mining_lvl = 1
-        ctx.player.mining_multiplier = 2
+        ctx.player.has_coffee = True
         monkeypatch.setattr(sections.time, 'sleep', lambda _seconds: None)
         monkeypatch.setattr(sections, 'is_pressed', lambda _key: True)
 
@@ -147,7 +147,7 @@ class TestMining:
         monkeypatch: pytest.MonkeyPatch,
     ) -> None:
         ctx.player.mining_lvl = 1
-        ctx.player.mining_multiplier = 2
+        ctx.player.has_coffee = True
         delays: list[float] = []
         monkeypatch.setattr(sections.time, 'sleep', delays.append)
         monkeypatch.setattr(sections, 'is_pressed', lambda _key: True)

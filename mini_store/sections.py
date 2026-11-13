@@ -93,8 +93,8 @@ def profile(ctx: GameContext) -> None:
     if ctx.player.mining_lvl > 0:
         msg = f' - Майнинг-ферма: {Colors.yellow}{ctx.player.mining_lvl} лвл{Colors.reset}.'
 
-        if ctx.player.mining_multiplier != 1.0:
-            msg += f' {Colors.blue}[Кофе ускорил в {ctx.player.mining_multiplier:.0f} раза]{Colors.reset}'
+        if ctx.player.has_coffee:
+            msg += f' {Colors.blue}[Кофе ускорил]{Colors.reset}'
 
         items.append(msg)
 
@@ -194,7 +194,7 @@ def mining(ctx: GameContext) -> None:
                 end='\r',
             )
 
-            sleep_time = 1 / ctx.player.mining_multiplier
+            sleep_time = 0.5 if ctx.player.has_coffee else 1
 
             time.sleep(sleep_time)
 

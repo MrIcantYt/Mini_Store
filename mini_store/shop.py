@@ -51,11 +51,12 @@ class Shop:
     def open(self) -> None:
         cls()
 
-        print(f'\n{Colors.blue}🛒 Добро пожаловать в Каталог Незнакомца!{Colors.reset}\n')
-
         self._roll_discount()
 
-        print(f'Ваш баланс: {Colors.yellow}{fmt(self._player.balance)} монет{Colors.reset}.\n')
+        print(
+            f'\n{Colors.blue}🛒 Добро пожаловать в Каталог Незнакомца!{Colors.reset}\n'
+            f'Ваш баланс: {Colors.yellow}{fmt(self._player.balance)} монет{Colors.reset}.\n'
+        )
 
         item = self._choose_item()
 
@@ -291,7 +292,7 @@ class Shop:
             self._not_bought('майнинг-ферма')
             return
 
-        if self._player.mining_multiplier == 2:
+        if self._player.has_coffee:
             self._already_bought()
             return
 
@@ -308,7 +309,7 @@ class Shop:
         )
 
         self._player.balance -= price
-        self._player.mining_multiplier = 2
+        self._player.has_coffee = True
 
         print(
             f'\n{Colors.green}Успешно! Списано {fmt(price)} монет, теперь у вас есть Кофе (Майнинг ускорен)!{Colors.reset}\n'
@@ -374,11 +375,11 @@ class Shop:
             self._not_bought('Майнинг-ферма')
 
     def _sell_coffee(self) -> None:
-        if self._player.mining_multiplier != 2:
+        if not self._player.has_coffee:
             self._not_bought('Кофе')
             return
 
-        self._player.mining_multiplier = 1
+        self._player.has_coffee = False
         self._player.balance += 350
 
         print(
