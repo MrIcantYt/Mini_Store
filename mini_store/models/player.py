@@ -44,7 +44,6 @@ class Player:
     lucky_ticket: bool = False
     buy_num_boost: int = 0
     business: bool = False
-    secret_case: int = 0
     quest_id: int = 1
     quest_progress: int = 0
     rebirths: int = 0

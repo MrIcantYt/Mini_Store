@@ -90,7 +90,6 @@ class TestInitGame:
             'lucky_ticket': False,
             'buy_num_boost': 0,
             'business': False,
-            'secret_case': 0,
             'quest_id': 1,
             'quest_progress': 0,
             'rebirths': 0,

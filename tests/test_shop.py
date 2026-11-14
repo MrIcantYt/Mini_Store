@@ -182,7 +182,6 @@ class TestBuy:
 
         shop._buy(shop._catalog_by_id[7])
 
-        assert shop._player.secret_case == 1
         assert shop._player.balance == 12_500
 
     def test_discount_is_used_when_buying(self, shop: Shop) -> None:

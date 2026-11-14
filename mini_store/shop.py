@@ -320,7 +320,6 @@ class Shop:
             return
 
         self._player.balance -= price
-        self._player.secret_case += 1
 
         win_money = random.choice(list(self.CASE_DROPS.keys()))
 
