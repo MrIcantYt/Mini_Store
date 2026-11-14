@@ -36,7 +36,7 @@ class Shop:
     CASE_DROPS: ClassVar[dict[int, str]] = {
         1250: f'{Colors.red}Эх, Незнакомец подсунул дешёвку. Повезёт в следующий раз!{Colors.reset}\n',
         2500: f'{Colors.yellow}Нормально, вернули своё!{Colors.reset}\n',
-        5000: f'{Colors.green}🔥 ЛУЧШИЙ ДРОП! Вы сорвали куш кейса!{Colors.reset}\n',
+        3750: f'{Colors.green}🔥 ЛУЧШИЙ ДРОП! Вы сорвали куш кейса!{Colors.reset}\n',
     }
 
     def __init__(self, ctx: GameContext) -> None:
