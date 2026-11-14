@@ -55,7 +55,7 @@ class Shop:
 
         print(
             f'\n{Colors.blue}🛒 Добро пожаловать в Каталог Незнакомца!{Colors.reset}\n'
-            f'Ваш баланс: {Colors.yellow}{fmt(self._player.balance)} монет{Colors.reset}.\n'
+            f'\nВаш баланс: {Colors.yellow}{fmt(self._player.balance)} монет{Colors.reset}.\n'
         )
 
         item = self._choose_item()
@@ -148,7 +148,7 @@ class Shop:
         print(
             f'{Colors.purple}✨ Загадочный Незнакомец хитро улыбается вам...{Colors.reset}\n'
             f'{Colors.yellow}   «Сегодня твой счастливый день, приятель! Устраиваю распродажу!»{Colors.reset}\n'
-            f'🔥 Временная скидка 20% на товар {Colors.green}"{item.name}"{Colors.reset}\n'
+            f'🔥 Временная скидка 20% на товар {Colors.green}"{item.name}"{Colors.reset}'
         )
 
     def _choose_item(self) -> ShopItem | None:
@@ -157,7 +157,7 @@ class Shop:
 
     def _choose_action(self) -> ShopAction | None:
         action = ask_number(
-            'Купить или вернуть? (1 или 2. 3 Для выхода): ',
+            '\nКупить или вернуть? (1 или 2. 3 Для выхода): ',
             max=2,
             allow_cancel=True,
             cancel_on='3',
@@ -363,7 +363,12 @@ class Shop:
 
     def _sell_mining(self) -> None:
         if self._player.mining_lvl == 10:
-            print(f'\n{Colors.red}Майнинг ферму нельзя вернуть!{Colors.reset}\n')
+            self._player.mining_lvl = 0
+            self._player._balance += 8250
+
+            print(
+                f'\n{Colors.green}Успешно! Вы вернули "Майнинг-ферму"! К вашему балансу было прибавлено 8.250 монет!{Colors.reset}\n'
+            )
 
         elif 0 < self._player.mining_lvl < 10:
             print(
