@@ -16,7 +16,6 @@ BOOL_FIELDS = frozenset(
         'secret_used',
         'potion_luck',
         'lucky_ticket',
-        'business',
     }
 )
 
@@ -43,7 +42,6 @@ class Player:
     potion_luck: bool = False
     lucky_ticket: bool = False
     buy_num_boost: int = 0
-    business: bool = False
     quest_id: int = 1
     quest_progress: int = 0
     rebirths: int = 0

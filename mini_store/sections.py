@@ -98,9 +98,6 @@ def profile(ctx: GameContext) -> None:
 
         items.append(msg)
 
-    if ctx.player.business:
-        items.append(f' - Пассивный бизнес {Colors.green}[+25 монет за ход]{Colors.reset}')
-
     if not items:
         print(f'{Colors.red}Рюкзак пуст. Купите что-нибудь в магазине.{Colors.reset}')
     else:
