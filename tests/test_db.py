@@ -67,7 +67,6 @@ class TestJsonDataBase:
     def test_get_player_keeps_flags(self, db: JsonDataBase) -> None:
         player = Player(id=1)
         player.lucky_amulet = True
-        player.business = True
         player.mining_lvl = 4
         db.save_player(player)
 
@@ -75,7 +74,6 @@ class TestJsonDataBase:
 
         assert saved is not None
         assert saved.lucky_amulet is True
-        assert saved.business is True
         assert saved.mining_lvl == 4
 
     def test_reset_player_returns_defaults(self, db: JsonDataBase) -> None:

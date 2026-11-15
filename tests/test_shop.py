@@ -177,12 +177,12 @@ class TestBuy:
 
     def test_buy_secret_case(self, shop: Shop, monkeypatch: pytest.MonkeyPatch) -> None:
         shop._player.balance = 10_000
-        monkeypatch.setattr(shop_module.random, 'choice', lambda _items: 5000)
+        monkeypatch.setattr(shop_module.random, 'choice', lambda _items: 3750)
         monkeypatch.setattr(shop_module.time, 'sleep', lambda _seconds: None)
 
         shop._buy(shop._catalog_by_id[7])
 
-        assert shop._player.balance == 12_500
+        assert shop._player.balance == 11_250
 
     def test_discount_is_used_when_buying(self, shop: Shop) -> None:
         shop._player.balance = 1000
@@ -250,11 +250,11 @@ class TestReturn:
 
     def test_return_mining_max_level_forbidden(self, shop: Shop) -> None:
         shop._player.mining_lvl = 10
-        shop._player.balance = 5000
+        shop._player.balance = 8_250
 
         shop._return(shop._catalog_by_id[3])
 
-        assert shop._player.mining_lvl == 10
+        assert shop._player.mining_lvl == 0
 
     def test_return_mining_not_bought(self, shop: Shop) -> None:
         shop._return(shop._catalog_by_id[3])

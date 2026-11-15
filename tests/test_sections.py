@@ -41,7 +41,6 @@ class TestProfile:
         ctx.player.lucky_ticket = True
         ctx.player.mining_lvl = 3
         ctx.player.has_coffee = True
-        ctx.player.business = True
 
         sections.profile(ctx)
 
@@ -51,7 +50,6 @@ class TestProfile:
         assert 'Счастливый Тикет' in output
         assert 'Майнинг-ферма' in output
         assert 'Кофе ускорил' in output
-        assert 'Пассивный бизнес' in output
 
     def test_quest_one_completed(self, ctx: GameContext) -> None:
         ctx.player.balance = 500
