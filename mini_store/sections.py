@@ -197,13 +197,11 @@ def mining(ctx: GameContext) -> None:
                 time.sleep(sleep_time)
 
                 if is_pressed('q'):
-                    print()
-                    print(f'\n{Colors.green}Майнинг приостановлен...{Colors.reset}\n')
-                    break
+                    raise KeyboardInterrupt()
 
         except KeyboardInterrupt:
-            print()
-            print(f'\n{Colors.red}Принудительная остановка.{Colors.reset}\n')
+            cls()
+            print(f'\n{Colors.green}Майнинг приостановлен...{Colors.reset}\n')
 
     else:
         print(f'\n{Colors.red}Сначала купите ферму в каталоге!{Colors.reset}\n')
