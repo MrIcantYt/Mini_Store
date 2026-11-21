@@ -347,7 +347,7 @@ Definition of Done:
 - [ ] Обновить README.
   - Версия 0.9, структура проекта (`models/player.py`, а не `player.py`),
     сохранения с `schema_version`, локализация, новые правила экономики.
-- [ ] (MrIcant) Обновить `pyproject.toml`: `version = "0.9.0"`.
+- [x] (MrIcant) Обновить `pyproject.toml`: `version = "0.9.0"`.
 
 #### Тесты и CI
 
