@@ -3,7 +3,7 @@ from os import PathLike
 from pathlib import Path
 
 from mini_store.config import CONFIG
-from mini_store.models import Player
+from mini_store.models import DailyContext, Player
 from mini_store.sign import SignedJson
 
 
@@ -16,6 +16,10 @@ class AbstractDataBase(ABC):
 
     @abstractmethod
     def save_player(self, player: Player) -> None:
+        pass
+
+    @abstractmethod
+    def save_daily(self, daily: DailyContext) -> None:
         pass
 
     @abstractmethod
@@ -42,7 +46,7 @@ class JsonDataBase(AbstractDataBase):
 
     def init_db(self) -> None:
         if not self.path.exists():
-            self.json.dump({'players': []})
+            self.json.dump({'players': [], 'daily': []})
 
     def save_player(self, player: Player) -> None:
         data = self.json.load(verify_sign=False)
@@ -61,6 +65,9 @@ class JsonDataBase(AbstractDataBase):
             players.append(record)
 
         self.json.dump(data)
+
+    def save_daily(self, daily: DailyContext) -> None:
+        pass
 
     def reset(self) -> None:
         self.json.dump({'players': []})

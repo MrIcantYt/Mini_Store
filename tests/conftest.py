@@ -32,6 +32,9 @@ class FakeDB(AbstractDataBase):
     def save_player(self, player: Player) -> None:
         self.saved.append(player)
 
+    def save_daily(self, daily: DailyContext) -> None:
+        pass
+
     def reset(self):
         pass
 
