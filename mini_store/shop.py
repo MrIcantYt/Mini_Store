@@ -323,7 +323,7 @@ class Shop:
 
         win_money = random.choice(list(self.CASE_DROPS.keys()))
 
-        self._player.balance += win_money
+        self._player.add_coins(win_money)
 
         print(
             f'\n{Colors.green}Успешно! Куплен Секретный кейс за {fmt(price)} монет.{Colors.reset}'
@@ -342,7 +342,7 @@ class Shop:
 
         setattr(self._player, attr, 1)
 
-        self._player.balance += 1500
+        self._player.add_coins(1500)
 
         print(
             f'\n{Colors.green}Успешно! Вы вернули "{name}"! К вашему балансу было прибавлено 1.500 монет!{Colors.reset}\n'
@@ -355,7 +355,7 @@ class Shop:
 
         setattr(self._player, attr, False)
 
-        self._player.balance += refund
+        self._player.add_coins(refund)
 
         print(
             f'\n{Colors.green}Успешно! Вы вернули "{name}"! К вашему балансу было прибавлено {fmt(refund)} монет!{Colors.reset}\n'
@@ -364,7 +364,7 @@ class Shop:
     def _sell_mining(self) -> None:
         if self._player.mining_lvl == 10:
             self._player.mining_lvl = 0
-            self._player._balance += 8250
+            self._player.add_coins(8250)
 
             print(
                 f'\n{Colors.green}Успешно! Вы вернули "Майнинг-ферму"! К вашему балансу было прибавлено 8.250 монет!{Colors.reset}\n'
@@ -384,7 +384,7 @@ class Shop:
             return
 
         self._player.has_coffee = False
-        self._player.balance += 350
+        self._player.add_coins(350)
 
         print(
             f'\n{Colors.green}Успешно! Вы вернули "Кофе"! К вашему балансу было прибавлено 350 монет!{Colors.reset}\n'

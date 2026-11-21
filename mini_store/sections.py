@@ -183,7 +183,7 @@ def mining(ctx: GameContext) -> None:
         print(f'\n⛏️ {Colors.green}Майнинг-ферма запущена! [Нажмите Q для выхода]{Colors.reset}\n')
 
         while True:
-            ctx.player.balance += 1 * ctx.player.mining_lvl
+            ctx.player.add_coins(1 * ctx.player.mining_lvl)
 
             print(
                 f'Добыча... Ваш баланс: {Colors.yellow}{fmt(ctx.player.balance)}{Colors.reset} монет 💰',
@@ -363,7 +363,7 @@ def bank_menu(ctx: GameContext) -> None:
             if ctx.player.bank_deposit > 0:
                 withdrawn = ctx.player.bank_deposit
 
-                ctx.player.balance += withdrawn
+                ctx.player.add_coins(withdrawn)
                 ctx.player.bank_deposit = 0
                 ctx.player.bank_turns = 0
 
@@ -427,7 +427,7 @@ def merchant_contracts(ctx: GameContext):
             print(f'\n{Colors.green}⭐ Контракт выполнен! Торговец готов заплатить. {Colors.reset}')
 
             if ask_confirmation('\nЗабрать награду?'):
-                ctx.player.balance += contract.reward
+                ctx.player.add_coins(contract.reward)
                 contract.completed = True
 
                 print(

@@ -104,7 +104,7 @@ class CrapsGame(AbstractGame):
 
             if not ask_confirmation('Готовы сделать следующий бросок кубиков?'):
                 refund = int(money_player / 2)
-                self._player.balance += refund
+                self._player.add_coins(refund)
 
                 print(
                     f'\n{Colors.yellow}🏳️  Вы решили сдаться. Вам возвращена половина ставки: {fmt(refund)} монет.{Colors.reset}\n'

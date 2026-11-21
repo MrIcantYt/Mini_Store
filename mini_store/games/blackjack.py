@@ -252,7 +252,7 @@ class BlackjackGame(AbstractGame):
         if dealer_blackjack:
             insurance_payout = insurance_bet * INSURANCE_PAYOUT
 
-            self._player.balance += insurance_payout
+            self._player.add_coins(insurance_payout)
 
             print(
                 f'💰 {Colors.green}Страховка сработала! У дилера Блекджек! Выплата: {fmt(insurance_payout)} монет.{Colors.reset}'
@@ -284,7 +284,7 @@ class BlackjackGame(AbstractGame):
 
         if natural_blackjack:
             if dealer_blackjack:
-                self._player.balance += hand.bet
+                self._player.add_coins(hand.bet)
 
                 print(
                     f'{Colors.yellow}🤝 У дилера тоже Блекджек! Ставка возвращена.{Colors.reset}\n'
@@ -294,7 +294,7 @@ class BlackjackGame(AbstractGame):
             profit = int(hand.bet * BLACKJACK_PAYOUT)
 
             # return bet without multipliers, profit goes through multipliers
-            self._player.balance += hand.bet
+            self._player.add_coins(hand.bet, False)
 
             print(
                 f'🎉 {Colors.green}БЛЕКДЖЕК! Выплата 3:2.{Colors.reset}',
@@ -305,7 +305,7 @@ class BlackjackGame(AbstractGame):
 
         if bot_score > 21 or hand.score > bot_score:
             # return bet without multipliers, profit goes through multipliers
-            self._player.balance += hand.bet
+            self._player.add_coins(hand.bet, False)
 
             print(
                 f'🎉 {Colors.green}Бот перебрал ({bot_score} очков)! Вы победили!{Colors.reset}'
@@ -316,7 +316,7 @@ class BlackjackGame(AbstractGame):
             )
 
         elif hand.score == bot_score:
-            self._player.balance += hand.bet
+            self._player.add_coins(hand.bet)
 
             print(
                 f'{Colors.yellow}🤝 Ничья! Очков поровну ({hand.score} vs {bot_score}). Ставка возвращена.{Colors.reset}\n'
