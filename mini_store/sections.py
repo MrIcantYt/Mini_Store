@@ -182,25 +182,20 @@ def mining(ctx: GameContext) -> None:
     if ctx.player.mining_lvl > 0:
         print(f'\n⛏️ {Colors.green}Майнинг-ферма запущена! [Нажмите Q для выхода]{Colors.reset}\n')
 
-        try:
-            while True:
-                ctx.player.balance += 1 * ctx.player.mining_lvl
+        while True:
+            ctx.player.balance += 1 * ctx.player.mining_lvl
 
-                print(
-                    f'Добыча... Ваш баланс: {Colors.yellow}{fmt(ctx.player.balance)}{Colors.reset} монет 💰',
-                    end='\r',
-                )
+            print(
+                f'Добыча... Ваш баланс: {Colors.yellow}{fmt(ctx.player.balance)}{Colors.reset} монет 💰',
+                end='\r',
+            )
 
-                sleep_time = 0.5 if ctx.player.has_coffee else 1
+            sleep_time = 0.5 if ctx.player.has_coffee else 1
 
-                time.sleep(sleep_time)
+            time.sleep(sleep_time)
 
-                if is_pressed('q'):
-                    raise KeyboardInterrupt()
-
-        except KeyboardInterrupt:
-            cls()
-            print(f'\n{Colors.green}Майнинг приостановлен...{Colors.reset}\n')
+            if is_pressed('q'):
+                raise KeyboardInterrupt()
 
     else:
         print(f'\n{Colors.red}Сначала купите ферму в каталоге!{Colors.reset}\n')

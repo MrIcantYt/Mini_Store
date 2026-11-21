@@ -126,7 +126,10 @@ def main() -> None:
         if section is None:
             continue
 
-        section(ctx)
+        try:
+            section(ctx)
+        except KeyboardInterrupt:
+            cls()
 
         ctx.db.save_player(ctx.player)
 
