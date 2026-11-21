@@ -1,5 +1,6 @@
-__all__ = ('DailyContext', 'GameContext', 'Player')
+__all__ = ('Contract', 'ContractKind', 'DailyContext', 'DailyContract', 'GameContext', 'Player')
 
 from .context import GameContext
-from .daily import DailyContext
+from .contract import Contract, ContractKind
+from .daily import DailyContext, DailyContract
 from .player import Player

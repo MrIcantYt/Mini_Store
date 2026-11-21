@@ -2,6 +2,7 @@ import random
 from time import sleep
 
 from mini_store.colors import Colors
+from mini_store.models import ContractKind
 from mini_store.utils import ask_confirmation, cls, fmt
 
 from .abstract import AbstractGame
@@ -20,13 +21,7 @@ class CrapsGame(AbstractGame):
             f'🎲 Результат броска: {Colors.yellow}[ {dice[0]} ] [ {dice[1]} ]{Colors.reset} -> {Colors.blue}{total} очков{Colors.reset}'
         )
 
-        if (
-            total == 12
-            and self._ctx.daily.contract
-            and 'сумму 12 в Костях' in self._ctx.daily.contract
-            and not self._ctx.daily.completed
-        ):
-            self._ctx.daily.progress += 1
+        if total == 12 and self._ctx.daily.update_contract_progress(ContractKind.CRAPS_SCORE):
             print(f'\n{Colors.green}⭐ КВЕСТ ВЫПОЛНЕН: Вы выбросили заветные 6 и 6!{Colors.reset}')
 
         return total

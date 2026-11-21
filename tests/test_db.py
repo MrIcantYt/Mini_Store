@@ -5,7 +5,7 @@ import pytest
 
 from mini_store.db import JsonDataBase
 from mini_store.exceptions import SignCheckError
-from mini_store.models import DailyContext, Player
+from mini_store.models import ContractKind, DailyContext, DailyContract, Player
 
 
 @pytest.fixture
@@ -101,12 +101,12 @@ class TestJsonDataBase:
     @pytest.mark.xfail(reason='TODO in next update')
     def test_daily_round_trip(self, db: JsonDataBase) -> None:
         daily = DailyContext(
-            contract='Сыграть 3 раунда в Блекджек',
-            target=3,
-            progress=1,
-            reward=150,
-            last_update=date(2026, 11, 7),
-            completed=False,
+            DailyContract(
+                ContractKind.BLACKJACK_ROUNDS,
+                3,
+                progress=1,
+                last_update_date=date(2026, 11, 7),
+            ),
             discount_item_id=3,
         )
 

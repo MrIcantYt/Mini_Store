@@ -1,3 +1,5 @@
+from datetime import date, datetime
+
 __all__ = (
     'HiddenOption',
     'Option',
@@ -8,6 +10,7 @@ __all__ = (
     'ask_option',
     'cls',
     'fmt',
+    'today',
 )
 
 from os import name as os_name
@@ -22,3 +25,7 @@ def fmt(value: int) -> str:
 
 def cls() -> None:
     run('cls', shell=True, check=False) if os_name == 'nt' else run('clear', check=False)
+
+
+def today() -> date:
+    return datetime.now().astimezone().date()

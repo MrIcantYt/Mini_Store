@@ -4,7 +4,7 @@ import pytest
 
 from mini_store.deck import Card, Suit
 from mini_store.games.blackjack import BlackjackGame, Hand
-from mini_store.models import GameContext
+from mini_store.models import ContractKind, DailyContract, GameContext
 
 
 class TestBlackjack:
@@ -363,14 +363,15 @@ class TestBlackjack:
         ctx: GameContext,
     ) -> None:
         ctx.player.balance = 1000
-        ctx.daily.contract = 'Сыграть 3 раундов в Блекджек'
+        ctx.daily.contract = DailyContract(ContractKind.BLACKJACK_ROUNDS, 3)
         game = BlackjackGame(ctx)
         set_blackjack_cards([10, 9], [10, 8])
         feed_input('100', 'н')
 
         game.play()
 
-        assert ctx.daily.progress == 1
+        assert ctx.daily.contract is not None
+        assert ctx.daily.contract.progress == 1
 
     def test_daily_split_progress(
         self,
@@ -379,11 +380,12 @@ class TestBlackjack:
         ctx: GameContext,
     ) -> None:
         ctx.player.balance = 1000
-        ctx.daily.contract = 'Разделить карты 2 раза'
+        ctx.daily.contract = DailyContract(ContractKind.ONCE_SPLIT, 1)
         game = BlackjackGame(ctx)
         set_blackjack_cards([10, 10], [10, 8], [2, 3])
         feed_input('100', 'д', 'н', 'н')
 
         game.play()
 
-        assert ctx.daily.progress == 1
+        assert ctx.daily.contract is not None
+        assert ctx.daily.contract.progress == 1

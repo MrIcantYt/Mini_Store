@@ -4,7 +4,7 @@ from typing import Self
 import pytest
 
 from mini_store import sections
-from mini_store.models import GameContext
+from mini_store.models import ContractKind, DailyContract, GameContext
 from tests.conftest import FakeDB
 
 
@@ -407,12 +407,14 @@ class TestMerchantContracts:
 
         sections.merchant_contracts(ctx)
 
-        assert ctx.daily.contract == 'Сыграть 5 раундов в Блекджек'
-        assert ctx.daily.target == 5
-        assert ctx.daily.progress == 0
-        assert ctx.daily.reward == 750
-        assert ctx.daily.last_update == date(2026, 1, 1)
-        assert ctx.daily.completed is False
+        contract = ctx.daily.contract
+        assert contract is not None
+        assert contract.text == 'Сыграть 5 раундов в Блекджек'
+        assert contract.target == 5
+        assert contract.progress == 0
+        assert contract.reward == 750
+        assert contract.last_update_date == date(2026, 1, 1)
+        assert contract.completed is False
         assert 'обновил ассортимент' in capsys.readouterr().out
 
     def test_keeps_contract_for_the_same_day(
@@ -420,34 +422,37 @@ class TestMerchantContracts:
         ctx: GameContext,
         monkeypatch: pytest.MonkeyPatch,
     ) -> None:
-        ctx.daily.contract = 'Старый контракт'
-        ctx.daily.target = 5
-        ctx.daily.last_update = date(2026, 1, 1)
+        ctx.daily.contract = DailyContract(
+            ContractKind.CRAPS_SCORE, 1, last_update_date=date(2026, 1, 1)
+        )
         monkeypatch.setattr(sections, 'datetime', FakeDateTime)
         feed_input(monkeypatch, '')
 
         sections.merchant_contracts(ctx)
 
-        assert ctx.daily.contract == 'Старый контракт'
+        contract = ctx.daily.contract
+        assert contract is not None
+        assert contract.text == 'Выбить сумму 12 в Костях (6 и 6) 1 раз(а)'
 
     def test_claims_reward(
         self,
         ctx: GameContext,
         monkeypatch: pytest.MonkeyPatch,
     ) -> None:
-        ctx.daily.contract = 'Сыграть 5 раундов в Блекджек'
-        ctx.daily.target = 5
-        ctx.daily.progress = 5
-        ctx.daily.reward = 750
-        ctx.daily.last_update = date(2026, 1, 1)
-        ctx.daily.completed = False
+        ctx.daily.contract = DailyContract(
+            ContractKind.BLACKJACK_ROUNDS,
+            5,
+            progress=5,
+            last_update_date=date(2026, 1, 1),
+        )
         monkeypatch.setattr(sections, 'datetime', FakeDateTime)
         monkeypatch.setattr(sections, 'ask_confirmation', lambda _prompt: True)
         feed_input(monkeypatch, '')
 
         sections.merchant_contracts(ctx)
 
-        assert ctx.daily.completed is True
+        assert ctx.daily.contract is not None
+        assert ctx.daily.contract.completed is True
         assert ctx.player.balance == 750
 
     def test_does_not_claim_twice(
@@ -455,12 +460,13 @@ class TestMerchantContracts:
         ctx: GameContext,
         monkeypatch: pytest.MonkeyPatch,
     ) -> None:
-        ctx.daily.contract = 'Сыграть 5 раундов в Блекджек'
-        ctx.daily.target = 5
-        ctx.daily.progress = 5
-        ctx.daily.reward = 750
-        ctx.daily.last_update = date(2026, 1, 1)
-        ctx.daily.completed = True
+        ctx.daily.contract = DailyContract(
+            ContractKind.BLACKJACK_ROUNDS,
+            5,
+            progress=5,
+            last_update_date=date(2026, 1, 1),
+            completed=True,
+        )
         monkeypatch.setattr(sections, 'datetime', FakeDateTime)
         feed_input(monkeypatch, '')
 
@@ -473,17 +479,19 @@ class TestMerchantContracts:
         ctx: GameContext,
         monkeypatch: pytest.MonkeyPatch,
     ) -> None:
-        ctx.daily.contract = 'Сыграть 5 раундов в Блекджек'
-        ctx.daily.target = 5
-        ctx.daily.progress = 2
-        ctx.daily.reward = 750
-        ctx.daily.last_update = date(2026, 1, 1)
+        ctx.daily.contract = DailyContract(
+            ContractKind.BLACKJACK_ROUNDS,
+            5,
+            progress=2,
+            last_update_date=date(2026, 1, 1),
+        )
         monkeypatch.setattr(sections, 'datetime', FakeDateTime)
         feed_input(monkeypatch, '')
 
         sections.merchant_contracts(ctx)
 
-        assert ctx.daily.completed is False
+        assert ctx.daily.contract is not None
+        assert ctx.daily.contract.completed is False
         assert ctx.player.balance == 0
 
 

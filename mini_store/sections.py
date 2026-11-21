@@ -17,14 +17,13 @@ import random
 import sys
 import time
 from collections.abc import Callable
-from dataclasses import dataclass
-from datetime import UTC, datetime, timedelta
+from datetime import datetime, timedelta
 from typing import Final
 
 from mini_store.colors import Colors
 from mini_store.games import *
 from mini_store.keyboard import is_pressed, wait
-from mini_store.models import DailyContext, GameContext
+from mini_store.models import ContractKind, DailyContext, DailyContract, GameContext
 from mini_store.shop import Shop
 from mini_store.utils import *
 
@@ -382,7 +381,7 @@ def bank_menu(ctx: GameContext) -> None:
 
 
 def _time_until_midnight(now: datetime) -> str:
-    """Возвращает отформатированное время до ближайшей полуночи."""
+    """Return formated time to midnight."""
     midnight = (now + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
     time_left = midnight - now
     hours, remainder = divmod(int(time_left.total_seconds()), 3600)
@@ -392,68 +391,52 @@ def _time_until_midnight(now: datetime) -> str:
 
 
 def merchant_contracts(ctx: GameContext):
-    @dataclass
-    class MerchantContract:
-        text: str
-        min: int
-        max: int
-        reward_base: int
 
     cls()
 
     print(f'\n {Colors.yellow}== 📅 Ежедневные Контракты Торговца =={Colors.reset}\n')
 
-    player = ctx.player
-    daily = ctx.daily
-
-    now = datetime.now(UTC).astimezone()
+    now = datetime.now().astimezone()
     today = now.date()
     timer_str = _time_until_midnight(now)
 
-    available_contracts: list[MerchantContract] = [
-        MerchantContract('Сыграть {target} раундов в Блекджек', 3, 7, 150),
-        MerchantContract('Набрать ровно 21 очко {target} раз(а)', 1, 2, 300),
-        MerchantContract('Разделить карты (Сплит) хотя бы {target} раз', 1, 1, 250),
-        MerchantContract('Выбить сумму 12 в Костях (6 и 6) {target} раз(а)', 1, 1, 500),
-    ]
+    if ctx.daily.contract is None or ctx.daily.contract.last_update_date != today:
+        today_kind = random.choice(tuple(ContractKind))
+        target_value = random.randint(*today_kind.value.progress_range)
 
-    if daily.last_update != today:
-        selected = random.choice(available_contracts)
-        target_value = random.randint(selected.min, selected.max)
-
-        daily.contract = selected.text.format(target=target_value)
-        daily.target = target_value
-        daily.progress = 0
-        daily.reward = target_value * selected.reward_base
-        daily.last_update = today
-        daily.completed = False
+        ctx.daily = DailyContext(DailyContract(today_kind, target_value, last_update_date=today))
 
         print(
             f'{Colors.blue}🛒 Торговец обновил ассортимент контрактов на сегодня!{Colors.reset}\n'
         )
 
-    print(f'🕒 Время до обновления контракта: {Colors.red}{timer_str}{Colors.reset}')
-    print(f'📜 Задание: {Colors.yellow}{daily.contract}{Colors.reset}')
+    contract = ctx.daily.contract
+    assert contract is not None
 
-    if daily.completed:
+    print(f'🕒 Время до обновления контракта: {Colors.red}{timer_str}{Colors.reset}')
+    print(f'📜 Задание: {Colors.yellow}{contract.text}{Colors.reset}')
+
+    if contract.completed:
         print(
-            f'📊 Прогресс: [{Colors.green}ВЫПОЛНЕНО{Colors.reset}] ({daily.progress}/{daily.target})'
+            f'📊 Прогресс: [{Colors.green}ВЫПОЛНЕНО{Colors.reset}] ({contract.progress}/{contract.target})'
         )
         print('🎉 Вы уже забрали награду за этот контракт!')
 
     else:
-        print(f'📊 Прогресс: {Colors.blue}{daily.progress}/{daily.target}{Colors.reset}')
-        print(f'💰 Награда за выполнение: {Colors.yellow}{fmt(daily.reward)}{Colors.reset} монет')
+        print(f'📊 Прогресс: {Colors.blue}{contract.progress}/{contract.target}{Colors.reset}')
+        print(
+            f'💰 Награда за выполнение: {Colors.yellow}{fmt(contract.reward)}{Colors.reset} монет'
+        )
 
-        if daily.progress >= daily.target:
+        if contract.progress >= contract.target:
             print(f'\n{Colors.green}⭐ Контракт выполнен! Торговец готов заплатить. {Colors.reset}')
 
             if ask_confirmation('\nЗабрать награду?'):
-                player.balance += daily.reward
-                daily.completed = True
+                ctx.player.balance += contract.reward
+                contract.completed = True
 
                 print(
-                    f'\n💰 {Colors.green}Вы получили {fmt(daily.reward)} монет от Торговца!{Colors.reset}'
+                    f'\n💰 {Colors.green}Вы получили {fmt(contract.reward)} монет от Торговца!{Colors.reset}'
                 )
 
         else:

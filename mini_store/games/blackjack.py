@@ -3,6 +3,7 @@ from time import sleep
 
 from mini_store.colors import Colors
 from mini_store.deck import Card, Deck
+from mini_store.models import ContractKind
 from mini_store.utils import ask_confirmation, cls, fmt
 
 from .abstract import AbstractGame
@@ -72,7 +73,7 @@ class BlackjackGame(AbstractGame):
         for index, hand in enumerate(player_hands):
             self._settle_hand(index, hand, len(player_hands), bot_score, dealer_blackjack)
 
-        self._ctx.daily.register_daily('раундов в Блекджек')
+        self._ctx.daily.update_contract_progress(ContractKind.BLACKJACK_ROUNDS)
         self._apply_bank_interest()
 
     def _ask_bet(self) -> int | None:
@@ -163,7 +164,7 @@ class BlackjackGame(AbstractGame):
             return player_hands, False
 
         self._player.balance -= bet
-        self._ctx.daily.register_daily('Разделить карты')
+        self._ctx.daily.update_contract_progress(ContractKind.ONCE_SPLIT)
 
         left, right = hand.cards
         split_aces = left.rank == 1
@@ -217,7 +218,7 @@ class BlackjackGame(AbstractGame):
 
         if hand.score == 21:
             print(f'\n🎉 {Colors.green}ОГО! На этой руке ровно 21 очко!{Colors.reset}')
-            self._ctx.daily.register_daily('ровно 21 очко')
+            self._ctx.daily.update_contract_progress(ContractKind.BLACKJACK_SCORE)
 
     def _dealer_turn(self, deck: Deck, bot_cards: list[Card], bot_score: int) -> int:
         print(f'\n{Colors.blue}🤖 Очередь Дилера (Бота)...{Colors.reset}\n')
