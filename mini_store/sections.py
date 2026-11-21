@@ -298,9 +298,10 @@ def debug_menu(ctx: GameContext) -> None:
             if level is None:
                 return
 
-            ctx.player.lvl = level
+            set_lvl = min(level, 100)
+            ctx.player.lvl = set_lvl
 
-            print(f'Был установлен {level} уровень.')
+            print(f'Был установлен {set_lvl} уровень.')
 
 
 def bank_menu(ctx: GameContext) -> None:
